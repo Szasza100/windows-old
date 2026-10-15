@@ -29,6 +29,9 @@
         #desktop { position: absolute; top: 0; left: 0; width: 100vw; height: calc(100vh - 40px); z-index: 1; background-size: cover; background-position: center; background-repeat: no-repeat; }
         
         #taskbar { position: absolute; bottom: 0; left: 0; width: 100%; height: 40px; background-color: var(--win-bg); border-top: 2px solid #dfdfdf; display: flex; align-items: center; justify-content: space-between; box-shadow: inset 0 1px 0 var(--win-border-light); z-index: 1000; color: var(--win-text); }
+        #start-button { display: flex; align-items: center; justify-content: center; padding: 0 10px; cursor: pointer; height: 100%; border-right: 2px solid var(--win-border-dark); box-shadow: inset -1px 0 0 var(--win-border-light); }
+        #start-button img { height: 28px; filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.5)); transition: transform 0.1s; }
+        #start-button:active img { transform: scale(0.9); }
         #tray { display: flex; align-items: center; padding-right: 10px; border-left: 2px solid var(--win-border-dark); box-shadow: inset 1px 0 0 var(--win-border-light); height: 100%; padding-left: 10px; }
         .tray-btn { background: var(--win-bg); color: var(--win-text); border: 2px solid; border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light); padding: 2px 8px; margin-right: 5px; cursor: pointer; font-weight: bold; font-size: 14px; }
         .tray-btn:active { border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark); padding: 3px 7px 1px 9px; }
@@ -60,6 +63,10 @@
         .folder-view-list .icon-size-label { font-size: 11px; opacity: 0.8; padding-right: 10px; width: 80px; text-align: right; }
         .folder-view-list .icon-img-wrapper { margin-bottom: 0; margin-right: 10px; }
         
+        .tree-item { padding: 2px 5px; cursor: pointer; margin-bottom: 2px; border: 1px dotted transparent; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; color: var(--win-text); }
+        .tree-item:hover { text-decoration: underline; }
+        .tree-item.active { background: #000080; color: white; border-color: yellow; font-weight: bold; }
+
         #context-menu { position: absolute; display: none; z-index: 9999; background: var(--win-bg); color: var(--win-text); border: 2px solid; border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light); box-shadow: 2px 2px 5px rgba(0,0,0,0.5); flex-direction: column; padding: 2px; min-width: 170px; }
         .menu-item { padding: 5px 10px; cursor: pointer; font-size: 14px; }
         .menu-item:hover { background: var(--win-header); color: var(--win-header-text); }
@@ -85,39 +92,79 @@
         .bin-btn { background: var(--win-bg); color: var(--win-text); border: 2px solid; border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light); cursor: pointer; padding: 2px 6px; font-weight: bold; font-size: 12px; }
         .bin-btn.del { color: red; }
 
-        #recording-overlay { position: absolute; top: 20px; right: 20px; z-index: 20000; display: none; flex-direction: column; align-items: center; background: rgba(0,0,0,0.8); color: white; padding: 12px; border-radius: 8px; border: 2px solid #fff; }
-        #rec-circle { width: 28px; height: 28px; background: red; border-radius: 50%; cursor: pointer; box-shadow: 0 0 10px red; margin-bottom: 6px; animation: blink 1s infinite; }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-
-        .ratio-option { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; cursor: pointer; font-size: 13px; }
-        .ratio-box { background: red; border: 1px solid #000; display: inline-block; }
+        /* Média Rögzítő Felület */
+        #media-capture-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 30000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        #capture-video-elem { max-width: 100vw; max-height: 85vh; display: none; object-fit: contain; }
+        #audio-visualizer-canvas { width: 60%; height: 200px; display: none; background: #111; border-radius: 10px; border: 2px solid #555; }
+        .capture-btn { width: 50px; height: 50px; border-radius: 50%; border: 3px solid white; cursor: pointer; margin: 20px; box-shadow: 0 0 15px rgba(255,255,255,0.5); transition: transform 0.1s; }
+        .capture-btn:active { transform: scale(0.9); }
+        .btn-red { background-color: red; }
+        .btn-white { background-color: white; }
 
         .rename-input { width: 85px; text-align: center; font-size: 12px; color: black; background: white; border: 1px solid black; }
         .code-block { background: #111; color: #0f0; padding: 8px; font-family: monospace; font-size: 12px; margin: 5px 0 12px 0; border: 1px solid #555; user-select: text; white-space: pre-wrap; }
+
+        #boot-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: black; z-index: 9999999; transition: opacity 1s; }
+        #bsod-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: url('BD.png') center/cover no-repeat black; z-index: 9999998; display: none; opacity: 1; }
+        #toast-notification { position: fixed; bottom: 50px; right: -320px; width: 250px; background: var(--win-bg); color: var(--win-text); border: 2px solid; border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light); padding: 10px; box-shadow: 2px 2px 5px rgba(0,0,0,0.5); z-index: 10000; transition: right 0.5s; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    
+        /* Diakészítő */
+        #slide-container { display:flex; flex-direction:column; align-items:center; height:100%; background:#f0f0f0; padding:10px; box-sizing:border-box;}
+        #slide-editor { width: 90%; flex-grow: 1; margin: 10px 0; font-size: 18px; padding: 10px; border: 1px solid #ccc; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); resize: none;}
+        .ppt-toolbar { display: flex; gap: 10px; background: var(--win-bg); padding: 5px; border: 2px solid var(--win-border-dark); width: 100%; justify-content: center;}
     </style>
 </head>
 <body>
 
+    <!-- Betöltőképernyő -->
+    <div id="boot-screen">
+        <img src="icon.png" alt="Loading" style="width: 100vw; height: 100vh; object-fit: fill;">
+    </div>
+
+    <!-- Kékhalál képernyő -->
+    <div id="bsod-screen"></div>
+
+    <!-- Rendszer értesítés (Toast) -->
+    <div id="toast-notification">
+        <div style="font-weight:bold;background:var(--win-header);color:var(--win-header-text);padding:2px 5px;margin:-10px -10px 10px -10px;" data-i18n="sysMsgTitle">Rendszerüzenet</div>
+        <span id="toast-text" data-i18n="sysRestored">A rendszer újra működésre kész és a hibát kijavítottuk.</span>
+    </div>
+
+    <!-- Kamera és Mikrofon Rögzítő Felület -->
+    <div id="media-capture-overlay">
+        <h2 id="media-capture-title" style="color:white; margin-top:10px;">Felvétel</h2>
+        <video id="capture-video-elem" autoplay muted></video>
+        <canvas id="audio-visualizer-canvas"></canvas>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <div id="capture-action-btn" class="capture-btn btn-red" onclick="executeMediaCapture()"></div>
+            <button class="app-btn" style="width:100px;" onclick="cancelMediaCapture()">Mégse</button>
+        </div>
+    </div>
+
     <div id="context-menu"></div>
     <div id="desktop"></div>
 
+    <!-- TÁLCA -->
     <div id="taskbar">
-        <div id="taskbar-apps" style="display: flex; gap: 5px; padding-left: 10px;"></div>
+        <div id="start-button" onclick="triggerEasterEgg()" title="Start">
+            <img src="icon.png" alt="Start">
+        </div>
+        <div id="taskbar-apps" style="display: flex; gap: 5px; padding-left: 10px; flex-grow: 1;"></div>
         <div id="tray">
-            <button class="tray-btn" id="btn-settings">⚙️ <span class="i18n-settings">Beállítások</span></button>
+            <button class="tray-btn" id="btn-settings">⚙️ <span data-i18n="settingsTitle">Beállítások</span></button>
             <div id="clock" onclick="changeTimezone()" title="Időzóna beállítása">00:00:00</div>
         </div>
     </div>
 
     <!-- Tulajdonságok -->
     <div class="window" id="properties-window" style="top: 150px; left: 300px; width: 360px; height: 320px;">
-        <div class="window-header"><span id="prop-title">Tulajdonságok</span><div class="window-close" onclick="closeWindow('properties-window')">X</div></div>
+        <div class="window-header"><span id="prop-title" data-i18n="propTitle">Tulajdonságok</span><div class="window-close" onclick="closeWindow('properties-window')">X</div></div>
         <div class="window-content" style="background: var(--win-bg);">
-            <div class="prop-row"><div class="prop-label">Név:</div><div id="prop-val-name"></div></div>
-            <div class="prop-row"><div class="prop-label">Kiterjesztés:</div><div id="prop-val-type"></div></div>
-            <div class="prop-row"><div class="prop-label">Elérési út:</div><div id="prop-val-path" style="word-wrap: break-word; max-width:210px;"></div></div>
-            <div class="prop-row"><div class="prop-label">Helyfoglalás:</div><div id="prop-val-size"></div></div>
-            <div class="prop-row"><div class="prop-label">Készült:</div><div id="prop-val-date"></div></div>
+            <div class="prop-row"><div class="prop-label" data-i18n="propName">Név:</div><div id="prop-val-name"></div></div>
+            <div class="prop-row"><div class="prop-label" data-i18n="propExt">Típus:</div><div id="prop-val-type"></div></div>
+            <div class="prop-row"><div class="prop-label" data-i18n="propPath">Elérési út:</div><div id="prop-val-path" style="word-wrap: break-word; max-width:210px;"></div></div>
+            <div class="prop-row"><div class="prop-label" data-i18n="propSize">Helyfoglalás:</div><div id="prop-val-size"></div></div>
+            <div class="prop-row"><div class="prop-label" data-i18n="propDate">Készült:</div><div id="prop-val-date"></div></div>
             <hr style="border-top:1px solid var(--win-border-dark);">
             <div id="prop-extra-data" style="font-size: 13px; font-weight: bold;"></div>
         </div>
@@ -125,150 +172,166 @@
 
     <!-- TXT Ablak -->
     <div class="window" id="txt-window" style="top: 150px; left: 350px; width: 420px; height: 320px;">
-        <div class="window-header"><span id="txt-title">Szöveges dokumentum</span><div class="window-close" onclick="closeWindow('txt-window')">X</div></div>
+        <div class="window-header"><span id="txt-title" data-i18n="txtDocTitle">Szöveges dokumentum</span><div class="window-close" onclick="closeWindow('txt-window')">X</div></div>
         <div class="window-content" style="padding:0; overflow:hidden;">
             <textarea id="txt-textarea" style="border:none; padding:10px;"></textarea>
-            <button class="app-btn" onclick="saveTxtFile()">Fájl Mentése</button>
+            <button class="app-btn" onclick="saveTxtFile()" data-i18n="btnSaveFile">Fájl Mentése</button>
+        </div>
+    </div>
+
+    <!-- HTML Futtató Ablak -->
+    <div class="window" id="html-window" style="top: 120px; left: 250px; width: 600px; height: 450px;">
+        <div class="window-header"><span id="html-title">Weboldal Megjelenítő</span><div class="window-close" onclick="closeWindow('html-window')">X</div></div>
+        <div class="window-content" style="padding:0; overflow:hidden; background:white;">
+            <iframe id="html-iframe" style="width:100%; height:100%; border:none;"></iframe>
+        </div>
+    </div>
+
+    <!-- PPTX (Prezentáció) Ablak -->
+    <div class="window" id="pptx-window" style="top: 100px; left: 300px; width: 550px; height: 400px;">
+        <div class="window-header"><span id="pptx-title">Prezentáció (PPTX)</span><div class="window-close" onclick="closeWindow('pptx-window')">X</div></div>
+        <div class="window-content" style="padding:0; overflow:hidden;">
+            <div id="slide-container">
+                <div style="font-weight:bold; width:100%; text-align:center;">Dia <span id="current-slide-num">1</span> / <span id="total-slides-num">1</span></div>
+                <textarea id="slide-editor" placeholder="Ide írd a dia tartalmát..."></textarea>
+                <div class="ppt-toolbar">
+                    <button class="app-btn" style="width:80px;" onclick="changeSlide(-1)">⬅ Előző</button>
+                    <button class="app-btn" style="width:120px;" onclick="addSlide()">➕ Új Dia</button>
+                    <button class="app-btn" style="width:80px;" onclick="changeSlide(1)">Következő ➡</button>
+                </div>
+                <button class="app-btn" onclick="savePptxFile()" style="margin-top:5px;" data-i18n="btnSaveFile">Fájl Mentése</button>
+            </div>
         </div>
     </div>
 
     <!-- Parancssor -->
     <div class="window" id="cmd-window" style="top: 50px; left: 280px; width: 520px; height: 360px;">
         <div class="window-header">
-            <span>Rendszer Parancssor (CMD)</span>
+            <span data-i18n="cmdTitle">Rendszer Parancssor (CMD)</span>
             <div class="header-btns">
-                <button class="help-btn" onclick="openCmdHelp()">❓ Súgó</button>
+                <button class="help-btn" onclick="openCmdHelp()" data-i18n="btnHelp">❓ Súgó</button>
                 <div class="window-close" onclick="closeWindow('cmd-window')">X</div>
             </div>
         </div>
         <div class="window-content" style="padding:0; overflow:hidden;">
-            <textarea id="cmd-textarea" placeholder="// Írj ide JavaScript parancsokat..."></textarea>
-            <button class="app-btn" onclick="executeCommand()">Futtatás</button>
+            <textarea id="cmd-textarea" data-i18n-ph="cmdPlaceholder" placeholder="// Írj ide JavaScript parancsokat..."></textarea>
+            <button class="app-btn" onclick="executeCommand()" data-i18n="btnRun">Futtatás</button>
         </div>
     </div>
 
     <!-- Parancssor Súgó Ablak -->
     <div class="window" id="cmd-help-window" style="top: 80px; left: 350px; width: 500px; height: 420px; z-index: 200;">
         <div class="window-header">
-            <span>Parancssor Súgó - Példák</span>
+            <span data-i18n="cmdHelpTitle">Parancssor Súgó - Példák</span>
             <div class="window-close" onclick="closeWindow('cmd-help-window')">X</div>
         </div>
         <div class="window-content" style="user-select: text;">
-            <h4 style="margin-top:0;">Másold be ezeket a Parancssorba és nyomj Futtatást:</h4>
-            
-            <b>1. Új menüpont hozzáadása a jobb klikk menühöz:</b>
+            <h4 style="margin-top:0;" data-i18n="cmdHelp1">Másold be ezeket a Parancssorba és nyomj Futtatást:</h4>
+            <b data-i18n="cmdHelp2">1. Új menüpont hozzáadása a jobb klikk menühöz:</b>
             <div class="code-block">customMenuItems.push({ label: '⚡ Egyedi Üzenet', action: () => showDialog('Szia!', 'Ez egy új menüpont!', 'alert') });</div>
-
-            <b>2. Asztal háttérszínének megváltoztatása:</b>
+            <b data-i18n="cmdHelp3">2. Asztal háttérszínének megváltoztatása:</b>
             <div class="code-block">applyBg('#225588', true);</div>
-
-            <b>3. Új szöveges fájl létrehozása kódból:</b>
-            <div class="code-block">items.push({ id: 'txt_'+Date.now(), type: 'txt', name: 'titkos.txt', content: 'Szia!', dateCreated: new Date().toISOString(), x: 140, y: 20, parentId: null }); renderDesktop();</div>
-
-            <b>4. Egyedi rendszerüzenet felugrasztása:</b>
-            <div class="code-block">showDialog('Rendszer', 'A kód sikeresen lefutott!', 'alert');</div>
         </div>
     </div>
 
     <!-- Képnézegető / Média Lejátszó -->
     <div class="window" id="img-window" style="top: 100px; left: 200px; width: 550px; height: 420px;">
-        <div class="window-header"><span id="img-title">Média Megjelenítő</span><div class="window-close" onclick="closeWindow('img-window')">X</div></div>
+        <div class="window-header"><span id="img-title" data-i18n="mediaTitle">Média Megjelenítő</span><div class="window-close" onclick="closeWindow('img-window')">X</div></div>
         <div class="window-content" id="media-window-body" style="padding:0; background:#000; color:#fff; display:flex; flex-direction:column; justify-content:center; align-items:center;">
         </div>
     </div>
 
     <!-- Mappa -->
-    <div class="window" id="folder-window" style="top: 90px; left: 150px; width: 580px; height: 420px;">
-        <div class="window-header"><span id="folder-window-title">Mappa</span><div class="window-close" onclick="closeWindow('folder-window')">X</div></div>
+    <div class="window" id="folder-window" style="top: 70px; left: 100px; width: 720px; height: 450px;">
+        <div class="window-header"><span id="folder-window-title" data-i18n="folderTitle">Mappa</span><div class="window-close" onclick="closeWindow('folder-window')">X</div></div>
         <div class="folder-toolbar">
-            <label>Nézet: 
+            <label><span data-i18n="lblView">Nézet:</span>
                 <select id="folder-view-select" onchange="renderFolderContent()">
-                    <option value="grid">Rács</option>
-                    <option value="list">Lista</option>
+                    <option value="grid" data-i18n="optGrid">Rács</option>
+                    <option value="list" data-i18n="optList">Lista</option>
                 </select>
             </label>
-            <label>Rendezés: 
+            <label><span data-i18n="lblSort">Rendezés:</span> 
                 <select id="folder-sort-select" onchange="renderFolderContent()">
-                    <option value="name">Név szerint</option>
-                    <option value="date">Dátum szerint</option>
+                    <option value="name" data-i18n="optName">Név szerint</option>
+                    <option value="date" data-i18n="optDate">Dátum szerint</option>
                 </select>
             </label>
-            <label>Irány: 
+            <label><span data-i18n="lblOrder">Irány:</span> 
                 <select id="folder-order-select" onchange="renderFolderContent()">
-                    <option value="asc">Növekvő (A-Z / Régi-Új)</option>
-                    <option value="desc">Csökkenő (Z-A / Új-Régi)</option>
+                    <option value="asc" data-i18n="optAsc">Növekvő (A-Z / Régi-Új)</option>
+                    <option value="desc" data-i18n="optDesc">Csökkenő (Z-A / Új-Régi)</option>
                 </select>
             </label>
         </div>
-        <div class="window-content folder-view-grid" id="folder-content"></div>
+        <div style="display:flex; flex-grow:1; overflow:hidden;">
+            <!-- Bal oldalsáv ágrajzzal -->
+            <div id="folder-tree" style="width: 170px; background: var(--win-content-bg); border-right: 2px inset var(--win-border-dark); padding: 5px; overflow-y: auto;"></div>
+            <!-- Mappa tartalma -->
+            <div class="window-content folder-view-grid" id="folder-content" style="flex-grow:1;"></div>
+        </div>
     </div>
 
     <!-- Kuka -->
     <div class="window" id="bin-window" style="top: 120px; left: 200px; width: 450px; height: 350px;">
-        <div class="window-header"><span>Kuka Tartalma</span><div class="window-close" onclick="closeWindow('bin-window')">X</div></div>
+        <div class="window-header"><span data-i18n="binTitle">Kuka Tartalma</span><div class="window-close" onclick="closeWindow('bin-window')">X</div></div>
         <div class="window-content" id="bin-content" style="display: block; overflow-y: auto;"></div>
     </div>
 
     <!-- Beállítások -->
     <div class="window" id="settings-window" style="top: 100px; left: 120px; width: 480px; height: 340px;">
-        <div class="window-header"><span>Beállítások</span><div class="window-close" onclick="closeWindow('settings-window')">X</div></div>
+        <div class="window-header"><span data-i18n="settingsTitle">Beállítások</span><div class="window-close" onclick="closeWindow('settings-window')">X</div></div>
         <div class="window-content" style="display:flex; padding:0; flex-direction:row;">
             <div class="settings-sidebar">
-                <div class="settings-tab active" data-target="panel-appearance">Megjelenés</div>
-                <div class="settings-tab" data-target="panel-system">Nyelv & Óra</div>
-                <div class="settings-tab" data-target="panel-save">Mentés / Betöltés</div>
+                <div class="settings-tab active" data-target="panel-appearance" data-i18n="tabApp">Megjelenés</div>
+                <div class="settings-tab" data-target="panel-system" data-i18n="tabSys">Nyelv & Óra</div>
+                <div class="settings-tab" data-target="panel-save" data-i18n="tabSave">Mentés / Betöltés</div>
             </div>
             <div class="settings-panel active" id="panel-appearance">
-                <h3 style="margin-top:0;">Téma és Ikonok</h3>
-                <label style="cursor:pointer;"><input type="checkbox" id="dark-mode-toggle" onchange="toggleTheme()"> Sötét Mód (Dark Mode)</label><br><br>
-                <label>Ikonok mérete: <span id="icon-size-label">48px</span></label><br>
+                <h3 style="margin-top:0;" data-i18n="setTheme">Téma és Ikonok</h3>
+                <label style="cursor:pointer;"><input type="checkbox" id="dark-mode-toggle" onchange="toggleTheme()"> <span data-i18n="setDark">Sötét Mód (Dark Mode)</span></label><br><br>
+                <label><span data-i18n="setIconSize">Ikonok mérete:</span> <span id="icon-size-label">48px</span></label><br>
                 <input type="range" id="icon-size-slider" min="32" max="96" value="48" style="width:100%;">
             </div>
             <div class="settings-panel" id="panel-system">
-                <h3 style="margin-top:0;">Nyelv és Idő</h3>
-                <label>Rendszer nyelve: 
+                <h3 style="margin-top:0;" data-i18n="setLangTime">Nyelv és Idő</h3>
+                <label><span data-i18n="setLang">Rendszer nyelve:</span> 
                     <select id="lang-select" onchange="changeLanguage()">
                         <option value="hu">Magyar</option>
                         <option value="en">English</option>
                         <option value="de">Deutsch</option>
                     </select>
                 </label><br><br>
-                <label>Óra formátuma: 
+                <label><span data-i18n="setTimeFmt">Óra formátuma:</span> 
                     <select id="time-format" onchange="updateClock()">
-                        <option value="24">24 órás</option>
-                        <option value="12">12 órás (AM/PM)</option>
+                        <option value="24" data-i18n="opt24">24 órás</option>
+                        <option value="12" data-i18n="opt12">12 órás (AM/PM)</option>
                     </select>
                 </label>
             </div>
             <div class="settings-panel" id="panel-save">
-                <h3 style="margin-top:0;">Rendszerállapot Fájlba</h3>
-                <p style="font-size:12px;">A böngészőbe semmi nem mentődik automatikusan. Itt tudod fájlba menteni és visszatölteni a munkádat:</p>
-                <button onclick="exportState()" class="app-btn">💾 Mentés Fájlba (.json)</button><br><br>
+                <h3 style="margin-top:0;" data-i18n="setSaveInfoTitle">Rendszerállapot Fájlba</h3>
+                <p style="font-size:12px;" data-i18n="setSaveInfo">A böngészőbe semmi nem mentődik automatikusan. Itt tudod fájlba menteni és visszatölteni a munkádat:</p>
+                <button onclick="exportState()" class="app-btn" data-i18n="btnExport">💾 Mentés Fájlba (.json)</button><br><br>
                 <input type="file" id="state-upload" style="display:none;" onchange="importState(event)" accept=".json">
-                <button onclick="document.getElementById('state-upload').click()" class="app-btn">📂 Betöltés Fájlból</button>
+                <button onclick="document.getElementById('state-upload').click()" class="app-btn" data-i18n="btnImport">📂 Betöltés Fájlból</button>
             </div>
         </div>
     </div>
 
     <!-- Egyedi Windows Dialog -->
     <div class="window" id="dialog-window" style="top: 30%; left: 38%; width: 370px; min-height: 160px; z-index: 15000;">
-        <div class="window-header"><span id="dialog-title">Rendszerüzenet</span></div>
+        <div class="window-header"><span id="dialog-title" data-i18n="sysMsgTitle">Rendszerüzenet</span></div>
         <div class="window-content" style="background:var(--win-bg); display:flex; flex-direction:column; justify-content:space-between;">
             <p id="dialog-text" style="margin-top:0; font-size:14px;"></p>
             <input type="text" id="dialog-input" style="display:none; width:100%; box-sizing:border-box; padding:5px; margin-bottom:10px;">
             <select id="dialog-select" style="display:none; width:100%; padding:5px; margin-bottom:10px;"></select>
             <div id="dialog-custom-html"></div>
             <div style="display:flex; justify-content:center; gap:10px; margin-top:10px;">
-                <button class="app-btn" id="dialog-btn-ok" style="width:100px;">OK / Igen</button>
-                <button class="app-btn" id="dialog-btn-cancel" style="width:100px; display:none;">Mégse / Nem</button>
+                <button class="app-btn" id="dialog-btn-ok" style="width:100px;" data-i18n="btnOk">OK / Igen</button>
+                <button class="app-btn" id="dialog-btn-cancel" style="width:100px; display:none;" data-i18n="btnCancel">Mégse / Nem</button>
             </div>
         </div>
-    </div>
-
-    <!-- Felvevő számláló a jobb felső sarokban -->
-    <div id="recording-overlay">
-        <div id="rec-circle" onclick="stopRecording()" title="Kattints a felvétel leállításához"></div>
-        <span id="rec-timer" style="font-weight:bold; font-family:monospace;">0 sec</span>
     </div>
 
     <script>
@@ -280,7 +343,7 @@
         let iconSize = 48; 
         let GRID_W = 88; 
         let GRID_H = 108;
-        let desktopBg = '#008080';
+        let desktopBg = 'background.png';
         let desktopStretch = true;
         let currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         let currentLang = 'hu';
@@ -294,10 +357,51 @@
         const contextMenu = document.getElementById('context-menu');
 
         const dict = {
-            'hu': { newFolder: '📁 Új Mappa', newTxt: '📄 Új Szöveg (.txt)', newApp: '🔗 Új Parancsikon', newImg: '🖼️ Új Kép (.png/.jpg)', newMp3: '🎵 Új Hang (.mp3)', newMp4: '🎬 Új Videó (.mp4)', bgSet: '🖼️ Háttérkép / Szín beállítása', open: '📂 Megnyitás', prop: 'ℹ️ Tulajdonságok', del: '🗑️ Törlés (Kukába)', emptyErr: 'Még nem töltött fel filet vagy nem készített képet/felvételt!' },
-            'en': { newFolder: '📁 New Folder', newTxt: '📄 New Text (.txt)', newApp: '🔗 New Shortcut', newImg: '🖼️ New Image (.png/.jpg)', newMp3: '🎵 New Audio (.mp3)', newMp4: '🎬 New Video (.mp4)', bgSet: '🖼️ Set Background / Color', open: '📂 Open', prop: 'ℹ️ Properties', del: '🗑️ Delete (To Bin)', emptyErr: 'No file uploaded or media recorded yet!' },
-            'de': { newFolder: '📁 Neuer Ordner', newTxt: '📄 Neuer Text (.txt)', newApp: '🔗 Neue Verknüpfung', newImg: '🖼️ Neues Bild (.png/.jpg)', newMp3: '🎵 Neues Audio (.mp3)', newMp4: '🎬 Neues Video (.mp4)', bgSet: '🖼️ Hintergrund einstellen', open: '📂 Öffnen', prop: 'ℹ️ Eigenschaften', del: '🗑️ Löschen', emptyErr: 'Noch keine Datei hochgeladen oder aufgenommen!' }
+            'hu': { 
+                newFolder: '📁 Új Mappa', newTxt: '📄 Új Szöveg (.txt)', newHtml: '🌐 Új Weboldal (.html)', newPptx: '📊 Új Prezi (.pptx)', newApp: '🔗 Új Parancsikon', newImg: '🖼️ Új Kép (.png)', newMp3: '🎵 Új Hang (.mp3)', newMp4: '🎬 Új Videó (.mp4)', bgSet: '🖼️ Háttérkép beállítása', open: '📂 Megnyitás', rename: '✏️ Átnevezés', prop: 'ℹ️ Tulajdonságok', del: '🗑️ Törlés (Kukába)', emptyErr: 'Nem található média tartalom!',
+                settingsTitle: 'Beállítások', propTitle: 'Tulajdonságok', propName: 'Név:', propExt: 'Típus:', propPath: 'Elérési út:', propSize: 'Helyfoglalás:', propDate: 'Készült:', txtDocTitle: 'Szöveges dokumentum', btnSaveFile: 'Fájl Mentése', cmdTitle: 'Rendszer Parancssor (CMD)', btnHelp: '❓ Súgó', cmdPlaceholder: '// Írj ide JavaScript parancsokat...', btnRun: 'Futtatás', cmdHelpTitle: 'Parancssor Súgó - Példák', cmdHelp1: 'Másold be ezeket a Parancssorba és nyomj Futtatást:', cmdHelp2: '1. Új menüpont hozzáadása a jobb klikk menühöz:', cmdHelp3: '2. Asztal háttérszínének megváltoztatása:', mediaTitle: 'Média Megjelenítő', folderTitle: 'Mappa', lblView: 'Nézet:', optGrid: 'Rács', optList: 'Lista', lblSort: 'Rendezés:', optName: 'Név szerint', optDate: 'Dátum szerint', lblOrder: 'Irány:', optAsc: 'Növekvő (A-Z / Régi-Új)', optDesc: 'Csökkenő (Z-A / Új-Régi)', binTitle: 'Kuka Tartalma', tabApp: 'Megjelenés', tabSys: 'Nyelv & Óra', tabSave: 'Mentés / Betöltés', setTheme: 'Téma és Ikonok', setDark: 'Sötét Mód (Dark Mode)', setIconSize: 'Ikonok mérete:', setLangTime: 'Nyelv és Idő', setLang: 'Rendszer nyelve:', setTimeFmt: 'Óra formátuma:', opt24: '24 órás', opt12: '12 órás (AM/PM)', setSaveInfoTitle: 'Rendszerállapot Fájlba', setSaveInfo: 'A böngészőbe semmi nem mentődik automatikusan. Itt tudod fájlba menteni és visszatölteni a munkádat:', btnExport: '💾 Mentés Fájlba (.json)', btnImport: '📂 Betöltés Fájlból', sysMsgTitle: 'Rendszerüzenet', sysRestored: 'A rendszer újra működésre kész és a hibát kijavítottuk.', btnOk: 'OK / Igen', btnCancel: 'Mégse / Nem', binName: 'Kuka', cmdName: 'Parancssor', errorCritical: 'Windows xp ERROR', backFolder: 'Vissza (Kifelé)', binEmpty: 'A kuka jelenleg üres.', btnRestore: '♻️ Visszaállítás', desktopName: '🖥️ Főmappa'
+            },
+            'en': { 
+                newFolder: '📁 New Folder', newTxt: '📄 New Text (.txt)', newHtml: '🌐 New Webpage (.html)', newPptx: '📊 New Presentation (.pptx)', newApp: '🔗 New Shortcut', newImg: '🖼️ New Image (.png)', newMp3: '🎵 New Audio (.mp3)', newMp4: '🎬 New Video (.mp4)', bgSet: '🖼️ Set Background', open: '📂 Open', rename: '✏️ Rename', prop: 'ℹ️ Properties', del: '🗑️ Delete (To Bin)', emptyErr: 'No media content found!',
+                settingsTitle: 'Settings', propTitle: 'Properties', propName: 'Name:', propExt: 'Type:', propPath: 'Path:', propSize: 'Size:', propDate: 'Created:', txtDocTitle: 'Text Document', btnSaveFile: 'Save File', cmdTitle: 'Command Prompt (CMD)', btnHelp: '❓ Help', cmdPlaceholder: '// Write JavaScript commands here...', btnRun: 'Run', cmdHelpTitle: 'CMD Help - Examples', cmdHelp1: 'Copy these to CMD and press Run:', cmdHelp2: '1. Add custom right-click menu item:', cmdHelp3: '2. Change desktop background:', mediaTitle: 'Media Viewer', folderTitle: 'Folder', lblView: 'View:', optGrid: 'Grid', optList: 'List', lblSort: 'Sort:', optName: 'By Name', optDate: 'By Date', lblOrder: 'Order:', optAsc: 'Ascending (A-Z / Old-New)', optDesc: 'Descending (Z-A / New-Old)', binTitle: 'Recycle Bin', tabApp: 'Appearance', tabSys: 'Language & Time', tabSave: 'Save / Load', setTheme: 'Theme and Icons', setDark: 'Dark Mode', setIconSize: 'Icon size:', setLangTime: 'Language and Time', setLang: 'System language:', setTimeFmt: 'Clock format:', opt24: '24-hour', opt12: '12-hour (AM/PM)', setSaveInfoTitle: 'System State to File', setSaveInfo: 'Nothing saves automatically in the browser. Save or load your work here:', btnExport: '💾 Save to File (.json)', btnImport: '📂 Load from File', sysMsgTitle: 'System Message', sysRestored: 'System ready again, error fixed.', btnOk: 'OK / Yes', btnCancel: 'Cancel / No', binName: 'Recycle Bin', cmdName: 'Command Prompt', errorCritical: 'Windows xp ERROR', backFolder: 'Back (Up)', binEmpty: 'Recycle bin is empty.', btnRestore: '♻️ Restore', desktopName: '🖥️ Desktop'
+            },
+            'de': { 
+                newFolder: '📁 Neuer Ordner', newTxt: '📄 Neuer Text (.txt)', newHtml: '🌐 Neue Webseite (.html)', newPptx: '📊 Neue Präsentation (.pptx)', newApp: '🔗 Neue Verknüpfung', newImg: '🖼️ Neues Bild (.png)', newMp3: '🎵 Neues Audio (.mp3)', newMp4: '🎬 Neues Video (.mp4)', bgSet: '🖼️ Hintergrund einstellen', open: '📂 Öffnen', rename: '✏️ Umbenennen', prop: 'ℹ️ Eigenschaften', del: '🗑️ Löschen', emptyErr: 'Keine Medieninhalte gefunden!',
+                settingsTitle: 'Einstellungen', propTitle: 'Eigenschaften', propName: 'Name:', propExt: 'Typ:', propPath: 'Pfad:', propSize: 'Größe:', propDate: 'Erstellt:', txtDocTitle: 'Textdokument', btnSaveFile: 'Datei speichern', cmdTitle: 'Eingabeaufforderung (CMD)', btnHelp: '❓ Hilfe', cmdPlaceholder: '// Schreiben Sie hier JavaScript-Befehle...', btnRun: 'Ausführen', cmdHelpTitle: 'CMD Hilfe - Beispiele', cmdHelp1: 'Kopieren und Ausführen drücken:', cmdHelp2: '1. Neues Rechtsklick-Menü hinzufügen:', cmdHelp3: '2. Hintergrundbild ändern:', mediaTitle: 'Medienbetrachter', folderTitle: 'Ordner', lblView: 'Ansicht:', optGrid: 'Raster', optList: 'Liste', lblSort: 'Sortieren:', optName: 'Nach Name', optDate: 'Nach Datum', lblOrder: 'Richtung:', optAsc: 'Aufsteigend (A-Z / Alt-Neu)', optDesc: 'Absteigend (Z-A / Neu-Alt)', binTitle: 'Papierkorb', tabApp: 'Design', tabSys: 'Sprache & Zeit', tabSave: 'Speichern / Laden', setTheme: 'Design und Symbole', setDark: 'Dunkelmodus', setIconSize: 'Symbolgröße:', setLangTime: 'Sprache und Zeit', setLang: 'Systemsprache:', setTimeFmt: 'Zeitformat:', opt24: '24-Stunden', opt12: '12-Stunden (AM/PM)', setSaveInfoTitle: 'Systemstatus in Datei', setSaveInfo: 'Nichts wird automatisch gespeichert. Hier speichern und laden:', btnExport: '💾 In Datei speichern (.json)', btnImport: '📂 Aus Datei laden', sysMsgTitle: 'Systemmeldung', sysRestored: 'System wieder bereit, Fehler behoben.', btnOk: 'OK / Ja', btnCancel: 'Abbrechen / Nein', binName: 'Papierkorb', cmdName: 'Eingabeaufforderung', errorCritical: 'Windows xp ERROR', backFolder: 'Zurück (Nach oben)', binEmpty: 'Papierkorb ist leer.', btnRestore: '♻️ Wiederherstellen', desktopName: '🖥️ Hauptordner'
+            }
         };
+
+        function applyTranslations() {
+            const langData = dict[currentLang];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (langData[key]) el.innerHTML = langData[key];
+            });
+            document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+                const key = el.getAttribute('data-i18n-ph');
+                if (langData[key]) el.placeholder = langData[key];
+            });
+            sysIcons.bin.name = langData.binName;
+            sysIcons.cmd.name = langData.cmdName;
+        }
+
+        // Fájl típus kinyerése a kiterjesztésből (hogy az átnevezés számítson)
+        function getFileTypeFromName(name) {
+            let parts = name.split('.');
+            if (parts.length < 2) return 'unknown';
+            let ext = parts.pop().toLowerCase();
+            let map = { 'txt':'txt', 'html':'html', 'pptx':'pptx', 'png':'img', 'jpg':'img', 'jpeg':'img', 'mp3':'mp3', 'wav':'mp3', 'mp4':'mp4', 'lnk':'app' };
+            return map[ext] || 'unknown';
+        }
+
+        // Kiterjesztés megváltoztatása az ikonon is, ha a név megváltozott
+        function updateTypeByExtension(item) {
+            if (item.id.startsWith('system-') || item.type === 'folder') return;
+            let newType = getFileTypeFromName(item.name);
+            if (newType !== 'unknown') {
+                item.type = newType;
+            }
+        }
 
         // --- ÓRA ÉS IDŐZÓNA ---
         function updateClock() { 
@@ -326,104 +430,120 @@
             sel.value = currentTimeZone;
         }
 
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode', document.getElementById('dark-mode-toggle').checked);
-        }
+        function toggleTheme() { document.body.classList.toggle('dark-mode', document.getElementById('dark-mode-toggle').checked); }
 
         function changeLanguage() {
             currentLang = document.getElementById('lang-select').value;
-            updateClock();
+            applyTranslations(); updateClock(); renderDesktop();
+            if (currentOpenFolderId) { renderFolderContent(); renderFolderTree(); }
+            renderBinList();
+        }
+
+        // --- EASTER EGG ---
+        let eeClicks = 0; let eeTimer = null; let spamInterval = null;
+        function triggerEasterEgg() {
+            eeClicks++; clearTimeout(eeTimer); eeTimer = setTimeout(() => { eeClicks = 0; }, 1000);
+            if (eeClicks === 5) {
+                eeClicks = 0; let spamCount = 0;
+                spamInterval = setInterval(() => {
+                    let fakeWindow = document.createElement('div');
+                    fakeWindow.className = 'window fake-error-window';
+                    fakeWindow.style.display = 'flex'; fakeWindow.style.width = '260px'; fakeWindow.style.height = '140px';
+                    fakeWindow.style.top = (Math.random() * (window.innerHeight - 180)) + 'px';
+                    fakeWindow.style.left = (Math.random() * (window.innerWidth - 300)) + 'px';
+                    fakeWindow.style.zIndex = 20000 + spamCount;
+                    fakeWindow.innerHTML = `
+                        <div class="window-header"><span>System Error</span><div class="window-close">X</div></div>
+                        <div class="window-content" style="background:var(--win-bg); display:flex; align-items:center; justify-content:center; flex-direction:column;">
+                            <span style="color:red; font-size:24px; font-weight:bold; margin-bottom:10px;">❌</span>
+                            <span style="font-weight:bold;">${dict[currentLang].errorCritical}</span>
+                        </div>`;
+                    document.body.appendChild(fakeWindow); spamCount++;
+                }, 30);
+                setTimeout(() => {
+                    clearInterval(spamInterval);
+                    document.querySelectorAll('.fake-error-window').forEach(w => w.remove());
+                    const bsod = document.getElementById('bsod-screen');
+                    bsod.style.display = 'block'; bsod.style.opacity = '1';
+                    setTimeout(() => {
+                        let opacity = 1;
+                        let choppyFadeInterval = setInterval(() => {
+                            opacity -= (Math.random() * 0.2 + 0.05);
+                            if (opacity <= 0) {
+                                opacity = 0; clearInterval(choppyFadeInterval); bsod.style.display = 'none';
+                                const toast = document.getElementById('toast-notification');
+                                toast.style.right = '10px'; setTimeout(() => { toast.style.right = '-320px'; }, 5000);
+                            }
+                            bsod.style.opacity = opacity;
+                        }, 200); 
+                    }, 5000); 
+                }, 2000); 
+            }
         }
 
         function recalculateGrid() { GRID_W = iconSize + 40; GRID_H = iconSize + 60; }
         function clearSelection() { document.querySelectorAll('.icon.selected').forEach(el => el.classList.remove('selected')); }
 
-        // --- WINDOWS DIALOG RENDSZER ---
+        // --- WINDOWS DIALOG ---
         let dialogCallback = null;
         function showDialog(title, text, type = 'alert', callback = null, customHtml = '') {
             document.getElementById('dialog-title').innerText = title;
             document.getElementById('dialog-text').innerText = text;
-            const inp = document.getElementById('dialog-input');
-            const sel = document.getElementById('dialog-select');
+            const inp = document.getElementById('dialog-input'); const sel = document.getElementById('dialog-select');
             const cust = document.getElementById('dialog-custom-html');
-            
-            inp.style.display = type === 'prompt' ? 'block' : 'none';
-            sel.style.display = type === 'select' ? 'block' : 'none';
-            cust.innerHTML = customHtml || '';
+            inp.style.display = type === 'prompt' ? 'block' : 'none'; sel.style.display = type === 'select' ? 'block' : 'none'; cust.innerHTML = customHtml || '';
             document.getElementById('dialog-btn-cancel').style.display = (type !== 'alert') ? 'block' : 'none';
             if (type === 'prompt') inp.value = '';
-            
             document.getElementById('dialog-window').style.display = 'flex';
-            if (type === 'prompt') setTimeout(() => inp.focus(), 50);
-            dialogCallback = callback;
+            if (type === 'prompt') setTimeout(() => inp.focus(), 50); dialogCallback = callback;
         }
-        
         document.getElementById('dialog-btn-ok').onclick = () => {
             document.getElementById('dialog-window').style.display = 'none';
             if (dialogCallback) {
                 let res = true;
                 if (document.getElementById('dialog-input').style.display === 'block') res = document.getElementById('dialog-input').value.trim();
                 else if (document.getElementById('dialog-select').style.display === 'block') res = document.getElementById('dialog-select').value;
-                else if (document.getElementById('dialog-custom-html').innerHTML !== '') {
-                    const checkedRatio = document.querySelector('input[name="videoRatio"]:checked');
-                    const qual = document.getElementById('vidQuality');
-                    if (checkedRatio && qual) res = { ratio: checkedRatio.value, quality: qual.value };
-                }
-                const cb = dialogCallback;
-                dialogCallback = null;
-                cb(res);
+                const cb = dialogCallback; dialogCallback = null; cb(res);
             }
         };
         document.getElementById('dialog-btn-cancel').onclick = () => { 
             document.getElementById('dialog-window').style.display = 'none'; 
-            if (dialogCallback) {
-                const cb = dialogCallback;
-                dialogCallback = null;
-                cb(null);
-            }
+            if (dialogCallback) { const cb = dialogCallback; dialogCallback = null; cb(null); }
         };
 
         // --- JOBB KLIKK MENÜ ---
-        let contextMenuTargetFolder = null; 
-        let contextMenuTargetIcon = null;
-
+        let contextMenuTargetFolder = null; let contextMenuTargetIcon = null;
         document.addEventListener('contextmenu', (e) => {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return; 
             if (e.target.closest('.window-content') && e.target.closest('.window').id !== 'folder-window') return;
             e.preventDefault();
-            
-            const icon = e.target.closest('.icon');
-            contextMenu.innerHTML = ''; 
-
+            const icon = e.target.closest('.icon'); contextMenu.innerHTML = ''; 
             if (icon) {
                 contextMenuTargetIcon = icon.dataset.id;
                 let isSystem = icon.dataset.type && (icon.dataset.type.startsWith('system-') || icon.dataset.type === 'folder-up');
                 contextMenu.innerHTML = `
                     <div class="menu-item" onclick="handleDblClick('${contextMenuTargetIcon}')">${dict[currentLang].open}</div>
+                    ${!isSystem ? `<div class="menu-separator"></div><div class="menu-item" onclick="triggerRename('${contextMenuTargetIcon}')">${dict[currentLang].rename}</div>` : ''}
                     ${icon.dataset.type !== 'folder-up' ? `<div class="menu-separator"></div><div class="menu-item" onclick="showProperties('${contextMenuTargetIcon}')">${dict[currentLang].prop}</div>` : ''}
                     ${!isSystem ? `<div class="menu-separator"></div><div class="menu-item" onclick="moveToBin('${contextMenuTargetIcon}')" style="color:red;">${dict[currentLang].del}</div>` : ''}
                 `;
             } else {
                 const folderContent = e.target.closest('#folder-content');
-                contextMenuTargetFolder = folderContent ? currentOpenFolderId : null;
-                contextMenuTargetIcon = null;
-                
+                contextMenuTargetFolder = folderContent ? currentOpenFolderId : null; contextMenuTargetIcon = null;
                 let menuHTML = `
                     <div class="menu-item" onclick="createNewItem('folder')">${dict[currentLang].newFolder}</div>
                     <div class="menu-item" onclick="createNewItem('txt')">${dict[currentLang].newTxt}</div>
+                    <div class="menu-item" onclick="createNewItem('html')">${dict[currentLang].newHtml}</div>
+                    <div class="menu-item" onclick="createNewItem('pptx')">${dict[currentLang].newPptx}</div>
                     <div class="menu-item" onclick="createNewItem('app')">${dict[currentLang].newApp}</div>
                     <div class="menu-item" onclick="createNewItem('img')">${dict[currentLang].newImg}</div>
                     <div class="menu-item" onclick="createNewItem('mp3')">${dict[currentLang].newMp3}</div>
                     <div class="menu-item" onclick="createNewItem('mp4')">${dict[currentLang].newMp4}</div>
                 `;
-                if (!folderContent) {
-                    menuHTML += `<div class="menu-separator"></div><div class="menu-item" onclick="changeDesktopBg()">${dict[currentLang].bgSet}</div>`;
-                }
+                if (!folderContent) { menuHTML += `<div class="menu-separator"></div><div class="menu-item" onclick="changeDesktopBg()">${dict[currentLang].bgSet}</div>`; }
                 if (customMenuItems.length > 0) {
                     menuHTML += `<div class="menu-separator"></div>`;
-                    customMenuItems.forEach((cItem, idx) => {
-                        menuHTML += `<div class="menu-item" onclick="runCustomMenu(${idx})">${cItem.label}</div>`;
-                    });
+                    customMenuItems.forEach((cItem, idx) => { menuHTML += `<div class="menu-item" onclick="runCustomMenu(${idx})">${cItem.label}</div>`; });
                 }
                 contextMenu.innerHTML = menuHTML;
             }
@@ -432,146 +552,101 @@
             contextMenu.style.top = Math.min(e.clientY, window.innerHeight - 220) + 'px';
         });
 
-        window.runCustomMenu = function(idx) {
-            contextMenu.style.display = 'none';
-            if (customMenuItems[idx] && customMenuItems[idx].action) customMenuItems[idx].action();
-        };
-
+        window.runCustomMenu = function(idx) { contextMenu.style.display = 'none'; if (customMenuItems[idx] && customMenuItems[idx].action) customMenuItems[idx].action(); };
         document.addEventListener('click', (e) => {
             if (!e.target.closest('#context-menu')) contextMenu.style.display = 'none';
-            if (!e.target.closest('.window-header') && e.target.tagName !== 'INPUT' && !e.target.closest('#recording-overlay')) {
+            if (!e.target.closest('.window-header') && e.target.tagName !== 'INPUT' && !e.target.closest('#media-capture-overlay')) {
                 const icon = e.target.closest('.icon');
                 if (icon) { clearSelection(); icon.classList.add('selected'); } 
                 else if (e.target === desktop || e.target.id === 'folder-content') { clearSelection(); }
             }
         });
 
-        // --- MOZGATÁS, MAPPÁBA HÚZÁS, KIFELÉ HÚZÁS ÉS 3 MP ÁTNEVEZÉS ---
+        // --- GOMB (DELETE) KEZELÉSE ---
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Delete' && !document.activeElement.matches('input, textarea')) {
+                const selected = document.querySelector('.icon.selected');
+                if (selected && selected.dataset.id && !selected.dataset.id.startsWith('system-') && selected.dataset.type !== 'folder-up') {
+                    moveToBin(selected.dataset.id);
+                }
+            }
+        });
+
+        // --- MOZGATÁS ÉS DRAG & DROP ---
         let draggedElement = null, isDragging = false, wasDragging = false, startX, startY, origX, origY, offsetX, offsetY;
         let pressTimer = null, renameTriggered = false;
         
         document.addEventListener('mousedown', (e) => {
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA' || e.target.closest('#context-menu')) return;
-            const icon = e.target.closest('.icon'); 
-            const winHeader = e.target.closest('.window-header');
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA' || e.target.closest('#context-menu') || e.target.closest('#folder-tree')) return;
+            const icon = e.target.closest('.icon'); const winHeader = e.target.closest('.window-header');
             
             if (icon && e.button === 0) { 
-                draggedElement = icon; 
-                isDragging = false; 
-                wasDragging = false; 
-                renameTriggered = false;
-                startX = e.clientX; 
-                startY = e.clientY; 
-                origX = parseFloat(icon.style.left || 0); 
-                origY = parseFloat(icon.style.top || 0);
-                const rect = icon.getBoundingClientRect(); 
-                offsetX = e.clientX - rect.left; 
-                offsetY = e.clientY - rect.top;
-                
-                clearSelection(); 
-                icon.classList.add('selected');
-
+                draggedElement = icon; isDragging = false; wasDragging = false; renameTriggered = false;
+                startX = e.clientX; startY = e.clientY; origX = parseFloat(icon.style.left || 0); origY = parseFloat(icon.style.top || 0);
+                const rect = icon.getBoundingClientRect(); offsetX = e.clientX - rect.left; offsetY = e.clientY - rect.top;
+                clearSelection(); icon.classList.add('selected');
                 if (icon.dataset.type !== 'folder-up') {
                     pressTimer = setTimeout(() => {
-                        renameTriggered = true; 
-                        isDragging = false; 
-                        draggedElement = null;
-                        triggerRename(icon.dataset.id);
+                        renameTriggered = true; isDragging = false; draggedElement = null; triggerRename(icon.dataset.id);
                     }, 3000);
                 }
             } else if (winHeader && e.button === 0) {
-                draggedElement = winHeader.parentElement; 
-                isDragging = false; 
-                startX = e.clientX; 
-                startY = e.clientY;
-                const rect = draggedElement.getBoundingClientRect(); 
-                offsetX = e.clientX - rect.left; 
-                offsetY = e.clientY - rect.top;
-                document.querySelectorAll('.window').forEach(w => { if (w.id !== 'dialog-window') w.style.zIndex = 100; });
+                draggedElement = winHeader.parentElement; isDragging = false; startX = e.clientX; startY = e.clientY;
+                const rect = draggedElement.getBoundingClientRect(); offsetX = e.clientX - rect.left; offsetY = e.clientY - rect.top;
+                document.querySelectorAll('.window').forEach(w => { if (w.id !== 'dialog-window' && !w.classList.contains('fake-error-window')) w.style.zIndex = 100; });
                 draggedElement.style.zIndex = 500;
             }
         });
-
         document.addEventListener('mousemove', (e) => {
             if (!draggedElement) return;
             if (!isDragging && Math.hypot(e.clientX - startX, e.clientY - startY) > 6) {
                 if (draggedElement.dataset && draggedElement.dataset.type === 'folder-up') return;
-                isDragging = true; 
-                draggedElement.style.zIndex = 1000;
+                isDragging = true; draggedElement.style.zIndex = 1000;
                 if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
             }
             if (isDragging) {
                 if (draggedElement.classList.contains('icon') && draggedElement.parentElement.classList.contains('folder-view-list')) return;
                 let pRect = { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight - 40 }; 
-                if (draggedElement.classList.contains('icon') && draggedElement.parentElement !== desktop) {
-                    pRect = draggedElement.parentElement.getBoundingClientRect(); 
-                }
-                draggedElement.style.left = `${Math.max(0, e.clientX - pRect.left - offsetX)}px`; 
-                draggedElement.style.top = `${Math.max(0, e.clientY - pRect.top - offsetY)}px`;
+                if (draggedElement.classList.contains('icon') && draggedElement.parentElement !== desktop) { pRect = draggedElement.parentElement.getBoundingClientRect(); }
+                draggedElement.style.left = `${Math.max(0, e.clientX - pRect.left - offsetX)}px`; draggedElement.style.top = `${Math.max(0, e.clientY - pRect.top - offsetY)}px`;
             }
         });
-
         document.addEventListener('mouseup', (e) => {
             if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
             if (renameTriggered) { renameTriggered = false; return; }
-
             if (draggedElement) {
-                // CSAK akkor számolunk és renderelünk újra, ha tényleg húztuk az ikont! (Így nem törik el a duplakatt!)
                 if (isDragging && draggedElement.classList.contains('icon')) {
-                    wasDragging = true; 
-                    setTimeout(() => wasDragging = false, 150); 
-                    
+                    wasDragging = true; setTimeout(() => wasDragging = false, 150); 
                     const id = draggedElement.dataset.id;
                     let isSys = (id === 'system-bin' || id === 'system-cmd');
                     let item = isSys ? (id === 'system-bin' ? sysIcons.bin : sysIcons.cmd) : items.find(i => i.id === id);
-                    
                     if (item) {
-                        let rawX = parseFloat(draggedElement.style.left); 
-                        let rawY = parseFloat(draggedElement.style.top);
-                        let targetX = Math.round((rawX - 20) / GRID_W) * GRID_W + 20; 
-                        let targetY = Math.round((rawY - 20) / GRID_H) * GRID_H + 20;
-
+                        let rawX = parseFloat(draggedElement.style.left); let rawY = parseFloat(draggedElement.style.top);
+                        let targetX = Math.round((rawX - 20) / GRID_W) * GRID_W + 20; let targetY = Math.round((rawY - 20) / GRID_H) * GRID_H + 20;
                         const pId = item.parentId || null;
-
-                        // 1. Ellenőrzés: Mappában a "Vissza / Kifelé" ikonra húztuk-e? (x:20, y:20)
                         if (pId !== null && !isSys && Math.abs(rawX - 20) < 45 && Math.abs(rawY - 20) < 45) {
                             let currentFolder = items.find(f => f.id === pId);
-                            let newParentId = currentFolder ? (currentFolder.parentId || null) : null;
-                            item.parentId = newParentId;
-                            let freePos = getNextGridPosition(newParentId, item.id);
-                            item.x = freePos.x;
-                            item.y = freePos.y;
+                            item.parentId = currentFolder ? (currentFolder.parentId || null) : null;
+                            let freePos = getNextGridPosition(item.parentId, item.id);
+                            item.x = freePos.x; item.y = freePos.y;
                         } else {
-                            // 2. Ellenőrzés: Ráhúztuk-e egy másik mappára?
                             let droppedOnFolder = items.find(i => i.type === 'folder' && i.id !== id && i.parentId === pId && Math.abs(i.x - rawX) < 45 && Math.abs(i.y - rawY) < 45);
-                            
                             if (droppedOnFolder && !isSys) {
                                 item.parentId = droppedOnFolder.id; 
-                                let pos = getNextGridPosition(item.parentId, item.id);
-                                item.x = pos.x; 
-                                item.y = pos.y;
+                                let pos = getNextGridPosition(item.parentId, item.id); item.x = pos.x; item.y = pos.y;
                             } else {
-                                // 3. Ütközésvizsgálat (ne lehessen két ikont egymásra tenni)
                                 let conflict = items.some(i => i.id !== id && i.parentId === pId && Math.abs(i.x - targetX) < 10 && Math.abs(i.y - targetY) < 10);
                                 if (pId === null) {
                                     if (id !== 'system-bin' && Math.abs(sysIcons.bin.x - targetX) < 10 && Math.abs(sysIcons.bin.y - targetY) < 10) conflict = true;
                                     if (id !== 'system-cmd' && Math.abs(sysIcons.cmd.x - targetX) < 10 && Math.abs(sysIcons.cmd.y - targetY) < 10) conflict = true;
                                 } else {
-                                    if (Math.abs(20 - targetX) < 10 && Math.abs(20 - targetY) < 10) conflict = true; // Vissza ikon helye foglalt
+                                    if (Math.abs(20 - targetX) < 10 && Math.abs(20 - targetY) < 10) conflict = true; 
                                 }
-
-                                if (conflict) {
-                                    item.x = origX; 
-                                    item.y = origY;
-                                } else {
-                                    item.x = Math.max(20, targetX); 
-                                    item.y = Math.max(20, targetY);
-                                }
+                                if (conflict) { item.x = origX; item.y = origY; } else { item.x = Math.max(20, targetX); item.y = Math.max(20, targetY); }
                             }
                         }
                     }
-                    renderDesktop(); 
-                    if (currentOpenFolderId) renderFolderContent();
+                    renderDesktop(); if (currentOpenFolderId) { renderFolderContent(); renderFolderTree(); }
                 }
                 draggedElement = null; 
             }
@@ -582,10 +657,83 @@
         document.addEventListener('dblclick', (e) => {
             if (wasDragging || renameTriggered) return;
             const icon = e.target.closest('.icon');
-            if (icon && e.target.tagName !== 'INPUT') {
-                handleDblClick(icon.dataset.id);
-            }
+            if (icon && e.target.tagName !== 'INPUT') { handleDblClick(icon.dataset.id); }
         });
+
+        // HULLÁMFORMA GENERÁLÓ (Lejátszáshoz)
+        let audioPlayContext = null;
+        function setupAudioVisualizerForPlayback(audioElement, canvasElement) {
+            if (!audioPlayContext) audioPlayContext = new (window.AudioContext || window.webkitAudioContext)();
+            const analyser = audioPlayContext.createAnalyser();
+            analyser.fftSize = 64;
+            
+            // Ha már be lett kötve egy source ehez az audio elemhez, a böngésző dobhat hibát, így egyszerű try-catch.
+            try {
+                const source = audioPlayContext.createMediaElementSource(audioElement);
+                source.connect(analyser);
+                analyser.connect(audioPlayContext.destination);
+            } catch (e) {
+                // Már bekötve, sebaj.
+            }
+
+            const ctx = canvasElement.getContext('2d');
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+            
+            function draw() {
+                if(audioElement.paused || audioElement.ended) return; // Állítsuk le a rajzolást ha vége
+                requestAnimationFrame(draw);
+                analyser.getByteFrequencyData(dataArray);
+                
+                ctx.fillStyle = '#111';
+                ctx.fillRect(0, 0, canvasElement.width, canvasElement.height);
+                
+                const barWidth = (canvasElement.width / dataArray.length) * 2;
+                let x = 0;
+                for (let i = 0; i < dataArray.length; i++) {
+                    const barHeight = (dataArray[i] / 255) * canvasElement.height;
+                    ctx.fillStyle = 'rgb(50, ' + (barHeight + 100) + ', 50)';
+                    ctx.fillRect(x, canvasElement.height - barHeight, barWidth, barHeight);
+                    x += barWidth + 2;
+                }
+            }
+            
+            audioElement.onplay = () => {
+                if(audioPlayContext.state === 'suspended') audioPlayContext.resume();
+                draw();
+            };
+        }
+
+        // PPTX VÁLTOZÓK
+        let currentPptxItem = null;
+        let currentSlideIndex = 0;
+        let slidesData = [];
+
+        window.changeSlide = function(dir) {
+            if(slidesData.length === 0) return;
+            slidesData[currentSlideIndex] = document.getElementById('slide-editor').value;
+            currentSlideIndex += dir;
+            if(currentSlideIndex < 0) currentSlideIndex = 0;
+            if(currentSlideIndex >= slidesData.length) currentSlideIndex = slidesData.length - 1;
+            document.getElementById('slide-editor').value = slidesData[currentSlideIndex];
+            document.getElementById('current-slide-num').innerText = currentSlideIndex + 1;
+        };
+
+        window.addSlide = function() {
+            slidesData[currentSlideIndex] = document.getElementById('slide-editor').value;
+            slidesData.push("Új dia tartalma...");
+            currentSlideIndex = slidesData.length - 1;
+            document.getElementById('slide-editor').value = slidesData[currentSlideIndex];
+            document.getElementById('total-slides-num').innerText = slidesData.length;
+            document.getElementById('current-slide-num').innerText = currentSlideIndex + 1;
+        };
+
+        window.savePptxFile = function() {
+            if(currentPptxItem) {
+                slidesData[currentSlideIndex] = document.getElementById('slide-editor').value;
+                currentPptxItem.content = JSON.stringify(slidesData);
+                showDialog('Mentés', 'Prezentáció elmentve!', 'alert');
+            }
+        };
 
         function handleDblClick(id) {
             contextMenu.style.display = 'none';
@@ -593,8 +741,7 @@
             if (id === 'system-cmd') { document.getElementById('cmd-window').style.display = 'flex'; return; }
             if (id === 'folder-up') {
                 let current = items.find(i => i.id === currentOpenFolderId);
-                if (current && current.parentId) openFolderWindow(current.parentId);
-                else { currentOpenFolderId = null; document.getElementById('folder-window').style.display = 'none'; }
+                if (current && current.parentId) openFolderWindow(current.parentId); else { openFolderWindow(null); }
                 return;
             }
             
@@ -602,21 +749,39 @@
             if (!item) return;
 
             if (item.type === 'folder') { openFolderWindow(id); return; }
+            
             if (item.type === 'txt') { 
-                activeFileId = id; 
-                document.getElementById('txt-title').innerText = item.name; 
-                document.getElementById('txt-textarea').value = item.content || ""; 
-                document.getElementById('txt-window').style.display = 'flex'; 
+                activeFileId = id; document.getElementById('txt-title').innerText = item.name; 
+                document.getElementById('txt-textarea').value = item.content || ""; document.getElementById('txt-window').style.display = 'flex'; 
+                return;
+            }
+
+            if (item.type === 'html') {
+                document.getElementById('html-title').innerText = item.name;
+                const iframe = document.getElementById('html-iframe');
+                iframe.srcdoc = item.content || "<h1>Üres HTML fájl</h1>";
+                document.getElementById('html-window').style.display = 'flex';
+                return;
+            }
+
+            if (item.type === 'pptx') {
+                currentPptxItem = item;
+                document.getElementById('pptx-title').innerText = item.name + " - Szerkesztő";
+                try {
+                    slidesData = item.content ? JSON.parse(item.content) : ["Első dia tartalma"];
+                } catch(e) { slidesData = ["Első dia tartalma"]; }
+                if(!Array.isArray(slidesData) || slidesData.length===0) slidesData = ["Első dia tartalma"];
+                currentSlideIndex = 0;
+                document.getElementById('slide-editor').value = slidesData[0];
+                document.getElementById('total-slides-num').innerText = slidesData.length;
+                document.getElementById('current-slide-num').innerText = 1;
+                document.getElementById('pptx-window').style.display = 'flex';
                 return;
             }
 
             if (item.type === 'app') {
-                if (!item.content) {
-                    showDialog('Hiba', dict[currentLang].emptyErr, 'alert');
-                } else {
-                    let url = item.content.startsWith('http') ? item.content : 'https://' + item.content;
-                    window.open(url, '_blank');
-                }
+                if (!item.content) { showDialog('Hiba', dict[currentLang].emptyErr, 'alert'); } 
+                else { let url = item.content.startsWith('http') ? item.content : 'https://' + item.content; window.open(url, '_blank'); }
                 return;
             }
 
@@ -629,24 +794,22 @@
             }
 
             if (item.type === 'mp3' || item.type === 'mp4') {
-                // Ha nincs sem URL, sem felvett hossz (extraData), akkor üres!
-                if (!item.imgUrl && (!item.extraData || item.extraData <= 0)) {
-                    showDialog('Hiba', dict[currentLang].emptyErr, 'alert'); 
-                    return;
-                }
+                if (!item.imgUrl) { showDialog('Hiba', dict[currentLang].emptyErr, 'alert'); return; }
                 document.getElementById('img-title').innerText = item.name + " - Lejátszó";
                 let body = document.getElementById('media-window-body');
-                if (item.imgUrl) {
-                    if (item.type === 'mp3') body.innerHTML = `<audio controls autoplay src="${item.imgUrl}"></audio><p>${item.name}</p>`;
-                    else body.innerHTML = `<video controls autoplay src="${item.imgUrl}" style="max-width:100%; max-height:85%;"></video>`;
-                } else {
-                    let details = item.vidConfig ? `<p>Minőség: <b>${item.vidConfig.quality}</b> | Képarány: <b>${item.vidConfig.ratio}</b></p>` : '';
+                
+                if (item.type === 'mp3') {
                     body.innerHTML = `
-                        <div style="font-size:48px; margin-bottom:10px;">${item.type === 'mp3' ? '🎵' : '🎬'}</div>
-                        <h3>Helyi felvétel lejátszása: ${item.name}</h3>
-                        <p>Felvétel hossza: <b>${formatDuration(item.extraData)}</b></p>
-                        ${details}
-                    `;
+                        <canvas id="playback-visualizer" style="width:80%; height:150px; background:#111; border: 2px solid #555; border-radius:5px; margin-bottom:15px;"></canvas>
+                        <audio id="playback-audio" controls autoplay src="${item.imgUrl}"></audio>
+                        <p>${item.name}</p>`;
+                    setTimeout(() => {
+                        const aud = document.getElementById('playback-audio');
+                        const can = document.getElementById('playback-visualizer');
+                        setupAudioVisualizerForPlayback(aud, can);
+                    }, 100);
+                } else {
+                    body.innerHTML = `<video controls autoplay src="${item.imgUrl}" style="max-width:100%; max-height:85%;"></video>`;
                 }
                 document.getElementById('img-window').style.display = 'flex';
             }
@@ -656,163 +819,205 @@
         window.triggerRename = function(id) {
             let item = (id === 'system-bin') ? sysIcons.bin : (id === 'system-cmd' ? sysIcons.cmd : items.find(i => i.id === id));
             if (!item) return;
-            const iconEl = document.querySelector(`.icon[data-id="${id}"]`); 
-            if (!iconEl) return;
-            
+            const iconEl = document.querySelector(`.icon[data-id="${id}"]`); if (!iconEl) return;
             const labelDiv = iconEl.querySelector('.icon-label');
             labelDiv.innerHTML = `<input type="text" id="rename-input" class="rename-input" value="${item.name}">`;
-            const input = document.getElementById('rename-input');
-            input.focus(); 
-            input.select();
-            
-            input.addEventListener('mousedown', e => e.stopPropagation());
-            input.addEventListener('dblclick', e => e.stopPropagation());
-            
+            const input = document.getElementById('rename-input'); input.focus(); input.select();
+            input.addEventListener('mousedown', e => e.stopPropagation()); input.addEventListener('dblclick', e => e.stopPropagation());
             let isFinished = false;
             const finishRename = () => { 
-                if (isFinished) return; 
-                isFinished = true;
+                if (isFinished) return; isFinished = true;
                 item.name = input.value.trim() || "Névtelen";
+                updateTypeByExtension(item); // Tipus frissítése a név alapján!
                 renderDesktop(); 
-                if (currentOpenFolderId) renderFolderContent();
+                if (currentOpenFolderId) { renderFolderContent(); renderFolderTree(); }
             };
-            input.addEventListener('blur', finishRename);
-            input.addEventListener('keydown', (e) => { if (e.key === 'Enter') finishRename(); });
+            input.addEventListener('blur', finishRename); input.addEventListener('keydown', (e) => { if (e.key === 'Enter') finishRename(); });
         };
 
         // --- POZÍCIÓ ÉS LÉTREHOZÁS ---
         function getNextGridPosition(parentId, ignoreId = null) {
-            recalculateGrid(); 
-            let row = 0, col = 0; 
-            let cols = parentId ? 4 : (Math.floor(window.innerWidth / GRID_W) || 1);
+            recalculateGrid(); let row = 0, col = 0; let cols = parentId ? 4 : (Math.floor(window.innerWidth / GRID_W) || 1);
             while (true) {
-                let checkX = col * GRID_W + 20; 
-                let checkY = row * GRID_H + 20;
+                let checkX = col * GRID_W + 20; let checkY = row * GRID_H + 20;
                 if (parentId !== null && checkX === 20 && checkY === 20) { col++; continue; }
-
                 let occupied = items.some(s => s.id !== ignoreId && s.parentId === parentId && Math.abs((s.x||0) - checkX) < 10 && Math.abs((s.y||0) - checkY) < 10);
                 if (parentId === null) {
                     if (Math.abs(sysIcons.bin.x - checkX) < 10 && Math.abs(sysIcons.bin.y - checkY) < 10) occupied = true;
                     if (Math.abs(sysIcons.cmd.x - checkX) < 10 && Math.abs(sysIcons.cmd.y - checkY) < 10) occupied = true;
                 }
                 if (!occupied) return { x: checkX, y: checkY };
-                col++; 
-                if (col >= cols) { col = 0; row++; }
+                col++; if (col >= cols) { col = 0; row++; }
             }
         }
 
-        function formatDuration(s) {
-            if (!s || s <= 0) return "0 sec";
-            if (s < 60) return s + " sec";
-            let m = Math.floor(s / 60), rs = s % 60;
-            if (m < 60) return `${m}:${rs < 10 ? '0' : ''}${rs}`;
-            let h = Math.floor(m / 60); m = m % 60;
-            return `${h}:${m < 10 ? '0' : ''}${m}:${rs < 10 ? '0' : ''}${rs}`;
+        // --- VALÓS MÉDIA FELVÉTEL WEBRTC-vel ---
+        let mediaStream = null;
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let captureType = null;
+        let pendingMediaItem = null;
+        let audioContext = null;
+        let animFrame = null;
+
+        function startWebRTCCapture(type, item) {
+            pendingMediaItem = item;
+            captureType = type;
+            const overlay = document.getElementById('media-capture-overlay');
+            const videoElem = document.getElementById('capture-video-elem');
+            const canvasElem = document.getElementById('audio-visualizer-canvas');
+            const actionBtn = document.getElementById('capture-action-btn');
+            const titleElem = document.getElementById('media-capture-title');
+            
+            overlay.style.display = 'flex';
+            videoElem.style.display = 'none';
+            canvasElem.style.display = 'none';
+            actionBtn.className = 'capture-btn btn-red'; // alapértelmezett piros
+            actionBtn.innerText = "";
+            
+            let constraints = {};
+            if (type === 'img') {
+                constraints = { video: true }; titleElem.innerText = "Fénykép Készítése";
+                videoElem.style.display = 'block'; actionBtn.className = 'capture-btn btn-white'; // FEHÉR KÖR KÉPHEZ
+            } else if (type === 'mp4') {
+                constraints = { video: true, audio: true }; titleElem.innerText = "Videó Felvétel";
+                videoElem.style.display = 'block';
+            } else if (type === 'mp3') {
+                constraints = { audio: true }; titleElem.innerText = "Hang Felvétel";
+                canvasElem.style.display = 'block';
+            }
+
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then(stream => {
+                    mediaStream = stream;
+                    if (type === 'img' || type === 'mp4') {
+                        videoElem.srcObject = stream;
+                    }
+                    if (type === 'mp3') {
+                        // Hanghullám rajzoló felvétel közben
+                        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        const source = audioContext.createMediaStreamSource(stream);
+                        const analyser = audioContext.createAnalyser();
+                        analyser.fftSize = 64;
+                        source.connect(analyser);
+                        const ctx = canvasElem.getContext('2d');
+                        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+                        function draw() {
+                            animFrame = requestAnimationFrame(draw);
+                            analyser.getByteFrequencyData(dataArray);
+                            ctx.fillStyle = '#111'; ctx.fillRect(0, 0, canvasElem.width, canvasElem.height);
+                            const barWidth = (canvasElem.width / dataArray.length) * 2.5;
+                            let x = 0;
+                            for (let i = 0; i < dataArray.length; i++) {
+                                const barHeight = (dataArray[i] / 255) * canvasElem.height;
+                                ctx.fillStyle = 'rgb(' + (barHeight + 100) + ', 50, 50)'; // Pirosas a felvételnél
+                                ctx.fillRect(x, canvasElem.height - barHeight, barWidth, barHeight);
+                                x += barWidth + 1;
+                            }
+                        }
+                        draw();
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    showDialog('Hiba', 'Nem sikerült hozzáférni a kamerához vagy a mikrofonhoz!', 'alert');
+                    cancelMediaCapture();
+                });
         }
 
-        let recInterval = null, recSecs = 0, activeRecItem = null;
-
-        function startRecordingMode(item) {
-            activeRecItem = item; 
-            recSecs = 0;
-            document.getElementById('recording-overlay').style.display = 'flex';
-            document.getElementById('rec-timer').innerText = "0 sec";
-            if (recInterval) clearInterval(recInterval);
-            recInterval = setInterval(() => { 
-                recSecs++; 
-                document.getElementById('rec-timer').innerText = formatDuration(recSecs); 
-            }, 1000);
-        }
-
-        window.stopRecording = function() {
-            clearInterval(recInterval); 
-            document.getElementById('recording-overlay').style.display = 'none';
-            if (activeRecItem) { 
-                activeRecItem.extraData = Math.max(1, recSecs); // Legalább 1 mp legyen, hogy ne számítson üresnek!
-                items.push(activeRecItem); 
-                activeRecItem = null; 
-                renderDesktop(); 
-                if (currentOpenFolderId) renderFolderContent(); 
+        window.executeMediaCapture = function() {
+            const actionBtn = document.getElementById('capture-action-btn');
+            
+            if (captureType === 'img') {
+                // Kép készítése canvas segítségével
+                const videoElem = document.getElementById('capture-video-elem');
+                const canvas = document.createElement('canvas');
+                canvas.width = videoElem.videoWidth; canvas.height = videoElem.videoHeight;
+                canvas.getContext('2d').drawImage(videoElem, 0, 0);
+                pendingMediaItem.imgUrl = canvas.toDataURL('image/png');
+                pendingMediaItem.extraData = 250;
+                finishMediaCapture();
+            } else {
+                // Videó vagy Hang indítása/leállítása
+                if (mediaRecorder && mediaRecorder.state === 'recording') {
+                    // Stop felvétel
+                    mediaRecorder.stop();
+                    actionBtn.style.animation = ''; // Villogás vége
+                } else {
+                    // Indít felvétel
+                    recordedChunks = [];
+                    mediaRecorder = new MediaRecorder(mediaStream);
+                    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
+                    mediaRecorder.onstop = () => {
+                        const blob = new Blob(recordedChunks, { type: captureType === 'mp4' ? 'video/webm' : 'audio/webm' }); // böngésző webm-et rögzít leginkább
+                        
+                        // Fájl mentése Base64-ként, hogy megmaradjon mentés/betöltés után is! (Lehet nagy méretű, de ez a legbiztosabb)
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                            pendingMediaItem.imgUrl = reader.result;
+                            finishMediaCapture();
+                        };
+                        reader.readAsDataURL(blob);
+                    };
+                    mediaRecorder.start();
+                    // Kis villogó animáció jelzi a felvételt
+                    actionBtn.style.animation = 'blink 1s infinite';
+                }
             }
         };
 
+        window.cancelMediaCapture = function() {
+            if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+            stopMediaTracks();
+            document.getElementById('media-capture-overlay').style.display = 'none';
+        }
+
+        function finishMediaCapture() {
+            stopMediaTracks();
+            document.getElementById('media-capture-overlay').style.display = 'none';
+            items.push(pendingMediaItem);
+            pendingMediaItem = null;
+            renderDesktop(); 
+            if (currentOpenFolderId) { renderFolderContent(); renderFolderTree(); }
+        }
+
+        function stopMediaTracks() {
+            if (mediaStream) { mediaStream.getTracks().forEach(track => track.stop()); mediaStream = null; }
+            if (audioContext) { audioContext.close(); audioContext = null; }
+            if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
+        }
+
+        // Alap elem létrehozó
         window.createNewItem = function(type) {
             contextMenu.style.display = 'none';
             const id = type + '_' + Date.now();
             let pId = contextMenuTargetFolder;
             const pos = getNextGridPosition(pId);
+            
+            let extMap = { 'folder':'Mappa', 'txt':'.txt', 'html':'.html', 'pptx':'.pptx', 'app':'.lnk', 'img':'.png', 'mp3':'.mp3', 'mp4':'.mp4' };
+            let defaultName = (type === 'folder' ? 'Új Mappa' : ('Új Fájl' + extMap[type]));
 
-            if (type === 'folder') {
-                items.push({ id, type, name: "Új Mappa", imgUrl: '', content: '', dateCreated: new Date().toISOString(), x: pos.x, y: pos.y, parentId: pId });
-                renderDesktop(); if (pId) renderFolderContent();
-                return;
-            }
-            if (type === 'txt') {
-                items.push({ id, type, name: "Szöveg.txt", imgUrl: '', content: '', dateCreated: new Date().toISOString(), x: pos.x, y: pos.y, parentId: pId });
-                renderDesktop(); if (pId) renderFolderContent();
-                return;
-            }
-            if (type === 'app') {
+            let newItem = { id, type, name: defaultName, imgUrl: '', content: '', dateCreated: new Date().toISOString(), x: pos.x, y: pos.y, parentId: pId, extraData: 0 };
+
+            if (type === 'folder' || type === 'txt' || type === 'html' || type === 'pptx') {
+                items.push(newItem); renderDesktop(); if (pId) { renderFolderContent(); renderFolderTree(); }
+            } 
+            else if (type === 'app') {
                 showDialog('Új Parancsikon', 'Add meg a weboldal URL-jét (pl. https://example.com):', 'prompt', (urlVal) => {
                     showDialog('Parancsikon Ikonja', 'Opcionális: Adj meg egy kép URL-t ikonként (vagy hagyd üresen):', 'prompt', (icoVal) => {
-                        items.push({ id, type, name: "Parancsikon", imgUrl: icoVal || '', content: urlVal || '', dateCreated: new Date().toISOString(), x: pos.x, y: pos.y, parentId: pId });
+                        newItem.content = urlVal || ''; newItem.imgUrl = icoVal || ''; items.push(newItem);
                         renderDesktop(); if (pId) renderFolderContent();
                     });
                 });
-                return;
-            }
-            if (type === 'img') {
-                showDialog('Új Kép (.png / .jpg)', 'Adj meg egy Kép URL-t (vagy hagyd üresen):', 'prompt', (val) => {
-                    let newItem = { id, type, name: "Kép.png", imgUrl: val || '', content: '', dateCreated: new Date().toISOString(), x: pos.x, y: pos.y, parentId: pId, extraData: val ? 250 : 0, resolution: '1024x768' };
+            } 
+            else if (type === 'img' || type === 'mp3' || type === 'mp4') {
+                showDialog(`Új ${type.toUpperCase()}`, 'Adj meg egy internetes URL-t, VAGY hagyd üresen a saját felvétel (Kamera/Mikrofon) készítéséhez:', 'prompt', (val) => {
                     if (val) {
-                        let tempImg = new Image();
-                        tempImg.onload = function() { newItem.resolution = this.naturalWidth + 'x' + this.naturalHeight; };
-                        tempImg.src = val;
-                    }
-                    items.push(newItem);
-                    renderDesktop(); if (pId) renderFolderContent();
-                });
-                return;
-            }
-            if (type === 'mp3' || type === 'mp4') {
-                let defaultName = type === 'mp3' ? "Hang.mp3" : "Videó.mp4";
-                showDialog(`${defaultName} létrehozása`, 'Adj meg egy forrás URL-t, VAGY hagyd üresen és nyomj OK-t a helyi felvételhez:', 'prompt', (val) => {
-                    if (val) {
-                        items.push({ id, type, name: defaultName, imgUrl: val, content: '', dateCreated: new Date().toISOString(), x: pos.x, y: pos.y, parentId: pId, extraData: 120 });
-                        renderDesktop(); if (pId) renderFolderContent();
+                        newItem.imgUrl = val; items.push(newItem); renderDesktop(); if (pId) renderFolderContent();
                     } else {
-                        showDialog('Felvétel indítása', `Üresen hagytad a forrást. Szeretnéd most felvenni a(z) ${defaultName} fájlt?`, 'confirm', (wantRec) => {
-                            let newItem = { id, type, name: defaultName, imgUrl: '', content: '', dateCreated: new Date().toISOString(), x: pos.x, y: pos.y, parentId: pId, extraData: 0 };
-                            if (wantRec) {
-                                if (type === 'mp4') {
-                                    let customHtml = `
-                                        <label><b>Minőség:</b> 
-                                            <select id="vidQuality" style="padding:3px; width:120px;">
-                                                <option value="4K">4K (Ultra HD)</option>
-                                                <option value="1080p">1080p (Full HD)</option>
-                                                <option value="1080i">1080i</option>
-                                                <option value="720p">720p (HD)</option>
-                                                <option value="480p">480p</option>
-                                            </select>
-                                        </label><br><br>
-                                        <b>Méretarány:</b>
-                                        <label class="ratio-option"><input type="radio" name="videoRatio" value="Automatikus" checked> Automatikus <span class="ratio-box" style="width:32px; height:18px;"></span></label>
-                                        <label class="ratio-option"><input type="radio" name="videoRatio" value="4:3"> 4:3 <span class="ratio-box" style="width:24px; height:18px;"></span></label>
-                                        <label class="ratio-option"><input type="radio" name="videoRatio" value="1:1"> 1:1 <span class="ratio-box" style="width:20px; height:20px;"></span></label>
-                                        <label class="ratio-option"><input type="radio" name="videoRatio" value="1:2"> 1:2 <span class="ratio-box" style="width:14px; height:28px;"></span></label>
-                                        <label class="ratio-option"><input type="radio" name="videoRatio" value="2:1"> 2:1 <span class="ratio-box" style="width:36px; height:18px;"></span></label>
-                                    `;
-                                    showDialog('Videó Beállítások', 'Válaszd ki a felvétel paramétereit:', 'custom', (cfg) => {
-                                        if (cfg) { newItem.vidConfig = cfg; startRecordingMode(newItem); }
-                                    }, customHtml);
-                                } else {
-                                    startRecordingMode(newItem);
-                                }
-                            } else {
-                                items.push(newItem);
-                                renderDesktop(); if (pId) renderFolderContent();
-                            }
-                        });
+                        // VALÓS FELVÉTEL INDÍTÁSA
+                        startWebRTCCapture(type, newItem);
                     }
                 });
             }
@@ -823,60 +1028,42 @@
             contextMenu.style.display = 'none';
             showDialog('Háttérkép beállítása', 'Adj meg egy kép URL-t (.png/.jpg/.ico) vagy színkódot (pl. #008080):', 'prompt', (bg) => {
                 if (!bg) return;
-                if (bg.startsWith('#') || (!bg.includes('.') && !bg.includes('/') && !bg.startsWith('data:'))) {
-                    applyBg(bg, true);
-                } else {
-                    showDialog('Háttérkép méretezése', 'Ha ezt elfogadja, akkor a képet kifeszítjük háttérkép ként, de ez a kép torzulásával is járhat!', 'confirm', (stretch) => {
-                        applyBg(bg, stretch === true);
-                    });
-                }
+                if (bg.startsWith('#') || (!bg.includes('.') && !bg.includes('/') && !bg.startsWith('data:'))) { applyBg(bg, true); } 
+                else { showDialog('Háttérkép méretezése', 'Kifeszítjük a képet a teljes asztalra?', 'confirm', (stretch) => { applyBg(bg, stretch === true); }); }
             });
         };
-
         function applyBg(bg, stretch = true) {
-            desktopBg = bg;
-            desktopStretch = stretch;
+            desktopBg = bg; desktopStretch = stretch;
             if (bg.startsWith('#') || (!bg.includes('.') && !bg.includes('/') && !bg.startsWith('data:'))) {
-                desktop.style.backgroundImage = 'none';
-                desktop.style.backgroundColor = bg;
+                desktop.style.backgroundImage = 'none'; desktop.style.backgroundColor = bg;
             } else {
                 desktop.style.backgroundImage = `url("${bg}")`;
-                if (stretch) {
-                    desktop.style.backgroundSize = '100% 100%';
-                    desktop.style.backgroundColor = 'transparent';
-                } else {
-                    desktop.style.backgroundSize = 'contain';
-                    desktop.style.backgroundPosition = 'center';
-                    desktop.style.backgroundRepeat = 'no-repeat';
-                    desktop.style.backgroundColor = '#000000';
-                }
+                if (stretch) { desktop.style.backgroundSize = '100% 100%'; desktop.style.backgroundColor = 'transparent'; } 
+                else { desktop.style.backgroundSize = 'contain'; desktop.style.backgroundPosition = 'center'; desktop.style.backgroundRepeat = 'no-repeat'; desktop.style.backgroundColor = '#000000'; }
             }
         }
 
-        // --- FÁJLMÉRET SZÁMÍTÁS ---
+        // --- MÉRET ---
         function getItemSize(item) {
             if (!item) return 0;
-            if (item.type === 'folder') {
-                return items.filter(i => i.parentId === item.id).reduce((sum, child) => sum + getItemSize(child), 0);
-            }
-            if (item.type === 'txt') return (item.content || "").length * 8;
+            if (item.type === 'folder') return items.filter(i => i.parentId === item.id).reduce((sum, child) => sum + getItemSize(child), 0);
+            if (item.type === 'txt' || item.type === 'html' || item.type === 'pptx') return (item.content || "").length * 8;
             if (item.type === 'app') return 512;
-            if (item.type === 'img' || item.type === 'mp3' || item.type === 'mp4') {
-                return item.extraData ? item.extraData * 1024 : (item.imgUrl ? 204800 : 0);
-            }
+            if (item.type === 'img' || item.type === 'mp3' || item.type === 'mp4') return item.imgUrl ? Math.round(item.imgUrl.length * 0.75) : 0;
             return 0;
         }
-
         function formatBytes(bytes) {
-            if (bytes < 1024) return bytes + " B";
-            return (bytes / 1024).toFixed(1) + " KB";
+            if (bytes < 1024) return bytes + " B"; else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB";
+            return (bytes / 1048576).toFixed(2) + " MB";
         }
 
-        // --- MEGJELENÍTÉS (ASZTAL ÉS MAPPA) ---
+        // --- MEGJELENÍTÉS (ASZTAL, MAPPA, ÁGRAJZ) ---
         function getIconHTML(item, viewMode = 'grid') {
             let imgSrc = '📝';
             if (item.type === 'folder') imgSrc = '📁';
             else if (item.type === 'txt') imgSrc = '📄';
+            else if (item.type === 'html') imgSrc = '🌐';
+            else if (item.type === 'pptx') imgSrc = '📊';
             else if (item.type === 'app') imgSrc = '🔗';
             else if (item.type === 'system-bin') imgSrc = '🗑️';
             else if (item.type === 'system-cmd') imgSrc = '💻';
@@ -886,7 +1073,6 @@
 
             const showCustomImg = item.imgUrl && (item.type === 'img' || item.type === 'app');
             const imgContent = showCustomImg ? `<img src="${item.imgUrl}">` : `<div style="font-size:${iconSize*0.65}px;">${imgSrc}</div>`;
-            
             const dateStr = (viewMode === 'list' && item.dateCreated) ? `<div class="icon-date">${new Date(item.dateCreated).toLocaleDateString()}</div>` : '';
             const sizeStr = (viewMode === 'list' && !item.type.startsWith('system-')) ? `<div class="icon-size-label">${formatBytes(getItemSize(item))}</div>` : '';
 
@@ -899,246 +1085,155 @@
         }
 
         function renderDesktop() {
-            recalculateGrid(); 
-            desktop.innerHTML = ''; 
-            desktop.insertAdjacentHTML('beforeend', getIconHTML(sysIcons.bin, 'grid'));
-            desktop.insertAdjacentHTML('beforeend', getIconHTML(sysIcons.cmd, 'grid'));
-            items.filter(i => i.parentId === null).forEach(item => { 
-                desktop.insertAdjacentHTML('beforeend', getIconHTML(item, 'grid')); 
-            });
+            recalculateGrid(); desktop.innerHTML = ''; 
+            desktop.insertAdjacentHTML('beforeend', getIconHTML(sysIcons.bin, 'grid')); desktop.insertAdjacentHTML('beforeend', getIconHTML(sysIcons.cmd, 'grid'));
+            items.filter(i => i.parentId === null).forEach(item => { desktop.insertAdjacentHTML('beforeend', getIconHTML(item, 'grid')); });
+        }
+
+        function renderFolderTree() {
+            const treeContainer = document.getElementById('folder-tree');
+            function buildTreeHTML(parentId, level) {
+                let html = ''; let folders = items.filter(i => i.type === 'folder' && i.parentId === parentId);
+                folders.sort((a, b) => a.name.localeCompare(b.name, 'hu'));
+                folders.forEach(f => {
+                    let isActive = (f.id === currentOpenFolderId) ? 'active' : '';
+                    html += `<div class="tree-item ${isActive}" style="padding-left: ${level * 10}px;" onclick="openFolderWindow('${f.id}')" title="${f.name}">📁 ${f.name}</div>`;
+                    html += buildTreeHTML(f.id, level + 1); 
+                }); return html;
+            }
+            let isDesktopActive = (currentOpenFolderId === null) ? 'active' : '';
+            let finalHtml = `<div class="tree-item ${isDesktopActive}" onclick="openFolderWindow(null)">${dict[currentLang].desktopName}</div>`;
+            finalHtml += buildTreeHTML(null, 1); treeContainer.innerHTML = finalHtml;
         }
 
         function renderFolderContent() {
             if (!currentOpenFolderId) return;
             const container = document.getElementById('folder-content'); 
-            const viewMode = document.getElementById('folder-view-select').value;
-            const sortBy = document.getElementById('folder-sort-select').value;
-            const order = document.getElementById('folder-order-select').value;
-
+            const viewMode = document.getElementById('folder-view-select').value; const sortBy = document.getElementById('folder-sort-select').value; const order = document.getElementById('folder-order-select').value;
             container.className = `window-content folder-view-${viewMode}`;
-            
-            // Vissza / Kifelé gomb (data-id="folder-up" a duplakattintáshoz!)
             container.innerHTML = `
                 <div class="icon" data-id="folder-up" data-type="folder-up" style="left:20px; top:20px; width:${viewMode === 'list' ? '100%' : (iconSize + 30) + 'px'}">
                     <div class="icon-img-wrapper" style="width:${iconSize}px; height:${iconSize}px; font-size:${iconSize*0.65}px;">⤴️</div>
-                    <div class="icon-label">Vissza (Kifelé)</div>
+                    <div class="icon-label">${dict[currentLang].backFolder}</div>
                 </div>`;
-            
             let folderItems = items.filter(i => i.parentId === currentOpenFolderId);
-            
             folderItems.sort((a, b) => {
-                let cmp = 0;
-                if (sortBy === 'name') cmp = a.name.localeCompare(b.name, 'hu');
-                else cmp = new Date(a.dateCreated || 0) - new Date(b.dateCreated || 0);
+                let cmp = 0; if (sortBy === 'name') cmp = a.name.localeCompare(b.name, 'hu'); else cmp = new Date(a.dateCreated || 0) - new Date(b.dateCreated || 0);
                 return order === 'asc' ? cmp : -cmp;
             });
-
-            folderItems.forEach((item, index) => {
-                // Ha rács nézetben rendezünk, vagy ütközne a Vissza gombbal, adjunk tiszta pozíciót
-                if (viewMode === 'grid' && item.x === 20 && item.y === 20) {
-                    let pos = getNextGridPosition(currentOpenFolderId, item.id);
-                    item.x = pos.x; item.y = pos.y;
-                }
+            folderItems.forEach((item) => {
+                if (viewMode === 'grid' && item.x === 20 && item.y === 20) { let pos = getNextGridPosition(currentOpenFolderId, item.id); item.x = pos.x; item.y = pos.y; }
                 container.insertAdjacentHTML('beforeend', getIconHTML(item, viewMode));
             });
         }
 
-        // --- TULAJDONSÁGOK ABLAK ---
+        // --- TULAJDONSÁGOK ---
         function getFullPath(item) {
             if (!item || !item.parentId) return "Főmappa/" + (item ? item.name : '');
-            let parent = items.find(i => i.id === item.parentId);
-            return (parent ? getFullPath(parent) : "Főmappa") + "/" + item.name;
+            let parent = items.find(i => i.id === item.parentId); return (parent ? getFullPath(parent) : "Főmappa") + "/" + item.name;
         }
-
         window.showProperties = function(id) {
             contextMenu.style.display = 'none';
             let isSys = (id === 'system-bin' || id === 'system-cmd');
-            let item = isSys ? (id === 'system-bin' ? sysIcons.bin : sysIcons.cmd) : items.find(i => i.id === id);
-            if (!item) return;
-
+            let item = isSys ? (id === 'system-bin' ? sysIcons.bin : sysIcons.cmd) : items.find(i => i.id === id); if (!item) return;
             document.getElementById('prop-val-name').innerText = item.name;
-            let extMap = { 'folder': 'Mappa', 'txt': '.txt (Szöveg)', 'img': '.png / .jpg (Kép)', 'mp3': '.mp3 (Hang)', 'mp4': '.mp4 (Videó)', 'app': '.lnk (Parancsikon)', 'system-bin': 'Rendszer (Kuka)', 'system-cmd': 'Rendszer (.exe)' };
-            document.getElementById('prop-val-type').innerText = extMap[item.type] || item.type;
-            
-            // Az elérési út megjelenítése "Főmappa/" kezdettel, valamint a perjelek és visszaperjelek kezelése (kicserélése a látvány kedvéért).
-            let generatedPath = isSys ? ("Főmappa/" + item.name) : getFullPath(item);
-            document.getElementById('prop-val-path').innerText = generatedPath.replace(/\\/g, '/');
-            
+            document.getElementById('prop-val-type').innerText = item.type;
+            document.getElementById('prop-val-path').innerText = isSys ? ("Főmappa/" + item.name).replace(/\\/g, '/') : getFullPath(item).replace(/\\/g, '/');
             document.getElementById('prop-val-size').innerText = formatBytes(getItemSize(item)) + ` (${getItemSize(item)} byte)`;
             document.getElementById('prop-val-date').innerText = item.dateCreated ? new Date(item.dateCreated).toLocaleString() : "Ismeretlen";
-            
             let extra = "";
-            if (item.type === 'img') extra = "Felbontás: " + (item.resolution || "1024x768");
-            else if (item.type === 'mp3' || item.type === 'mp4') {
-                extra = "Média hossza: " + formatDuration(item.extraData);
-                if (item.vidConfig) extra += ` | Minőség: ${item.vidConfig.quality} (${item.vidConfig.ratio})`;
-            } else if (item.type === 'folder') {
-                let count = items.filter(i => i.parentId === item.id).length;
-                extra = `Tartalom: ${count} db elem a mappában`;
-            }
+            if (item.type === 'folder') extra = `Tartalom: ${items.filter(i => i.parentId === item.id).length} db elem`;
             document.getElementById('prop-extra-data').innerText = extra;
             document.getElementById('properties-window').style.display = 'flex';
         };
 
-        // --- KUKA FUNKCIÓK (Visszaállítás és Piros X) ---
+        // --- KUKA ---
         window.moveToBin = function(id) { 
-            contextMenu.style.display = 'none'; 
-            const index = items.findIndex(i => i.id === id); 
+            contextMenu.style.display = 'none'; const index = items.findIndex(i => i.id === id); 
             if (index > -1) { 
-                deletedItems.push(items[index]); 
-                items.splice(index, 1); 
-                renderDesktop(); 
-                if (currentOpenFolderId) renderFolderContent(); 
-                renderBinList(); 
+                deletedItems.push(items[index]); items.splice(index, 1); renderDesktop(); 
+                if (currentOpenFolderId) { renderFolderContent(); renderFolderTree(); } renderBinList(); 
             } 
         };
-
         window.restoreFromBin = function(id) {
             const index = deletedItems.findIndex(i => i.id === id);
             if (index > -1) {
                 let item = deletedItems[index];
-                // Ha a szülőmappa már nem létezik, tegye vissza az asztalra
                 if (item.parentId && !items.some(i => i.id === item.parentId)) item.parentId = null;
-                let pos = getNextGridPosition(item.parentId);
-                item.x = pos.x; item.y = pos.y;
-                items.push(item);
-                deletedItems.splice(index, 1);
-                renderDesktop();
-                if (currentOpenFolderId) renderFolderContent();
-                renderBinList();
+                let pos = getNextGridPosition(item.parentId); item.x = pos.x; item.y = pos.y;
+                items.push(item); deletedItems.splice(index, 1); renderDesktop();
+                if (currentOpenFolderId) { renderFolderContent(); renderFolderTree(); } renderBinList();
             }
         };
-
-        window.deletePermanently = function(id) {
-            deletedItems = deletedItems.filter(i => i.id !== id);
-            renderBinList();
-        };
-
+        window.deletePermanently = function(id) { deletedItems = deletedItems.filter(i => i.id !== id); renderBinList(); };
         function renderBinList() { 
             const binContent = document.getElementById('bin-content'); 
-            if (deletedItems.length === 0) {
-                binContent.innerHTML = '<div style="padding:15px; opacity:0.7;">A kuka jelenleg üres.</div>';
-                return;
-            }
+            if (deletedItems.length === 0) { binContent.innerHTML = `<div style="padding:15px; opacity:0.7;">${dict[currentLang].binEmpty}</div>`; return; }
             binContent.innerHTML = ''; 
             deletedItems.forEach(item => { 
                 binContent.innerHTML += `
-                    <div class="bin-item">
-                        <span><strong>${item.name}</strong> <small>(${item.type})</small></span>
-                        <div class="bin-actions">
-                            <button class="bin-btn" onclick="restoreFromBin('${item.id}')">♻️ Visszaállítás</button>
-                            <button class="bin-btn del" onclick="deletePermanently('${item.id}')" title="Végleges törlés">X</button>
-                        </div>
+                    <div class="bin-item"><span><strong>${item.name}</strong> <small>(${item.type})</small></span>
+                        <div class="bin-actions"><button class="bin-btn" onclick="restoreFromBin('${item.id}')">${dict[currentLang].btnRestore}</button><button class="bin-btn del" onclick="deletePermanently('${item.id}')" title="Végleges törlés">X</button></div>
                     </div>`; 
             }); 
         }
 
-        // --- ABLAKOK ÉS PARANCSSOR ---
-        window.openFolderWindow = function(id) {
-            let item = items.find(i => i.id === id); 
-            if (!item) return;
-            currentOpenFolderId = id; 
-            document.getElementById('folder-window-title').innerText = item.name;
-            document.getElementById('folder-window').style.display = 'flex'; 
-            renderFolderContent();
-        };
-
-        window.openCmdHelp = function() {
-            document.getElementById('cmd-help-window').style.display = 'flex';
-        };
-
+        // --- ABLAK BEZÁRÁSOK ---
         window.closeWindow = function(id) { 
             document.getElementById(id).style.display = 'none'; 
             if (id === 'folder-window') currentOpenFolderId = null; 
-            if (id === 'img-window') document.getElementById('media-window-body').innerHTML = '';
+            if (id === 'img-window') {
+                // Audio leállítása ha be van zárva
+                let aud = document.getElementById('playback-audio'); if(aud) { aud.pause(); aud.src = ""; }
+                document.getElementById('media-window-body').innerHTML = '';
+            }
         };
 
         window.saveTxtFile = function() { 
             if (activeFileId) { 
                 let item = items.find(i => i.id === activeFileId); 
-                if (item) { 
-                    item.content = document.getElementById('txt-textarea').value; 
-                    if (currentOpenFolderId) renderFolderContent();
-                    showDialog('Mentés', 'A szöveges fájl tartalma frissítve!', 'alert'); 
-                } 
+                if (item) { item.content = document.getElementById('txt-textarea').value; showDialog('Mentés', 'A fájl tartalma frissítve!', 'alert'); } 
             } 
         };
 
-        window.executeCommand = function() { 
-            try { 
-                eval(document.getElementById('cmd-textarea').value); 
-            } catch(e) { 
-                showDialog('Parancssor Hiba', e.message, 'alert'); 
-            } 
-        };
+        window.executeCommand = function() { try { eval(document.getElementById('cmd-textarea').value); } catch(e) { showDialog('Parancssor Hiba', e.message, 'alert'); } };
 
-        // --- BEÁLLÍTÁSOK ÉS FÁJLBA MENTÉS ---
-        document.getElementById('btn-settings').onclick = () => {
-            document.getElementById('settings-window').style.display = 'flex';
-        };
-
+        // --- BEÁLLÍTÁSOK / FÁJLBA MENTÉS ---
+        document.getElementById('btn-settings').onclick = () => { document.getElementById('settings-window').style.display = 'flex'; };
         document.querySelectorAll('.settings-tab').forEach(tab => {
             tab.addEventListener('click', (e) => {
-                document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
-                e.target.classList.add('active'); 
-                document.getElementById(e.target.dataset.target).classList.add('active');
+                document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+                e.target.classList.add('active'); document.getElementById(e.target.dataset.target).classList.add('active');
             });
         });
-
-        document.getElementById('icon-size-slider').oninput = (e) => { 
-            iconSize = parseInt(e.target.value); 
-            document.getElementById('icon-size-label').innerText = iconSize + 'px';
-            renderDesktop(); 
-            if (currentOpenFolderId) renderFolderContent(); 
-        };
+        document.getElementById('icon-size-slider').oninput = (e) => { iconSize = parseInt(e.target.value); document.getElementById('icon-size-label').innerText = iconSize + 'px'; renderDesktop(); if (currentOpenFolderId) renderFolderContent(); };
 
         window.exportState = function() {
             const state = JSON.stringify({ items, deletedItems, sysIcons, desktopBg, desktopStretch, iconSize, currentTimeZone, currentLang, darkMode: document.body.classList.contains('dark-mode') });
-            const blob = new Blob([state], {type: "application/json"});
-            const a = document.createElement('a'); 
-            a.href = URL.createObjectURL(blob); 
-            a.download = "windows_allapot.json"; 
-            a.click();
+            const blob = new Blob([state], {type: "application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "windows_allapot.json"; a.click();
         };
 
         window.importState = function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+            const file = e.target.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = function(evt) {
                 try {
                     const state = JSON.parse(evt.target.result);
-                    items = state.items || []; 
-                    deletedItems = state.deletedItems || [];
+                    items = state.items || []; deletedItems = state.deletedItems || [];
                     if (state.sysIcons) sysIcons = state.sysIcons;
-                    if (state.iconSize) {
-                        iconSize = state.iconSize;
-                        document.getElementById('icon-size-slider').value = iconSize;
-                        document.getElementById('icon-size-label').innerText = iconSize + 'px';
-                    }
+                    if (state.iconSize) { iconSize = state.iconSize; document.getElementById('icon-size-slider').value = iconSize; document.getElementById('icon-size-label').innerText = iconSize + 'px'; }
                     if (state.currentTimeZone) currentTimeZone = state.currentTimeZone;
-                    if (state.currentLang) {
-                        currentLang = state.currentLang;
-                        document.getElementById('lang-select').value = currentLang;
-                    }
-                    document.getElementById('dark-mode-toggle').checked = !!state.darkMode;
-                    toggleTheme();
+                    if (state.currentLang) { currentLang = state.currentLang; document.getElementById('lang-select').value = currentLang; }
+                    document.getElementById('dark-mode-toggle').checked = !!state.darkMode; toggleTheme();
                     if (state.desktopBg) applyBg(state.desktopBg, state.desktopStretch !== false);
-                    updateClock();
-                    renderDesktop();
-                    if (currentOpenFolderId) renderFolderContent();
-                } catch (err) {
-                    showDialog('Hiba', 'Érvénytelen mentési fájl!', 'alert');
-                }
-            };
-            reader.readAsText(file);
+                    updateClock(); applyTranslations(); renderDesktop(); if (currentOpenFolderId) { renderFolderContent(); renderFolderTree(); }
+                } catch (err) { showDialog('Hiba', 'Érvénytelen mentési fájl!', 'alert'); }
+            }; reader.readAsText(file);
         };
 
         window.addEventListener('DOMContentLoaded', () => { 
-            applyBg(desktopBg, true);
-            updateClock();
-            renderDesktop(); 
+            setTimeout(() => { let bootScreen = document.getElementById('boot-screen'); bootScreen.style.opacity = '0'; setTimeout(() => bootScreen.style.display = 'none', 1000); }, 2000);
+            applyTranslations(); applyBg(desktopBg, true); updateClock(); renderDesktop(); 
         });
     </script>
 </body>
