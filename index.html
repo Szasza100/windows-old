@@ -32,6 +32,19 @@
         #start-button { display: flex; align-items: center; justify-content: center; padding: 0 10px; cursor: pointer; height: 100%; border-right: 2px solid var(--win-border-dark); box-shadow: inset -1px 0 0 var(--win-border-light); }
         #start-button img { height: 28px; filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.5)); transition: transform 0.1s; }
         #start-button:active img { transform: scale(0.9); }
+        
+        /* ÚJ TÁLCA GOMBOK DIZÁJNJA */
+        #taskbar-apps { display: flex; gap: 5px; padding-left: 10px; flex-grow: 1; overflow-x: auto; align-items: center; height: 100%; }
+        .tb-btn { background: var(--win-bg); border: 2px solid; border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light); padding: 2px 8px; cursor: pointer; font-size: 13px; font-weight: bold; white-space: nowrap; max-width: 160px; overflow: hidden; text-overflow: ellipsis; display:flex; align-items:center; gap:5px; height: 28px; box-sizing: border-box; }
+        .tb-btn:active { border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark); padding: 3px 7px 1px 9px; }
+        .tb-btn.active { border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark); background: #e0e0e0; padding: 3px 7px 1px 9px; }
+        .tb-group { position: relative; height: 100%; display: flex; align-items: center; }
+        .tb-popup { position: absolute; bottom: 35px; left: 0; background: var(--win-bg); border: 2px solid var(--win-border-light); box-shadow: 2px 2px 5px rgba(0,0,0,0.5); display: none; flex-direction: column; z-index: 9999; border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light); }
+        .tb-popup-item { padding: 5px 15px; cursor: pointer; font-size: 13px; white-space: nowrap; border-bottom: 1px dotted var(--win-border-dark); }
+        .tb-popup-item:last-child { border-bottom: none; }
+        .tb-popup-item:hover { background: var(--win-header); color: var(--win-header-text); }
+        .tb-group:hover .tb-popup { display: flex; }
+
         #tray { display: flex; align-items: center; padding-right: 10px; border-left: 2px solid var(--win-border-dark); box-shadow: inset 1px 0 0 var(--win-border-light); height: 100%; padding-left: 10px; }
         .tray-btn { background: var(--win-bg); color: var(--win-text); border: 2px solid; border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light); padding: 2px 8px; margin-right: 5px; cursor: pointer; font-weight: bold; font-size: 14px; }
         .tray-btn:active { border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark); padding: 3px 7px 1px 9px; }
@@ -44,12 +57,18 @@
         .icon.selected .icon-label { background-color: #000080; border-color: yellow; color: white; text-shadow: none; }
         
         .window { position: absolute; background: var(--win-bg); color: var(--win-text); border: 2px solid; border-color: var(--win-border-light) #000 #000 var(--win-border-light); display: none; flex-direction: column; min-width: 300px; min-height: 200px; z-index: 100; box-shadow: 2px 2px 5px rgba(0,0,0,0.5); resize: both; overflow: hidden; }
+        .window.maximized { top: 0 !important; left: 0 !important; width: 100vw !important; height: calc(100vh - 40px) !important; }
+        
         .window-header { background: var(--win-header); color: var(--win-header-text); padding: 3px 5px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; cursor: move; }
-        .header-btns { display: flex; align-items: center; gap: 6px; }
+        .header-btns { display: flex; align-items: center; gap: 4px; }
+        
+        /* ÚJ ABLAKKEZELŐ GOMBOK */
+        .win-ctrl { background: var(--win-bg); color: var(--win-text); border: 2px solid; border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light); width: 20px; height: 20px; font-weight: bold; line-height: 16px; text-align: center; cursor: pointer; display: inline-block; font-size:12px; }
+        .win-ctrl:active { border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark); padding: 1px 0 0 1px; }
+        .win-ctrl.close { background: #d00; color: white; }
+
         .help-btn { background: var(--win-bg); color: var(--win-text); border: 2px solid; border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light); cursor: pointer; font-size: 12px; font-weight: bold; padding: 1px 6px; }
         .help-btn:active { border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark); }
-        .window-close { background: var(--win-bg); color: var(--win-text); border: 2px solid; border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light); width: 20px; height: 20px; font-weight: bold; line-height: 16px; text-align: center; cursor: pointer; display: inline-block; }
-        .window-close:active { border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark); }
         .window-content { padding: 10px; flex-grow: 1; overflow-y: auto; overflow-x: hidden; position: relative; background: var(--win-content-bg); color: var(--win-text); }
 
         .folder-toolbar { background: var(--win-bg); color: var(--win-text); border-bottom: 2px solid var(--win-border-dark); padding: 5px; display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; align-items: center; }
@@ -144,21 +163,28 @@
     <div id="context-menu"></div>
     <div id="desktop"></div>
 
-    <!-- TÁLCA -->
+    <!-- TÁLCA ÚJ DIZÁJNNAL -->
     <div id="taskbar">
         <div id="start-button" onclick="triggerEasterEgg()" title="Start">
             <img src="icon.png" alt="Start">
         </div>
-        <div id="taskbar-apps" style="display: flex; gap: 5px; padding-left: 10px; flex-grow: 1;"></div>
+        <div id="taskbar-apps"></div>
         <div id="tray">
             <button class="tray-btn" id="btn-settings">⚙️ <span data-i18n="settingsTitle">Beállítások</span></button>
             <div id="clock" onclick="changeTimezone()" title="Időzóna beállítása">00:00:00</div>
         </div>
     </div>
 
-    <!-- Tulajdonságok -->
+    <!-- STATIKUS ABLAKOK FEJLÉC FRISSÍTÉSSEL -->
     <div class="window" id="properties-window" style="top: 150px; left: 300px; width: 360px; height: 320px;">
-        <div class="window-header"><span id="prop-title" data-i18n="propTitle">Tulajdonságok</span><div class="window-close" onclick="closeWindow('properties-window')">X</div></div>
+        <div class="window-header" onmousedown="bringToFront(this.parentElement)">
+            <span class="win-title" data-i18n="propTitle">Tulajdonságok</span>
+            <div class="header-btns">
+                <div class="win-ctrl" onclick="minimizeWindow('properties-window')">_</div>
+                <div class="win-ctrl" onclick="maximizeWindow('properties-window')">□</div>
+                <div class="win-ctrl close" onclick="closeWindow('properties-window')">X</div>
+            </div>
+        </div>
         <div class="window-content" style="background: var(--win-bg);">
             <div class="prop-row"><div class="prop-label" data-i18n="propName">Név:</div><div id="prop-val-name"></div></div>
             <div class="prop-row"><div class="prop-label" data-i18n="propExt">Típus:</div><div id="prop-val-type"></div></div>
@@ -170,26 +196,44 @@
         </div>
     </div>
 
-    <!-- TXT Ablak -->
     <div class="window" id="txt-window" style="top: 150px; left: 350px; width: 420px; height: 320px;">
-        <div class="window-header"><span id="txt-title" data-i18n="txtDocTitle">Szöveges dokumentum</span><div class="window-close" onclick="closeWindow('txt-window')">X</div></div>
+        <div class="window-header" onmousedown="bringToFront(this.parentElement)">
+            <span class="win-title" id="txt-title" data-i18n="txtDocTitle">Szöveges dokumentum</span>
+            <div class="header-btns">
+                <div class="win-ctrl" onclick="minimizeWindow('txt-window')">_</div>
+                <div class="win-ctrl" onclick="maximizeWindow('txt-window')">□</div>
+                <div class="win-ctrl close" onclick="closeWindow('txt-window')">X</div>
+            </div>
+        </div>
         <div class="window-content" style="padding:0; overflow:hidden;">
             <textarea id="txt-textarea" style="border:none; padding:10px;"></textarea>
             <button class="app-btn" onclick="saveTxtFile()" data-i18n="btnSaveFile">Fájl Mentése</button>
         </div>
     </div>
 
-    <!-- HTML Futtató Ablak -->
-    <div class="window" id="html-window" style="top: 120px; left: 250px; width: 600px; height: 450px;">
-        <div class="window-header"><span id="html-title">Weboldal Megjelenítő</span><div class="window-close" onclick="closeWindow('html-window')">X</div></div>
+    <div class="window" id="html-window" style="top: 80px; left: 200px; width: 720px; height: 500px;">
+        <div class="window-header" onmousedown="bringToFront(this.parentElement)">
+            <span class="win-title" id="html-title">Weboldal Megjelenítő</span>
+            <div class="header-btns">
+                <div class="win-ctrl" onclick="minimizeWindow('html-window')">_</div>
+                <div class="win-ctrl" onclick="maximizeWindow('html-window')">□</div>
+                <div class="win-ctrl close" onclick="closeWindow('html-window')">X</div>
+            </div>
+        </div>
         <div class="window-content" style="padding:0; overflow:hidden; background:white;">
-            <iframe id="html-iframe" style="width:100%; height:100%; border:none;"></iframe>
+            <iframe id="html-iframe" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>
         </div>
     </div>
 
-    <!-- PPTX (Prezentáció) Ablak -->
     <div class="window" id="pptx-window" style="top: 100px; left: 300px; width: 550px; height: 400px;">
-        <div class="window-header"><span id="pptx-title">Prezentáció (PPTX)</span><div class="window-close" onclick="closeWindow('pptx-window')">X</div></div>
+        <div class="window-header" onmousedown="bringToFront(this.parentElement)">
+            <span class="win-title" id="pptx-title">Prezentáció (PPTX)</span>
+            <div class="header-btns">
+                <div class="win-ctrl" onclick="minimizeWindow('pptx-window')">_</div>
+                <div class="win-ctrl" onclick="maximizeWindow('pptx-window')">□</div>
+                <div class="win-ctrl close" onclick="closeWindow('pptx-window')">X</div>
+            </div>
+        </div>
         <div class="window-content" style="padding:0; overflow:hidden;">
             <div id="slide-container">
                 <div style="font-weight:bold; width:100%; text-align:center;">Dia <span id="current-slide-num">1</span> / <span id="total-slides-num">1</span></div>
@@ -204,13 +248,14 @@
         </div>
     </div>
 
-    <!-- Parancssor -->
     <div class="window" id="cmd-window" style="top: 50px; left: 280px; width: 520px; height: 360px;">
-        <div class="window-header">
-            <span data-i18n="cmdTitle">Rendszer Parancssor (CMD)</span>
+        <div class="window-header" onmousedown="bringToFront(this.parentElement)">
+            <span class="win-title" data-i18n="cmdTitle">Rendszer Parancssor (CMD)</span>
             <div class="header-btns">
                 <button class="help-btn" onclick="openCmdHelp()" data-i18n="btnHelp">❓ Súgó</button>
-                <div class="window-close" onclick="closeWindow('cmd-window')">X</div>
+                <div class="win-ctrl" onclick="minimizeWindow('cmd-window')">_</div>
+                <div class="win-ctrl" onclick="maximizeWindow('cmd-window')">□</div>
+                <div class="win-ctrl close" onclick="closeWindow('cmd-window')">X</div>
             </div>
         </div>
         <div class="window-content" style="padding:0; overflow:hidden;">
@@ -219,11 +264,14 @@
         </div>
     </div>
 
-    <!-- Parancssor Súgó Ablak -->
     <div class="window" id="cmd-help-window" style="top: 80px; left: 350px; width: 500px; height: 420px; z-index: 200;">
-        <div class="window-header">
-            <span data-i18n="cmdHelpTitle">Parancssor Súgó - Példák</span>
-            <div class="window-close" onclick="closeWindow('cmd-help-window')">X</div>
+        <div class="window-header" onmousedown="bringToFront(this.parentElement)">
+            <span class="win-title" data-i18n="cmdHelpTitle">Parancssor Súgó - Példák</span>
+            <div class="header-btns">
+                <div class="win-ctrl" onclick="minimizeWindow('cmd-help-window')">_</div>
+                <div class="win-ctrl" onclick="maximizeWindow('cmd-help-window')">□</div>
+                <div class="win-ctrl close" onclick="closeWindow('cmd-help-window')">X</div>
+            </div>
         </div>
         <div class="window-content" style="user-select: text;">
             <h4 style="margin-top:0;" data-i18n="cmdHelp1">Másold be ezeket a Parancssorba és nyomj Futtatást:</h4>
@@ -234,53 +282,40 @@
         </div>
     </div>
 
-    <!-- Képnézegető / Média Lejátszó -->
     <div class="window" id="img-window" style="top: 100px; left: 200px; width: 550px; height: 420px;">
-        <div class="window-header"><span id="img-title" data-i18n="mediaTitle">Média Megjelenítő</span><div class="window-close" onclick="closeWindow('img-window')">X</div></div>
+        <div class="window-header" onmousedown="bringToFront(this.parentElement)">
+            <span class="win-title" id="img-title" data-i18n="mediaTitle">Média Megjelenítő</span>
+            <div class="header-btns">
+                <div class="win-ctrl" onclick="minimizeWindow('img-window')">_</div>
+                <div class="win-ctrl" onclick="maximizeWindow('img-window')">□</div>
+                <div class="win-ctrl close" onclick="closeWindow('img-window')">X</div>
+            </div>
+        </div>
         <div class="window-content" id="media-window-body" style="padding:0; background:#000; color:#fff; display:flex; flex-direction:column; justify-content:center; align-items:center;">
         </div>
     </div>
 
-    <!-- Mappa -->
-    <div class="window" id="folder-window" style="top: 70px; left: 100px; width: 720px; height: 450px;">
-        <div class="window-header"><span id="folder-window-title" data-i18n="folderTitle">Mappa</span><div class="window-close" onclick="closeWindow('folder-window')">X</div></div>
-        <div class="folder-toolbar">
-            <label><span data-i18n="lblView">Nézet:</span>
-                <select id="folder-view-select" onchange="renderFolderContent()">
-                    <option value="grid" data-i18n="optGrid">Rács</option>
-                    <option value="list" data-i18n="optList">Lista</option>
-                </select>
-            </label>
-            <label><span data-i18n="lblSort">Rendezés:</span> 
-                <select id="folder-sort-select" onchange="renderFolderContent()">
-                    <option value="name" data-i18n="optName">Név szerint</option>
-                    <option value="date" data-i18n="optDate">Dátum szerint</option>
-                </select>
-            </label>
-            <label><span data-i18n="lblOrder">Irány:</span> 
-                <select id="folder-order-select" onchange="renderFolderContent()">
-                    <option value="asc" data-i18n="optAsc">Növekvő (A-Z / Régi-Új)</option>
-                    <option value="desc" data-i18n="optDesc">Csökkenő (Z-A / Új-Régi)</option>
-                </select>
-            </label>
-        </div>
-        <div style="display:flex; flex-grow:1; overflow:hidden;">
-            <!-- Bal oldalsáv ágrajzzal -->
-            <div id="folder-tree" style="width: 170px; background: var(--win-content-bg); border-right: 2px inset var(--win-border-dark); padding: 5px; overflow-y: auto;"></div>
-            <!-- Mappa tartalma -->
-            <div class="window-content folder-view-grid" id="folder-content" style="flex-grow:1;"></div>
-        </div>
-    </div>
-
-    <!-- Kuka -->
     <div class="window" id="bin-window" style="top: 120px; left: 200px; width: 450px; height: 350px;">
-        <div class="window-header"><span data-i18n="binTitle">Kuka Tartalma</span><div class="window-close" onclick="closeWindow('bin-window')">X</div></div>
+        <div class="window-header" onmousedown="bringToFront(this.parentElement)">
+            <span class="win-title" data-i18n="binTitle">Kuka Tartalma</span>
+            <div class="header-btns">
+                <div class="win-ctrl" onclick="minimizeWindow('bin-window')">_</div>
+                <div class="win-ctrl" onclick="maximizeWindow('bin-window')">□</div>
+                <div class="win-ctrl close" onclick="closeWindow('bin-window')">X</div>
+            </div>
+        </div>
         <div class="window-content" id="bin-content" style="display: block; overflow-y: auto;"></div>
     </div>
 
-    <!-- Beállítások -->
     <div class="window" id="settings-window" style="top: 100px; left: 120px; width: 480px; height: 340px;">
-        <div class="window-header"><span data-i18n="settingsTitle">Beállítások</span><div class="window-close" onclick="closeWindow('settings-window')">X</div></div>
+        <div class="window-header" onmousedown="bringToFront(this.parentElement)">
+            <span class="win-title" data-i18n="settingsTitle">Beállítások</span>
+            <div class="header-btns">
+                <div class="win-ctrl" onclick="minimizeWindow('settings-window')">_</div>
+                <div class="win-ctrl" onclick="maximizeWindow('settings-window')">□</div>
+                <div class="win-ctrl close" onclick="closeWindow('settings-window')">X</div>
+            </div>
+        </div>
         <div class="window-content" style="display:flex; padding:0; flex-direction:row;">
             <div class="settings-sidebar">
                 <div class="settings-tab active" data-target="panel-appearance" data-i18n="tabApp">Megjelenés</div>
@@ -335,10 +370,15 @@
     </div>
 
     <script>
-        let items = []; 
+        // ALAP ALKALMAZÁSOK BETÖLTÉSE: A kért Minecraft!
+        let items = [
+            { id: 'app_minecraft', type: 'app', name: 'Minecraft', imgUrl: 'Minecraft.icon', content: 'https://classic.minecraft.net/', dateCreated: new Date().toISOString(), x: 20, y: 240, parentId: null, extraData: 0 }
+        ]; 
+        
         let deletedItems = []; 
         let customMenuItems = [];
-        let currentOpenFolderId = null; 
+        let openWindows = []; // Tálca logikához: { id, type, itemId, title, elem, isDynamic, minimized, maximized }
+        
         let activeFileId = null;
         let iconSize = 48; 
         let GRID_W = 88; 
@@ -358,16 +398,16 @@
 
         const dict = {
             'hu': { 
-                newFolder: '📁 Új Mappa', newTxt: '📄 Új Szöveg (.txt)', newHtml: '🌐 Új Weboldal (.html)', newPptx: '📊 Új Prezi (.pptx)', newApp: '🔗 Új Parancsikon', newImg: '🖼️ Új Kép (.png)', newMp3: '🎵 Új Hang (.mp3)', newMp4: '🎬 Új Videó (.mp4)', bgSet: '🖼️ Háttérkép beállítása', open: '📂 Megnyitás', rename: '✏️ Átnevezés', prop: 'ℹ️ Tulajdonságok', del: '🗑️ Törlés (Kukába)', emptyErr: 'Nem található média tartalom!',
-                settingsTitle: 'Beállítások', propTitle: 'Tulajdonságok', propName: 'Név:', propExt: 'Típus:', propPath: 'Elérési út:', propSize: 'Helyfoglalás:', propDate: 'Készült:', txtDocTitle: 'Szöveges dokumentum', btnSaveFile: 'Fájl Mentése', cmdTitle: 'Rendszer Parancssor (CMD)', btnHelp: '❓ Súgó', cmdPlaceholder: '// Írj ide JavaScript parancsokat...', btnRun: 'Futtatás', cmdHelpTitle: 'Parancssor Súgó - Példák', cmdHelp1: 'Másold be ezeket a Parancssorba és nyomj Futtatást:', cmdHelp2: '1. Új menüpont hozzáadása a jobb klikk menühöz:', cmdHelp3: '2. Asztal háttérszínének megváltoztatása:', mediaTitle: 'Média Megjelenítő', folderTitle: 'Mappa', lblView: 'Nézet:', optGrid: 'Rács', optList: 'Lista', lblSort: 'Rendezés:', optName: 'Név szerint', optDate: 'Dátum szerint', lblOrder: 'Irány:', optAsc: 'Növekvő (A-Z / Régi-Új)', optDesc: 'Csökkenő (Z-A / Új-Régi)', binTitle: 'Kuka Tartalma', tabApp: 'Megjelenés', tabSys: 'Nyelv & Óra', tabSave: 'Mentés / Betöltés', setTheme: 'Téma és Ikonok', setDark: 'Sötét Mód (Dark Mode)', setIconSize: 'Ikonok mérete:', setLangTime: 'Nyelv és Idő', setLang: 'Rendszer nyelve:', setTimeFmt: 'Óra formátuma:', opt24: '24 órás', opt12: '12 órás (AM/PM)', setSaveInfoTitle: 'Rendszerállapot Fájlba', setSaveInfo: 'A böngészőbe semmi nem mentődik automatikusan. Itt tudod fájlba menteni és visszatölteni a munkádat:', btnExport: '💾 Mentés Fájlba (.json)', btnImport: '📂 Betöltés Fájlból', sysMsgTitle: 'Rendszerüzenet', sysRestored: 'A rendszer újra működésre kész és a hibát kijavítottuk.', btnOk: 'OK / Igen', btnCancel: 'Mégse / Nem', binName: 'Kuka', cmdName: 'Parancssor', errorCritical: 'Windows xp ERROR', backFolder: 'Vissza (Kifelé)', binEmpty: 'A kuka jelenleg üres.', btnRestore: '♻️ Visszaállítás', desktopName: '🖥️ Főmappa'
+                newFolder: '📁 Új Mappa', newTxt: '📄 Új Szöveg (.txt)', newHtml: '🌐 Új Weboldal (.html)', newPptx: '📊 Új Prezi (.pptx)', newApp: '🔗 Új Parancsikon', newImg: '🖼️ Új Kép (.png)', newMp3: '🎵 Új Hang (.mp3)', newMp4: '🎬 Új Videó (.mp4)', bgSet: '🖼️ Háttérkép beállítása', open: '📂 Megnyitás', rename: '✏️ Átnevezés', prop: 'ℹ️ Tulajdonságok', del: '🗑️ Törlés (Kukába)', emptyErr: 'Nem található tartalom!',
+                settingsTitle: 'Beállítások', propTitle: 'Tulajdonságok', propName: 'Név:', propExt: 'Típus:', propPath: 'Elérési út:', propSize: 'Helyfoglalás:', propDate: 'Készült:', txtDocTitle: 'Szöveges dokumentum', btnSaveFile: 'Fájl Mentése', cmdTitle: 'Rendszer Parancssor (CMD)', btnHelp: '❓ Súgó', cmdPlaceholder: '// Írj ide JavaScript parancsokat...', btnRun: 'Futtatás', cmdHelpTitle: 'Parancssor Súgó - Példák', cmdHelp1: 'Másold be ezeket a Parancssorba és nyomj Futtatást:', cmdHelp2: '1. Új menüpont hozzáadása a jobb klikk menühöz:', cmdHelp3: '2. Asztal háttérszínének megváltoztatása:', mediaTitle: 'Média Megjelenítő', folderTitle: 'Mappa', lblView: 'Nézet:', optGrid: 'Rács', optList: 'Lista', lblSort: 'Rendezés:', optName: 'Név szerint', optDate: 'Dátum szerint', lblOrder: 'Irány:', optAsc: 'Növekvő (A-Z / Régi-Új)', optDesc: 'Csökkenő (Z-A / Új-Régi)', binTitle: 'Kuka Tartalma', tabApp: 'Megjelenés', tabSys: 'Nyelv & Óra', tabSave: 'Mentés / Betöltés', setTheme: 'Téma és Ikonok', setDark: 'Sötét Mód (Dark Mode)', setIconSize: 'Ikonok mérete:', setLangTime: 'Nyelv és Idő', setLang: 'Rendszer nyelve:', setTimeFmt: 'Óra formátuma:', opt24: '24 órás', opt12: '12 órás (AM/PM)', setSaveInfoTitle: 'Rendszerállapot Fájlba', setSaveInfo: 'A böngészőbe semmi nem mentődik automatikusan. Itt tudod fájlba menteni és visszatölteni a munkádat:', btnExport: '💾 Mentés Fájlba (.json)', btnImport: '📂 Betöltés Fájlból', sysMsgTitle: 'Rendszerüzenet', sysRestored: 'A rendszer újra működésre kész és a hibát kijavítottuk.', btnOk: 'OK / Igen', btnCancel: 'Mégse / Nem', binName: 'Kuka', cmdName: 'Parancssor', errorCritical: 'Windows xp ERROR', backFolder: 'Vissza (Kifelé)', binEmpty: 'A kuka jelenleg üres.', btnRestore: '♻️ Visszaállítás', desktopName: '🖥️ Főmappa', iframeError: 'Egyes külső weboldalak elutasíthatják a beágyazást (üres lap jelenik meg). Ha nem töltött be, meg szeretnéd nyitni új ablakban? (Ezzel elhagyod a rendszert)'
             },
             'en': { 
-                newFolder: '📁 New Folder', newTxt: '📄 New Text (.txt)', newHtml: '🌐 New Webpage (.html)', newPptx: '📊 New Presentation (.pptx)', newApp: '🔗 New Shortcut', newImg: '🖼️ New Image (.png)', newMp3: '🎵 New Audio (.mp3)', newMp4: '🎬 New Video (.mp4)', bgSet: '🖼️ Set Background', open: '📂 Open', rename: '✏️ Rename', prop: 'ℹ️ Properties', del: '🗑️ Delete (To Bin)', emptyErr: 'No media content found!',
-                settingsTitle: 'Settings', propTitle: 'Properties', propName: 'Name:', propExt: 'Type:', propPath: 'Path:', propSize: 'Size:', propDate: 'Created:', txtDocTitle: 'Text Document', btnSaveFile: 'Save File', cmdTitle: 'Command Prompt (CMD)', btnHelp: '❓ Help', cmdPlaceholder: '// Write JavaScript commands here...', btnRun: 'Run', cmdHelpTitle: 'CMD Help - Examples', cmdHelp1: 'Copy these to CMD and press Run:', cmdHelp2: '1. Add custom right-click menu item:', cmdHelp3: '2. Change desktop background:', mediaTitle: 'Media Viewer', folderTitle: 'Folder', lblView: 'View:', optGrid: 'Grid', optList: 'List', lblSort: 'Sort:', optName: 'By Name', optDate: 'By Date', lblOrder: 'Order:', optAsc: 'Ascending (A-Z / Old-New)', optDesc: 'Descending (Z-A / New-Old)', binTitle: 'Recycle Bin', tabApp: 'Appearance', tabSys: 'Language & Time', tabSave: 'Save / Load', setTheme: 'Theme and Icons', setDark: 'Dark Mode', setIconSize: 'Icon size:', setLangTime: 'Language and Time', setLang: 'System language:', setTimeFmt: 'Clock format:', opt24: '24-hour', opt12: '12-hour (AM/PM)', setSaveInfoTitle: 'System State to File', setSaveInfo: 'Nothing saves automatically in the browser. Save or load your work here:', btnExport: '💾 Save to File (.json)', btnImport: '📂 Load from File', sysMsgTitle: 'System Message', sysRestored: 'System ready again, error fixed.', btnOk: 'OK / Yes', btnCancel: 'Cancel / No', binName: 'Recycle Bin', cmdName: 'Command Prompt', errorCritical: 'Windows xp ERROR', backFolder: 'Back (Up)', binEmpty: 'Recycle bin is empty.', btnRestore: '♻️ Restore', desktopName: '🖥️ Desktop'
+                newFolder: '📁 New Folder', newTxt: '📄 New Text (.txt)', newHtml: '🌐 New Webpage (.html)', newPptx: '📊 New Presentation (.pptx)', newApp: '🔗 New Shortcut', newImg: '🖼️ New Image (.png)', newMp3: '🎵 New Audio (.mp3)', newMp4: '🎬 New Video (.mp4)', bgSet: '🖼️ Set Background', open: '📂 Open', rename: '✏️ Rename', prop: 'ℹ️ Properties', del: '🗑️ Delete (To Bin)', emptyErr: 'No content found!',
+                settingsTitle: 'Settings', propTitle: 'Properties', propName: 'Name:', propExt: 'Type:', propPath: 'Path:', propSize: 'Size:', propDate: 'Created:', txtDocTitle: 'Text Document', btnSaveFile: 'Save File', cmdTitle: 'Command Prompt (CMD)', btnHelp: '❓ Help', cmdPlaceholder: '// Write JavaScript commands here...', btnRun: 'Run', cmdHelpTitle: 'CMD Help - Examples', cmdHelp1: 'Copy these to CMD and press Run:', cmdHelp2: '1. Add custom right-click menu item:', cmdHelp3: '2. Change desktop background:', mediaTitle: 'Media Viewer', folderTitle: 'Folder', lblView: 'View:', optGrid: 'Grid', optList: 'List', lblSort: 'Sort:', optName: 'By Name', optDate: 'By Date', lblOrder: 'Order:', optAsc: 'Ascending (A-Z / Old-New)', optDesc: 'Descending (Z-A / New-Old)', binTitle: 'Recycle Bin', tabApp: 'Appearance', tabSys: 'Language & Time', tabSave: 'Save / Load', setTheme: 'Theme and Icons', setDark: 'Dark Mode', setIconSize: 'Icon size:', setLangTime: 'Language and Time', setLang: 'System language:', setTimeFmt: 'Clock format:', opt24: '24-hour', opt12: '12-hour (AM/PM)', setSaveInfoTitle: 'System State to File', setSaveInfo: 'Nothing saves automatically in the browser. Save or load your work here:', btnExport: '💾 Save to File (.json)', btnImport: '📂 Load from File', sysMsgTitle: 'System Message', sysRestored: 'System ready again, error fixed.', btnOk: 'OK / Yes', btnCancel: 'Cancel / No', binName: 'Recycle Bin', cmdName: 'Command Prompt', errorCritical: 'Windows xp ERROR', backFolder: 'Back (Up)', binEmpty: 'Recycle bin is empty.', btnRestore: '♻️ Restore', desktopName: '🖥️ Desktop', iframeError: 'Some websites reject embedding (showing a blank page). If it didn\'t load, do you want to open it in a new window? (Leaving the system)'
             },
             'de': { 
-                newFolder: '📁 Neuer Ordner', newTxt: '📄 Neuer Text (.txt)', newHtml: '🌐 Neue Webseite (.html)', newPptx: '📊 Neue Präsentation (.pptx)', newApp: '🔗 Neue Verknüpfung', newImg: '🖼️ Neues Bild (.png)', newMp3: '🎵 Neues Audio (.mp3)', newMp4: '🎬 Neues Video (.mp4)', bgSet: '🖼️ Hintergrund einstellen', open: '📂 Öffnen', rename: '✏️ Umbenennen', prop: 'ℹ️ Eigenschaften', del: '🗑️ Löschen', emptyErr: 'Keine Medieninhalte gefunden!',
-                settingsTitle: 'Einstellungen', propTitle: 'Eigenschaften', propName: 'Name:', propExt: 'Typ:', propPath: 'Pfad:', propSize: 'Größe:', propDate: 'Erstellt:', txtDocTitle: 'Textdokument', btnSaveFile: 'Datei speichern', cmdTitle: 'Eingabeaufforderung (CMD)', btnHelp: '❓ Hilfe', cmdPlaceholder: '// Schreiben Sie hier JavaScript-Befehle...', btnRun: 'Ausführen', cmdHelpTitle: 'CMD Hilfe - Beispiele', cmdHelp1: 'Kopieren und Ausführen drücken:', cmdHelp2: '1. Neues Rechtsklick-Menü hinzufügen:', cmdHelp3: '2. Hintergrundbild ändern:', mediaTitle: 'Medienbetrachter', folderTitle: 'Ordner', lblView: 'Ansicht:', optGrid: 'Raster', optList: 'Liste', lblSort: 'Sortieren:', optName: 'Nach Name', optDate: 'Nach Datum', lblOrder: 'Richtung:', optAsc: 'Aufsteigend (A-Z / Alt-Neu)', optDesc: 'Absteigend (Z-A / Neu-Alt)', binTitle: 'Papierkorb', tabApp: 'Design', tabSys: 'Sprache & Zeit', tabSave: 'Speichern / Laden', setTheme: 'Design und Symbole', setDark: 'Dunkelmodus', setIconSize: 'Symbolgröße:', setLangTime: 'Sprache und Zeit', setLang: 'Systemsprache:', setTimeFmt: 'Zeitformat:', opt24: '24-Stunden', opt12: '12-Stunden (AM/PM)', setSaveInfoTitle: 'Systemstatus in Datei', setSaveInfo: 'Nichts wird automatisch gespeichert. Hier speichern und laden:', btnExport: '💾 In Datei speichern (.json)', btnImport: '📂 Aus Datei laden', sysMsgTitle: 'Systemmeldung', sysRestored: 'System wieder bereit, Fehler behoben.', btnOk: 'OK / Ja', btnCancel: 'Abbrechen / Nein', binName: 'Papierkorb', cmdName: 'Eingabeaufforderung', errorCritical: 'Windows xp ERROR', backFolder: 'Zurück (Nach oben)', binEmpty: 'Papierkorb ist leer.', btnRestore: '♻️ Wiederherstellen', desktopName: '🖥️ Hauptordner'
+                newFolder: '📁 Neuer Ordner', newTxt: '📄 Neuer Text (.txt)', newHtml: '🌐 Neue Webseite (.html)', newPptx: '📊 Neue Präsentation (.pptx)', newApp: '🔗 Neue Verknüpfung', newImg: '🖼️ Neues Bild (.png)', newMp3: '🎵 Neues Audio (.mp3)', newMp4: '🎬 Neues Video (.mp4)', bgSet: '🖼️ Hintergrund einstellen', open: '📂 Öffnen', rename: '✏️ Umbenennen', prop: 'ℹ️ Eigenschaften', del: '🗑️ Löschen', emptyErr: 'Keine Inhalte gefunden!',
+                settingsTitle: 'Einstellungen', propTitle: 'Eigenschaften', propName: 'Name:', propExt: 'Typ:', propPath: 'Pfad:', propSize: 'Größe:', propDate: 'Erstellt:', txtDocTitle: 'Textdokument', btnSaveFile: 'Datei speichern', cmdTitle: 'Eingabeaufforderung (CMD)', btnHelp: '❓ Hilfe', cmdPlaceholder: '// Schreiben Sie hier JavaScript-Befehle...', btnRun: 'Ausführen', cmdHelpTitle: 'CMD Hilfe - Beispiele', cmdHelp1: 'Kopieren und Ausführen drücken:', cmdHelp2: '1. Neues Rechtsklick-Menü hinzufügen:', cmdHelp3: '2. Hintergrundbild ändern:', mediaTitle: 'Medienbetrachter', folderTitle: 'Ordner', lblView: 'Ansicht:', optGrid: 'Raster', optList: 'Liste', lblSort: 'Sortieren:', optName: 'Nach Name', optDate: 'Nach Datum', lblOrder: 'Richtung:', optAsc: 'Aufsteigend (A-Z / Alt-Neu)', optDesc: 'Absteigend (Z-A / Neu-Alt)', binTitle: 'Papierkorb', tabApp: 'Design', tabSys: 'Sprache & Zeit', tabSave: 'Speichern / Laden', setTheme: 'Design und Symbole', setDark: 'Dunkelmodus', setIconSize: 'Symbolgröße:', setLangTime: 'Sprache und Zeit', setLang: 'Systemsprache:', setTimeFmt: 'Zeitformat:', opt24: '24-Stunden', opt12: '12-Stunden (AM/PM)', setSaveInfoTitle: 'Systemstatus in Datei', setSaveInfo: 'Nichts wird automatisch gespeichert. Hier speichern und laden:', btnExport: '💾 In Datei speichern (.json)', btnImport: '📂 Aus Datei laden', sysMsgTitle: 'Systemmeldung', sysRestored: 'System wieder bereit, Fehler behoben.', btnOk: 'OK / Ja', btnCancel: 'Abbrechen / Nein', binName: 'Papierkorb', cmdName: 'Eingabeaufforderung', errorCritical: 'Windows xp ERROR', backFolder: 'Zurück (Nach oben)', binEmpty: 'Papierkorb ist leer.', btnRestore: '♻️ Wiederherstellen', desktopName: '🖥️ Hauptordner', iframeError: 'Einige Websites blockieren die Einbettung (leere Seite). In neuem Fenster öffnen? (System verlassen)'
             }
         };
 
@@ -383,30 +423,34 @@
             });
             sysIcons.bin.name = langData.binName;
             sysIcons.cmd.name = langData.cmdName;
+            
+            // Frissítsük a már megnyitott dinamikus mappák és ablakok címét is
+            openWindows.forEach(w => {
+                if(w.type === 'folder') {
+                    let item = items.find(i => i.id === w.itemId);
+                    w.title = item ? item.name : dict[currentLang].desktopName;
+                    w.elem.querySelector('.win-title').innerText = w.title;
+                }
+            });
+            renderTaskbar();
         }
 
-        // Fájl típus kinyerése a kiterjesztésből (hogy az átnevezés számítson)
         function getFileTypeFromName(name) {
-            let parts = name.split('.');
-            if (parts.length < 2) return 'unknown';
+            let parts = name.split('.'); if (parts.length < 2) return 'unknown';
             let ext = parts.pop().toLowerCase();
             let map = { 'txt':'txt', 'html':'html', 'pptx':'pptx', 'png':'img', 'jpg':'img', 'jpeg':'img', 'mp3':'mp3', 'wav':'mp3', 'mp4':'mp4', 'lnk':'app' };
             return map[ext] || 'unknown';
         }
 
-        // Kiterjesztés megváltoztatása az ikonon is, ha a név megváltozott
         function updateTypeByExtension(item) {
             if (item.id.startsWith('system-') || item.type === 'folder') return;
             let newType = getFileTypeFromName(item.name);
-            if (newType !== 'unknown') {
-                item.type = newType;
-            }
+            if (newType !== 'unknown') { item.type = newType; }
         }
 
         // --- ÓRA ÉS IDŐZÓNA ---
         function updateClock() { 
-            const now = new Date();
-            const is12 = document.getElementById('time-format').value === '12';
+            const now = new Date(); const is12 = document.getElementById('time-format').value === '12';
             const options = { timeZone: currentTimeZone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: is12 };
             const locale = currentLang === 'hu' ? 'hu-HU' : (currentLang === 'de' ? 'de-DE' : 'en-US');
             document.getElementById('clock').innerHTML = new Intl.DateTimeFormat(locale, options).format(now).replace(', ', '<br>');
@@ -414,48 +458,29 @@
         setInterval(updateClock, 1000);
 
         function changeTimezone() {
-            showDialog('Időzóna választása', 'Melyik ország/város idejére hangoljuk az órát?', 'select', (tz) => { 
-                if (tz) { currentTimeZone = tz; updateClock(); } 
-            });
+            showDialog('Időzóna választása', 'Melyik ország/város idejére hangoljuk az órát?', 'select', (tz) => { if (tz) { currentTimeZone = tz; updateClock(); } });
             const sel = document.getElementById('dialog-select');
             sel.innerHTML = `
-                <option value="Europe/Budapest">Magyarország (Budapest)</option>
-                <option value="Europe/London">Egyesült Királyság (London)</option>
-                <option value="Europe/Berlin">Németország (Berlin)</option>
-                <option value="America/New_York">USA (New York)</option>
-                <option value="America/Los_Angeles">USA (Los Angeles)</option>
-                <option value="Asia/Tokyo">Japán (Tokió)</option>
-                <option value="Australia/Sydney">Ausztrália (Sydney)</option>
-            `;
-            sel.value = currentTimeZone;
+                <option value="Europe/Budapest">Magyarország (Budapest)</option><option value="Europe/London">Egyesült Királyság (London)</option><option value="Europe/Berlin">Németország (Berlin)</option><option value="America/New_York">USA (New York)</option><option value="America/Los_Angeles">USA (Los Angeles)</option><option value="Asia/Tokyo">Japán (Tokió)</option><option value="Australia/Sydney">Ausztrália (Sydney)</option>
+            `; sel.value = currentTimeZone;
         }
 
         function toggleTheme() { document.body.classList.toggle('dark-mode', document.getElementById('dark-mode-toggle').checked); }
-
         function changeLanguage() {
             currentLang = document.getElementById('lang-select').value;
-            applyTranslations(); updateClock(); renderDesktop();
-            if (currentOpenFolderId) { renderFolderContent(); renderFolderTree(); }
-            renderBinList();
+            applyTranslations(); updateClock(); renderDesktop(); refreshAllFolders(); renderBinList();
         }
 
         // --- EASTER EGG (JAVÍTOTT SPAM VÉDELEMMEL) ---
         let eeClicks = 0; let eeTimer = null; let spamInterval = null; let isEEActive = false;
         window.triggerEasterEgg = function() {
-            if (isEEActive) return; // Megakadályozzuk a túlkattintásos végtelen ciklust
-            
-            eeClicks++; 
-            clearTimeout(eeTimer); 
-            eeTimer = setTimeout(() => { eeClicks = 0; }, 1000);
+            if (isEEActive) return; 
+            eeClicks++; clearTimeout(eeTimer); eeTimer = setTimeout(() => { eeClicks = 0; }, 1000);
             
             if (eeClicks === 5) {
-                eeClicks = 0; 
-                isEEActive = true; 
-                let spamCount = 0;
-                
+                eeClicks = 0; isEEActive = true; let spamCount = 0;
                 spamInterval = setInterval(() => {
-                    let fakeWindow = document.createElement('div');
-                    fakeWindow.className = 'window fake-error-window';
+                    let fakeWindow = document.createElement('div'); fakeWindow.className = 'window fake-error-window';
                     fakeWindow.style.display = 'flex'; fakeWindow.style.width = '260px'; fakeWindow.style.height = '140px';
                     fakeWindow.style.top = (Math.random() * (window.innerHeight - 180)) + 'px';
                     fakeWindow.style.left = (Math.random() * (window.innerWidth - 300)) + 'px';
@@ -470,9 +495,7 @@
                 }, 30);
                 
                 setTimeout(() => {
-                    clearInterval(spamInterval);
-                    document.querySelectorAll('.fake-error-window').forEach(w => w.remove());
-                    
+                    clearInterval(spamInterval); document.querySelectorAll('.fake-error-window').forEach(w => w.remove());
                     const bsod = document.getElementById('bsod-screen');
                     bsod.style.display = 'block'; bsod.style.opacity = '1';
                     
@@ -481,34 +504,187 @@
                         let choppyFadeInterval = setInterval(() => {
                             opacity -= (Math.random() * 0.2 + 0.05);
                             if (opacity <= 0) {
-                                opacity = 0; 
-                                clearInterval(choppyFadeInterval); 
-                                bsod.style.display = 'none';
-                                
+                                opacity = 0; clearInterval(choppyFadeInterval); bsod.style.display = 'none';
                                 const toast = document.getElementById('toast-notification');
-                                toast.style.right = '10px'; 
-                                setTimeout(() => { 
-                                    toast.style.right = '-320px'; 
-                                    isEEActive = false; // Végzett az animáció, újra engedjük
-                                }, 5000);
-                            }
-                            bsod.style.opacity = opacity;
+                                toast.style.right = '10px'; setTimeout(() => { toast.style.right = '-320px'; isEEActive = false; }, 5000);
+                            } bsod.style.opacity = opacity;
                         }, 200); 
                     }, 5000); 
                 }, 2000); 
             }
         }
 
-        function recalculateGrid() { GRID_W = iconSize + 40; GRID_H = iconSize + 60; }
-        function clearSelection() { document.querySelectorAll('.icon.selected').forEach(el => el.classList.remove('selected')); }
+        // --- ABLAKKEZELÉS ÉS TÁLCA LOGIKA ---
+        function getIconForType(type) {
+            let map = { 'folder':'📁', 'txt':'📄', 'html':'🌐', 'pptx':'📊', 'app':'🔗', 'img':'🖼️', 'mp3':'🎵', 'mp4':'🎬', 'sys-bin':'🗑️', 'sys-cmd':'💻', 'sys-settings':'⚙️', 'sys-help':'❓', 'sys-prop':'ℹ️' };
+            return map[type] || '📝';
+        }
+
+        window.bringToFront = function(winElem) {
+            document.querySelectorAll('.window').forEach(w => { if (w.id !== 'dialog-window' && !w.classList.contains('fake-error-window')) w.style.zIndex = 100; });
+            if (winElem) winElem.style.zIndex = 500;
+        };
+
+        window.minimizeWindow = function(id) {
+            let w = openWindows.find(x => x.id === id);
+            if (w) { w.minimized = true; w.elem.style.display = 'none'; renderTaskbar(); }
+        };
+
+        window.maximizeWindow = function(id) {
+            let w = openWindows.find(x => x.id === id);
+            if (w) {
+                w.maximized = !w.maximized;
+                if (w.maximized) w.elem.classList.add('maximized'); else w.elem.classList.remove('maximized');
+                bringToFront(w.elem);
+            }
+        };
+
+        window.restoreWindow = function(id) {
+            let w = openWindows.find(x => x.id === id);
+            if (w) { w.minimized = false; w.elem.style.display = 'flex'; bringToFront(w.elem); renderTaskbar(); }
+        };
+
+        window.closeWindow = function(id) {
+            let w = openWindows.find(x => x.id === id);
+            if (w) {
+                if (w.isDynamic) w.elem.remove();
+                else {
+                    w.elem.style.display = 'none';
+                    if (id === 'img-window') { let aud = document.getElementById('playback-audio'); if(aud) { aud.pause(); aud.src = ""; } document.getElementById('media-window-body').innerHTML = ''; }
+                    if (id === 'html-window') { const iframe = document.getElementById('html-iframe'); iframe.removeAttribute('srcdoc'); iframe.removeAttribute('src'); }
+                }
+                openWindows = openWindows.filter(x => x.id !== id); renderTaskbar();
+            }
+        };
+
+        function renderTaskbar() {
+            const tb = document.getElementById('taskbar-apps'); tb.innerHTML = '';
+            let groups = {};
+            openWindows.forEach(w => { if(!groups[w.type]) groups[w.type] = []; groups[w.type].push(w); });
+
+            for(let t in groups) {
+                let wins = groups[t]; let icon = getIconForType(t);
+                if (t === 'folder' && wins.length > 1) { 
+                    // Több mappa csoportosítása
+                    let groupDiv = document.createElement('div'); groupDiv.className = 'tb-group';
+                    let btn = document.createElement('div'); btn.className = 'tb-btn';
+                    btn.innerHTML = `<span>${icon}</span> ${wins.length} Mappa`;
+                    
+                    let popup = document.createElement('div'); popup.className = 'tb-popup';
+                    wins.forEach(w => {
+                        let pItem = document.createElement('div'); pItem.className = 'tb-popup-item'; pItem.innerText = w.title;
+                        pItem.onclick = () => { restoreWindow(w.id); popup.style.display = 'none'; }; popup.appendChild(pItem);
+                    });
+                    groupDiv.appendChild(btn); groupDiv.appendChild(popup); tb.appendChild(groupDiv);
+                } else {
+                    wins.forEach(w => {
+                        let btn = document.createElement('div'); btn.className = `tb-btn ${w.minimized ? '' : 'active'}`;
+                        btn.innerHTML = `<span>${icon}</span> ${w.title}`;
+                        btn.onclick = () => {
+                            if (w.minimized) restoreWindow(w.id);
+                            else { if (w.elem.style.zIndex == 500) minimizeWindow(w.id); else restoreWindow(w.id); }
+                        }; tb.appendChild(btn);
+                    });
+                }
+            }
+        }
+
+        function openStaticWindow(id, type, title) {
+            let win = document.getElementById(id); win.style.display = 'flex'; bringToFront(win);
+            if (!openWindows.find(w => w.id === id)) { openWindows.push({ id, type, title, elem: win, isDynamic: false, minimized: false, maximized: false }); } 
+            else { let w = openWindows.find(w => w.id === id); w.minimized = false; w.title = title; win.querySelector('.win-title').innerText = title; }
+            renderTaskbar();
+        }
+
+        // --- DINAMIKUS MAPPÁK ---
+        window.openFolderWindow = function(folderId) {
+            if (folderId === null) return; // Nem asztalt nyitunk magára
+            let title = folderId ? items.find(i => i.id === folderId).name : dict[currentLang].desktopName;
+            let winId = 'folder_' + Date.now() + Math.floor(Math.random()*1000);
+            
+            let win = document.createElement('div'); win.className = 'window app-window'; win.id = winId;
+            win.style.top = (70 + (openWindows.length * 20) % 150) + 'px'; win.style.left = (100 + (openWindows.length * 20) % 200) + 'px';
+            win.style.width = '720px'; win.style.height = '450px'; win.style.display = 'flex';
+
+            win.innerHTML = `
+                <div class="window-header" onmousedown="bringToFront(this.parentElement)">
+                    <span class="win-title">${title}</span>
+                    <div class="header-btns">
+                        <div class="win-ctrl" onclick="minimizeWindow('${winId}')">_</div>
+                        <div class="win-ctrl" onclick="maximizeWindow('${winId}')">□</div>
+                        <div class="win-ctrl close" onclick="closeWindow('${winId}')">X</div>
+                    </div>
+                </div>
+                <div class="folder-toolbar">
+                    <label><span>${dict[currentLang].lblView}</span> <select class="f-view" onchange="renderSingleFolder('${winId}')"><option value="grid">${dict[currentLang].optGrid}</option><option value="list">${dict[currentLang].optList}</option></select></label>
+                    <label><span>${dict[currentLang].lblSort}</span> <select class="f-sort" onchange="renderSingleFolder('${winId}')"><option value="name">${dict[currentLang].optName}</option><option value="date">${dict[currentLang].optDate}</option></select></label>
+                    <label><span>${dict[currentLang].lblOrder}</span> <select class="f-order" onchange="renderSingleFolder('${winId}')"><option value="asc">${dict[currentLang].optAsc}</option><option value="desc">${dict[currentLang].optDesc}</option></select></label>
+                </div>
+                <div style="display:flex; flex-grow:1; overflow:hidden;">
+                    <div class="folder-tree" style="width: 170px; background: var(--win-content-bg); border-right: 2px inset var(--win-border-dark); padding: 5px; overflow-y: auto;"></div>
+                    <div class="window-content folder-view-grid folder-content" style="flex-grow:1;" id="content_${winId}"></div>
+                </div>
+            `;
+            document.body.appendChild(win);
+            openWindows.push({ id: winId, type: 'folder', itemId: folderId, title: title, elem: win, isDynamic: true, minimized: false, maximized: false });
+            
+            renderSingleFolder(winId); renderSingleTree(winId); bringToFront(win); renderTaskbar();
+        };
+
+        window.navigateFolder = function(winId, newFolderId) {
+            let w = openWindows.find(x => x.id === winId); if (!w) return;
+            w.itemId = newFolderId; let item = items.find(i => i.id === newFolderId);
+            w.title = item ? item.name : dict[currentLang].desktopName;
+            w.elem.querySelector('.win-title').innerText = w.title;
+            renderSingleFolder(winId); renderSingleTree(winId); renderTaskbar();
+        };
+
+        window.renderSingleFolder = function(winId) {
+            let w = openWindows.find(x => x.id === winId); if (!w) return;
+            let container = w.elem.querySelector('.folder-content');
+            let viewMode = w.elem.querySelector('.f-view').value; let sortBy = w.elem.querySelector('.f-sort').value; let order = w.elem.querySelector('.f-order').value;
+            container.className = `window-content folder-view-${viewMode} folder-content`;
+            
+            container.innerHTML = `
+                <div class="icon" data-id="folder-up" data-type="folder-up" style="left:20px; top:20px; width:${viewMode === 'list' ? '100%' : (iconSize + 30) + 'px'}">
+                    <div class="icon-img-wrapper" style="width:${iconSize}px; height:${iconSize}px; font-size:${iconSize*0.65}px;">⤴️</div>
+                    <div class="icon-label">${dict[currentLang].backFolder}</div>
+                </div>`;
+                
+            let folderItems = items.filter(i => i.parentId === w.itemId);
+            folderItems.sort((a, b) => { let cmp = 0; if (sortBy === 'name') cmp = a.name.localeCompare(b.name, 'hu'); else cmp = new Date(a.dateCreated || 0) - new Date(b.dateCreated || 0); return order === 'asc' ? cmp : -cmp; });
+            folderItems.forEach((item) => {
+                if (viewMode === 'grid' && item.x === 20 && item.y === 20) { let pos = getNextGridPosition(w.itemId, item.id); item.x = pos.x; item.y = pos.y; }
+                container.insertAdjacentHTML('beforeend', getIconHTML(item, viewMode));
+            });
+        };
+
+        window.renderSingleTree = function(winId) {
+            let w = openWindows.find(x => x.id === winId); if (!w) return;
+            let treeContainer = w.elem.querySelector('.folder-tree');
+            function buildTreeHTML(parentId, level) {
+                let html = ''; let folders = items.filter(i => i.type === 'folder' && i.parentId === parentId);
+                folders.sort((a, b) => a.name.localeCompare(b.name, 'hu'));
+                folders.forEach(f => {
+                    let isActive = (f.id === w.itemId) ? 'active' : '';
+                    html += `<div class="tree-item ${isActive}" style="padding-left: ${level * 10}px;" onclick="navigateFolder('${winId}', '${f.id}')" title="${f.name}">📁 ${f.name}</div>`;
+                    html += buildTreeHTML(f.id, level + 1); 
+                }); return html;
+            }
+            let isDesktopActive = (w.itemId === null) ? 'active' : '';
+            let finalHtml = `<div class="tree-item ${isDesktopActive}" onclick="navigateFolder('${winId}', null)">${dict[currentLang].desktopName}</div>`;
+            finalHtml += buildTreeHTML(null, 1); treeContainer.innerHTML = finalHtml;
+        };
+
+        function refreshAllFolders() {
+            openWindows.filter(w => w.type === 'folder').forEach(w => { renderSingleFolder(w.id); renderSingleTree(w.id); });
+        }
 
         // --- WINDOWS DIALOG ---
         let dialogCallback = null;
         function showDialog(title, text, type = 'alert', callback = null, customHtml = '') {
-            document.getElementById('dialog-title').innerText = title;
-            document.getElementById('dialog-text').innerText = text;
-            const inp = document.getElementById('dialog-input'); const sel = document.getElementById('dialog-select');
-            const cust = document.getElementById('dialog-custom-html');
+            document.getElementById('dialog-title').innerText = title; document.getElementById('dialog-text').innerText = text;
+            const inp = document.getElementById('dialog-input'); const sel = document.getElementById('dialog-select'); const cust = document.getElementById('dialog-custom-html');
             inp.style.display = type === 'prompt' ? 'block' : 'none'; sel.style.display = type === 'select' ? 'block' : 'none'; cust.innerHTML = customHtml || '';
             document.getElementById('dialog-btn-cancel').style.display = (type !== 'alert') ? 'block' : 'none';
             if (type === 'prompt') inp.value = '';
@@ -524,30 +700,29 @@
                 const cb = dialogCallback; dialogCallback = null; cb(res);
             }
         };
-        document.getElementById('dialog-btn-cancel').onclick = () => { 
-            document.getElementById('dialog-window').style.display = 'none'; 
-            if (dialogCallback) { const cb = dialogCallback; dialogCallback = null; cb(null); }
-        };
+        document.getElementById('dialog-btn-cancel').onclick = () => { document.getElementById('dialog-window').style.display = 'none'; if (dialogCallback) { const cb = dialogCallback; dialogCallback = null; cb(null); } };
 
         // --- JOBB KLIKK MENÜ ---
         let contextMenuTargetFolder = null; let contextMenuTargetIcon = null;
         document.addEventListener('contextmenu', (e) => {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return; 
-            if (e.target.closest('.window-content') && e.target.closest('.window').id !== 'folder-window') return;
+            if (e.target.closest('.window-content') && e.target.closest('.window.app-window')) return;
             e.preventDefault();
             const icon = e.target.closest('.icon'); contextMenu.innerHTML = ''; 
             if (icon) {
                 contextMenuTargetIcon = icon.dataset.id;
                 let isSystem = icon.dataset.type && (icon.dataset.type.startsWith('system-') || icon.dataset.type === 'folder-up');
+                let winElem = icon.closest('.window'); let sourceWinId = winElem ? winElem.id : null;
                 contextMenu.innerHTML = `
-                    <div class="menu-item" onclick="handleDblClick('${contextMenuTargetIcon}')">${dict[currentLang].open}</div>
+                    <div class="menu-item" onclick="handleDblClick('${contextMenuTargetIcon}', '${sourceWinId}')">${dict[currentLang].open}</div>
                     ${!isSystem ? `<div class="menu-separator"></div><div class="menu-item" onclick="triggerRename('${contextMenuTargetIcon}')">${dict[currentLang].rename}</div>` : ''}
                     ${icon.dataset.type !== 'folder-up' ? `<div class="menu-separator"></div><div class="menu-item" onclick="showProperties('${contextMenuTargetIcon}')">${dict[currentLang].prop}</div>` : ''}
                     ${!isSystem ? `<div class="menu-separator"></div><div class="menu-item" onclick="moveToBin('${contextMenuTargetIcon}')" style="color:red;">${dict[currentLang].del}</div>` : ''}
                 `;
             } else {
-                const folderContent = e.target.closest('#folder-content');
-                contextMenuTargetFolder = folderContent ? currentOpenFolderId : null; contextMenuTargetIcon = null;
+                const folderContent = e.target.closest('.folder-content');
+                let winElem = folderContent ? folderContent.closest('.window') : null;
+                contextMenuTargetFolder = winElem ? openWindows.find(w => w.id === winElem.id).itemId : null; contextMenuTargetIcon = null;
                 let menuHTML = `
                     <div class="menu-item" onclick="createNewItem('folder')">${dict[currentLang].newFolder}</div>
                     <div class="menu-item" onclick="createNewItem('txt')">${dict[currentLang].newTxt}</div>
@@ -559,15 +734,10 @@
                     <div class="menu-item" onclick="createNewItem('mp4')">${dict[currentLang].newMp4}</div>
                 `;
                 if (!folderContent) { menuHTML += `<div class="menu-separator"></div><div class="menu-item" onclick="changeDesktopBg()">${dict[currentLang].bgSet}</div>`; }
-                if (customMenuItems.length > 0) {
-                    menuHTML += `<div class="menu-separator"></div>`;
-                    customMenuItems.forEach((cItem, idx) => { menuHTML += `<div class="menu-item" onclick="runCustomMenu(${idx})">${cItem.label}</div>`; });
-                }
+                if (customMenuItems.length > 0) { menuHTML += `<div class="menu-separator"></div>`; customMenuItems.forEach((cItem, idx) => { menuHTML += `<div class="menu-item" onclick="runCustomMenu(${idx})">${cItem.label}</div>`; }); }
                 contextMenu.innerHTML = menuHTML;
             }
-            contextMenu.style.display = 'flex'; 
-            contextMenu.style.left = Math.min(e.clientX, window.innerWidth - 180) + 'px'; 
-            contextMenu.style.top = Math.min(e.clientY, window.innerHeight - 220) + 'px';
+            contextMenu.style.display = 'flex'; contextMenu.style.left = Math.min(e.clientX, window.innerWidth - 180) + 'px'; contextMenu.style.top = Math.min(e.clientY, window.innerHeight - 220) + 'px';
         });
 
         window.runCustomMenu = function(idx) { contextMenu.style.display = 'none'; if (customMenuItems[idx] && customMenuItems[idx].action) customMenuItems[idx].action(); };
@@ -575,44 +745,34 @@
             if (!e.target.closest('#context-menu')) contextMenu.style.display = 'none';
             if (!e.target.closest('.window-header') && e.target.tagName !== 'INPUT' && !e.target.closest('#media-capture-overlay')) {
                 const icon = e.target.closest('.icon');
-                if (icon) { clearSelection(); icon.classList.add('selected'); } 
-                else if (e.target === desktop || e.target.id === 'folder-content') { clearSelection(); }
+                if (icon) { clearSelection(); icon.classList.add('selected'); } else if (e.target === desktop || e.target.closest('.folder-content')) { clearSelection(); }
             }
         });
 
-        // --- GOMB (DELETE) KEZELÉSE ---
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Delete' && !document.activeElement.matches('input, textarea')) {
                 const selected = document.querySelector('.icon.selected');
-                if (selected && selected.dataset.id && !selected.dataset.id.startsWith('system-') && selected.dataset.type !== 'folder-up') {
-                    moveToBin(selected.dataset.id);
-                }
+                if (selected && selected.dataset.id && !selected.dataset.id.startsWith('system-') && selected.dataset.type !== 'folder-up') { moveToBin(selected.dataset.id); }
             }
         });
 
-        // --- MOZGATÁS ÉS DRAG & DROP ---
-        let draggedElement = null, isDragging = false, wasDragging = false, startX, startY, origX, origY, offsetX, offsetY;
-        let pressTimer = null, renameTriggered = false;
+        function recalculateGrid() { GRID_W = iconSize + 40; GRID_H = iconSize + 60; }
+        
+        let draggedElement = null, isDragging = false, wasDragging = false, startX, startY, origX, origY, offsetX, offsetY; let pressTimer = null, renameTriggered = false;
         
         document.addEventListener('mousedown', (e) => {
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA' || e.target.closest('#context-menu') || e.target.closest('#folder-tree')) return;
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA' || e.target.closest('#context-menu') || e.target.closest('.folder-tree')) return;
             const icon = e.target.closest('.icon'); const winHeader = e.target.closest('.window-header');
-            
             if (icon && e.button === 0) { 
                 draggedElement = icon; isDragging = false; wasDragging = false; renameTriggered = false;
                 startX = e.clientX; startY = e.clientY; origX = parseFloat(icon.style.left || 0); origY = parseFloat(icon.style.top || 0);
                 const rect = icon.getBoundingClientRect(); offsetX = e.clientX - rect.left; offsetY = e.clientY - rect.top;
                 clearSelection(); icon.classList.add('selected');
-                if (icon.dataset.type !== 'folder-up') {
-                    pressTimer = setTimeout(() => {
-                        renameTriggered = true; isDragging = false; draggedElement = null; triggerRename(icon.dataset.id);
-                    }, 3000);
-                }
+                if (icon.dataset.type !== 'folder-up') { pressTimer = setTimeout(() => { renameTriggered = true; isDragging = false; draggedElement = null; triggerRename(icon.dataset.id); }, 3000); }
             } else if (winHeader && e.button === 0) {
                 draggedElement = winHeader.parentElement; isDragging = false; startX = e.clientX; startY = e.clientY;
                 const rect = draggedElement.getBoundingClientRect(); offsetX = e.clientX - rect.left; offsetY = e.clientY - rect.top;
-                document.querySelectorAll('.window').forEach(w => { if (w.id !== 'dialog-window' && !w.classList.contains('fake-error-window')) w.style.zIndex = 100; });
-                draggedElement.style.zIndex = 500;
+                bringToFront(draggedElement);
             }
         });
         document.addEventListener('mousemove', (e) => {
@@ -630,239 +790,156 @@
             }
         });
         document.addEventListener('mouseup', (e) => {
-            if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
-            if (renameTriggered) { renameTriggered = false; return; }
+            if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } if (renameTriggered) { renameTriggered = false; return; }
             if (draggedElement) {
                 if (isDragging && draggedElement.classList.contains('icon')) {
                     wasDragging = true; setTimeout(() => wasDragging = false, 150); 
-                    const id = draggedElement.dataset.id;
-                    let isSys = (id === 'system-bin' || id === 'system-cmd');
+                    const id = draggedElement.dataset.id; let isSys = (id === 'system-bin' || id === 'system-cmd');
                     let item = isSys ? (id === 'system-bin' ? sysIcons.bin : sysIcons.cmd) : items.find(i => i.id === id);
                     if (item) {
                         let rawX = parseFloat(draggedElement.style.left); let rawY = parseFloat(draggedElement.style.top);
                         let targetX = Math.round((rawX - 20) / GRID_W) * GRID_W + 20; let targetY = Math.round((rawY - 20) / GRID_H) * GRID_H + 20;
                         const pId = item.parentId || null;
                         if (pId !== null && !isSys && Math.abs(rawX - 20) < 45 && Math.abs(rawY - 20) < 45) {
-                            let currentFolder = items.find(f => f.id === pId);
-                            item.parentId = currentFolder ? (currentFolder.parentId || null) : null;
-                            let freePos = getNextGridPosition(item.parentId, item.id);
-                            item.x = freePos.x; item.y = freePos.y;
+                            let currentFolder = items.find(f => f.id === pId); item.parentId = currentFolder ? (currentFolder.parentId || null) : null;
+                            let freePos = getNextGridPosition(item.parentId, item.id); item.x = freePos.x; item.y = freePos.y;
                         } else {
                             let droppedOnFolder = items.find(i => i.type === 'folder' && i.id !== id && i.parentId === pId && Math.abs(i.x - rawX) < 45 && Math.abs(i.y - rawY) < 45);
                             if (droppedOnFolder && !isSys) {
-                                item.parentId = droppedOnFolder.id; 
-                                let pos = getNextGridPosition(item.parentId, item.id); item.x = pos.x; item.y = pos.y;
+                                item.parentId = droppedOnFolder.id; let pos = getNextGridPosition(item.parentId, item.id); item.x = pos.x; item.y = pos.y;
                             } else {
                                 let conflict = items.some(i => i.id !== id && i.parentId === pId && Math.abs(i.x - targetX) < 10 && Math.abs(i.y - targetY) < 10);
-                                if (pId === null) {
-                                    if (id !== 'system-bin' && Math.abs(sysIcons.bin.x - targetX) < 10 && Math.abs(sysIcons.bin.y - targetY) < 10) conflict = true;
-                                    if (id !== 'system-cmd' && Math.abs(sysIcons.cmd.x - targetX) < 10 && Math.abs(sysIcons.cmd.y - targetY) < 10) conflict = true;
-                                } else {
-                                    if (Math.abs(20 - targetX) < 10 && Math.abs(20 - targetY) < 10) conflict = true; 
-                                }
+                                if (pId === null) { if (id !== 'system-bin' && Math.abs(sysIcons.bin.x - targetX) < 10 && Math.abs(sysIcons.bin.y - targetY) < 10) conflict = true; if (id !== 'system-cmd' && Math.abs(sysIcons.cmd.x - targetX) < 10 && Math.abs(sysIcons.cmd.y - targetY) < 10) conflict = true; } 
+                                else { if (Math.abs(20 - targetX) < 10 && Math.abs(20 - targetY) < 10) conflict = true; }
                                 if (conflict) { item.x = origX; item.y = origY; } else { item.x = Math.max(20, targetX); item.y = Math.max(20, targetY); }
                             }
                         }
-                    }
-                    renderDesktop(); if (currentOpenFolderId) { renderFolderContent(); renderFolderTree(); }
-                }
-                draggedElement = null; 
-            }
-            isDragging = false;
+                    } renderDesktop(); refreshAllFolders();
+                } draggedElement = null; 
+            } isDragging = false;
         });
 
-        // --- DUPLAKATTINTÁS ---
+        // --- DUPLAKATTINTÁS ÉS MEGNYITÁS ---
         document.addEventListener('dblclick', (e) => {
             if (wasDragging || renameTriggered) return;
             const icon = e.target.closest('.icon');
-            if (icon && e.target.tagName !== 'INPUT') { handleDblClick(icon.dataset.id); }
+            if (icon && e.target.tagName !== 'INPUT') { 
+                const winElem = e.target.closest('.window');
+                handleDblClick(icon.dataset.id, winElem ? winElem.id : null); 
+            }
         });
 
-        // HULLÁMFORMA GENERÁLÓ (Lejátszáshoz)
         let audioPlayContext = null;
         function setupAudioVisualizerForPlayback(audioElement, canvasElement) {
             if (!audioPlayContext) audioPlayContext = new (window.AudioContext || window.webkitAudioContext)();
-            const analyser = audioPlayContext.createAnalyser();
-            analyser.fftSize = 64;
-            
-            try {
-                const source = audioPlayContext.createMediaElementSource(audioElement);
-                source.connect(analyser);
-                analyser.connect(audioPlayContext.destination);
-            } catch (e) {}
-
-            const ctx = canvasElement.getContext('2d');
-            const dataArray = new Uint8Array(analyser.frequencyBinCount);
-            
+            const analyser = audioPlayContext.createAnalyser(); analyser.fftSize = 64;
+            try { const source = audioPlayContext.createMediaElementSource(audioElement); source.connect(analyser); analyser.connect(audioPlayContext.destination); } catch (e) {}
+            const ctx = canvasElement.getContext('2d'); const dataArray = new Uint8Array(analyser.frequencyBinCount);
             function draw() {
-                if(audioElement.paused || audioElement.ended) return; 
-                requestAnimationFrame(draw);
-                analyser.getByteFrequencyData(dataArray);
-                
-                ctx.fillStyle = '#111';
-                ctx.fillRect(0, 0, canvasElement.width, canvasElement.height);
-                
-                const barWidth = (canvasElement.width / dataArray.length) * 2;
-                let x = 0;
-                for (let i = 0; i < dataArray.length; i++) {
-                    const barHeight = (dataArray[i] / 255) * canvasElement.height;
-                    ctx.fillStyle = 'rgb(50, ' + (barHeight + 100) + ', 50)';
-                    ctx.fillRect(x, canvasElement.height - barHeight, barWidth, barHeight);
-                    x += barWidth + 2;
-                }
+                if(audioElement.paused || audioElement.ended) return; requestAnimationFrame(draw); analyser.getByteFrequencyData(dataArray);
+                ctx.fillStyle = '#111'; ctx.fillRect(0, 0, canvasElement.width, canvasElement.height);
+                const barWidth = (canvasElement.width / dataArray.length) * 2; let x = 0;
+                for (let i = 0; i < dataArray.length; i++) { const barHeight = (dataArray[i] / 255) * canvasElement.height; ctx.fillStyle = 'rgb(50, ' + (barHeight + 100) + ', 50)'; ctx.fillRect(x, canvasElement.height - barHeight, barWidth, barHeight); x += barWidth + 2; }
             }
-            
-            audioElement.onplay = () => {
-                if(audioPlayContext.state === 'suspended') audioPlayContext.resume();
-                draw();
-            };
+            audioElement.onplay = () => { if(audioPlayContext.state === 'suspended') audioPlayContext.resume(); draw(); };
         }
 
-        // PPTX VÁLTOZÓK
-        let currentPptxItem = null;
-        let currentSlideIndex = 0;
-        let slidesData = [];
-
+        let currentPptxItem = null; let currentSlideIndex = 0; let slidesData = [];
         window.changeSlide = function(dir) {
-            if(slidesData.length === 0) return;
-            slidesData[currentSlideIndex] = document.getElementById('slide-editor').value;
-            currentSlideIndex += dir;
-            if(currentSlideIndex < 0) currentSlideIndex = 0;
-            if(currentSlideIndex >= slidesData.length) currentSlideIndex = slidesData.length - 1;
-            document.getElementById('slide-editor').value = slidesData[currentSlideIndex];
-            document.getElementById('current-slide-num').innerText = currentSlideIndex + 1;
+            if(slidesData.length === 0) return; slidesData[currentSlideIndex] = document.getElementById('slide-editor').value; currentSlideIndex += dir;
+            if(currentSlideIndex < 0) currentSlideIndex = 0; if(currentSlideIndex >= slidesData.length) currentSlideIndex = slidesData.length - 1;
+            document.getElementById('slide-editor').value = slidesData[currentSlideIndex]; document.getElementById('current-slide-num').innerText = currentSlideIndex + 1;
         };
-
         window.addSlide = function() {
-            slidesData[currentSlideIndex] = document.getElementById('slide-editor').value;
-            slidesData.push("Új dia tartalma...");
-            currentSlideIndex = slidesData.length - 1;
-            document.getElementById('slide-editor').value = slidesData[currentSlideIndex];
-            document.getElementById('total-slides-num').innerText = slidesData.length;
-            document.getElementById('current-slide-num').innerText = currentSlideIndex + 1;
+            slidesData[currentSlideIndex] = document.getElementById('slide-editor').value; slidesData.push("Új dia tartalma..."); currentSlideIndex = slidesData.length - 1;
+            document.getElementById('slide-editor').value = slidesData[currentSlideIndex]; document.getElementById('total-slides-num').innerText = slidesData.length; document.getElementById('current-slide-num').innerText = currentSlideIndex + 1;
         };
-
         window.savePptxFile = function() {
-            if(currentPptxItem) {
-                slidesData[currentSlideIndex] = document.getElementById('slide-editor').value;
-                currentPptxItem.content = JSON.stringify(slidesData);
-                showDialog('Mentés', 'Prezentáció elmentve!', 'alert');
-            }
+            if(currentPptxItem) { slidesData[currentSlideIndex] = document.getElementById('slide-editor').value; currentPptxItem.content = JSON.stringify(slidesData); showDialog('Mentés', 'Prezentáció elmentve!', 'alert'); }
         };
 
-        function handleDblClick(id) {
+        window.handleDblClick = function(id, sourceWinId) {
             contextMenu.style.display = 'none';
-            if (id === 'system-bin') { document.getElementById('bin-window').style.display = 'flex'; renderBinList(); return; }
-            if (id === 'system-cmd') { document.getElementById('cmd-window').style.display = 'flex'; return; }
+            if (id === 'system-bin') return openStaticWindow('bin-window', 'sys-bin', dict[currentLang].binName);
+            if (id === 'system-cmd') return openStaticWindow('cmd-window', 'sys-cmd', dict[currentLang].cmdName);
             if (id === 'folder-up') {
-                let current = items.find(i => i.id === currentOpenFolderId);
-                if (current && current.parentId) openFolderWindow(current.parentId); else { openFolderWindow(null); }
+                if (sourceWinId) { let w = openWindows.find(x => x.id === sourceWinId); if (w && w.itemId) { let current = items.find(i => i.id === w.itemId); navigateFolder(sourceWinId, current ? current.parentId : null); } }
                 return;
             }
-            
-            let item = items.find(i => i.id === id); 
-            if (!item) return;
+            let item = items.find(i => i.id === id); if (!item) return;
 
-            if (item.type === 'folder') { openFolderWindow(id); return; }
-            
+            if (item.type === 'folder') { 
+                if (sourceWinId && sourceWinId.startsWith('folder_')) navigateFolder(sourceWinId, id); else openFolderWindow(id);
+                return; 
+            }
             if (item.type === 'txt') { 
-                activeFileId = id; document.getElementById('txt-title').innerText = item.name; 
-                document.getElementById('txt-textarea').value = item.content || ""; document.getElementById('txt-window').style.display = 'flex'; 
-                return;
+                activeFileId = id; document.getElementById('txt-title').innerText = item.name; document.getElementById('txt-textarea').value = item.content || ""; 
+                openStaticWindow('txt-window', 'txt', item.name); return;
             }
-
             if (item.type === 'html') {
-                document.getElementById('html-title').innerText = item.name;
-                const iframe = document.getElementById('html-iframe');
-                iframe.srcdoc = item.content || "<h1>Üres HTML fájl</h1>";
-                document.getElementById('html-window').style.display = 'flex';
-                return;
+                document.getElementById('html-title').innerText = item.name; const iframe = document.getElementById('html-iframe');
+                iframe.removeAttribute('src'); iframe.srcdoc = item.content || "<h1>Üres HTML fájl</h1>"; openStaticWindow('html-window', 'html', item.name); return;
             }
-
-            if (item.type === 'pptx') {
-                currentPptxItem = item;
-                document.getElementById('pptx-title').innerText = item.name + " - Szerkesztő";
-                try {
-                    slidesData = item.content ? JSON.parse(item.content) : ["Első dia tartalma"];
-                } catch(e) { slidesData = ["Első dia tartalma"]; }
-                if(!Array.isArray(slidesData) || slidesData.length===0) slidesData = ["Első dia tartalma"];
-                currentSlideIndex = 0;
-                document.getElementById('slide-editor').value = slidesData[0];
-                document.getElementById('total-slides-num').innerText = slidesData.length;
-                document.getElementById('current-slide-num').innerText = 1;
-                document.getElementById('pptx-window').style.display = 'flex';
-                return;
-            }
-
             if (item.type === 'app') {
                 if (!item.content) { showDialog('Hiba', dict[currentLang].emptyErr, 'alert'); } 
-                else { let url = item.content.startsWith('http') ? item.content : 'https://' + item.content; window.open(url, '_blank'); }
-                return;
+                else { 
+                    let url = item.content.startsWith('http') ? item.content : 'https://' + item.content; 
+                    document.getElementById('html-title').innerText = item.name; const iframe = document.getElementById('html-iframe');
+                    iframe.removeAttribute('srcdoc'); iframe.src = url; openStaticWindow('html-window', 'app', item.name);
+                    
+                    setTimeout(() => {
+                        let w = openWindows.find(x => x.id === 'html-window');
+                        if (w && !w.minimized && document.getElementById('html-title').innerText === item.name) {
+                            showDialog('Rendszerüzenet', dict[currentLang].iframeError, 'confirm', (res) => { if (res) { window.open(url, '_blank'); closeWindow('html-window'); } });
+                        }
+                    }, 2000);
+                } return;
             }
-
+            if (item.type === 'pptx') {
+                currentPptxItem = item; document.getElementById('pptx-title').innerText = item.name + " - Szerkesztő";
+                try { slidesData = item.content ? JSON.parse(item.content) : ["Első dia tartalma"]; } catch(e) { slidesData = ["Első dia tartalma"]; }
+                if(!Array.isArray(slidesData) || slidesData.length===0) slidesData = ["Első dia tartalma"];
+                currentSlideIndex = 0; document.getElementById('slide-editor').value = slidesData[0]; document.getElementById('total-slides-num').innerText = slidesData.length; document.getElementById('current-slide-num').innerText = 1;
+                openStaticWindow('pptx-window', 'pptx', item.name); return;
+            }
             if (item.type === 'img') {
                 if (!item.imgUrl) { showDialog('Hiba', dict[currentLang].emptyErr, 'alert'); return; }
-                document.getElementById('img-title').innerText = item.name;
-                document.getElementById('media-window-body').innerHTML = `<img src="${item.imgUrl}" style="max-width:100%; max-height:100%; object-fit:contain;">`;
-                document.getElementById('img-window').style.display = 'flex';
-                return;
+                document.getElementById('img-title').innerText = item.name; document.getElementById('media-window-body').innerHTML = `<img src="${item.imgUrl}" style="max-width:100%; max-height:100%; object-fit:contain;">`;
+                openStaticWindow('img-window', 'img', item.name); return;
             }
-
             if (item.type === 'mp3' || item.type === 'mp4') {
                 if (!item.imgUrl) { showDialog('Hiba', dict[currentLang].emptyErr, 'alert'); return; }
-                document.getElementById('img-title').innerText = item.name + " - Lejátszó";
-                let body = document.getElementById('media-window-body');
-                
+                document.getElementById('img-title').innerText = item.name + " - Lejátszó"; let body = document.getElementById('media-window-body');
                 if (item.type === 'mp3') {
-                    body.innerHTML = `
-                        <canvas id="playback-visualizer" style="width:80%; height:150px; background:#111; border: 2px solid #555; border-radius:5px; margin-bottom:15px;"></canvas>
-                        <audio id="playback-audio" controls autoplay src="${item.imgUrl}"></audio>
-                        <p>${item.name}</p>`;
-                    setTimeout(() => {
-                        const aud = document.getElementById('playback-audio');
-                        const can = document.getElementById('playback-visualizer');
-                        setupAudioVisualizerForPlayback(aud, can);
-                    }, 100);
-                } else {
-                    body.innerHTML = `<video controls autoplay src="${item.imgUrl}" style="max-width:100%; max-height:85%;"></video>`;
-                }
-                document.getElementById('img-window').style.display = 'flex';
+                    body.innerHTML = `<canvas id="playback-visualizer" style="width:80%; height:150px; background:#111; border: 2px solid #555; border-radius:5px; margin-bottom:15px;"></canvas><audio id="playback-audio" controls autoplay src="${item.imgUrl}"></audio><p>${item.name}</p>`;
+                    setTimeout(() => { const aud = document.getElementById('playback-audio'); const can = document.getElementById('playback-visualizer'); setupAudioVisualizerForPlayback(aud, can); }, 100);
+                } else { body.innerHTML = `<video controls autoplay src="${item.imgUrl}" style="max-width:100%; max-height:85%;"></video>`; }
+                openStaticWindow('img-window', item.type, item.name); return;
             }
-        }
+        };
 
-        // --- ÁTNEVEZÉS ---
         window.triggerRename = function(id) {
-            let item = (id === 'system-bin') ? sysIcons.bin : (id === 'system-cmd' ? sysIcons.cmd : items.find(i => i.id === id));
-            if (!item) return;
+            let item = (id === 'system-bin') ? sysIcons.bin : (id === 'system-cmd' ? sysIcons.cmd : items.find(i => i.id === id)); if (!item) return;
             const iconEl = document.querySelector(`.icon[data-id="${id}"]`); if (!iconEl) return;
-            const labelDiv = iconEl.querySelector('.icon-label');
-            labelDiv.innerHTML = `<input type="text" id="rename-input" class="rename-input" value="${item.name}">`;
+            const labelDiv = iconEl.querySelector('.icon-label'); labelDiv.innerHTML = `<input type="text" id="rename-input" class="rename-input" value="${item.name}">`;
             const input = document.getElementById('rename-input'); input.focus(); input.select();
             input.addEventListener('mousedown', e => e.stopPropagation()); input.addEventListener('dblclick', e => e.stopPropagation());
             let isFinished = false;
             const finishRename = () => { 
-                if (isFinished) return; isFinished = true;
-                item.name = input.value.trim() || "Névtelen";
-                updateTypeByExtension(item); 
-                renderDesktop(); 
-                if (currentOpenFolderId) { renderFolderContent(); renderFolderTree(); }
+                if (isFinished) return; isFinished = true; item.name = input.value.trim() || "Névtelen";
+                updateTypeByExtension(item); renderDesktop(); refreshAllFolders();
             };
             input.addEventListener('blur', finishRename); input.addEventListener('keydown', (e) => { if (e.key === 'Enter') finishRename(); });
         };
 
-        // --- POZÍCIÓ ÉS LÉTREHOZÁS ---
         function getNextGridPosition(parentId, ignoreId = null) {
             recalculateGrid(); let row = 0, col = 0; let cols = parentId ? 4 : (Math.floor(window.innerWidth / GRID_W) || 1);
             while (true) {
                 let checkX = col * GRID_W + 20; let checkY = row * GRID_H + 20;
                 if (parentId !== null && checkX === 20 && checkY === 20) { col++; continue; }
                 let occupied = items.some(s => s.id !== ignoreId && s.parentId === parentId && Math.abs((s.x||0) - checkX) < 10 && Math.abs((s.y||0) - checkY) < 10);
-                if (parentId === null) {
-                    if (Math.abs(sysIcons.bin.x - checkX) < 10 && Math.abs(sysIcons.bin.y - checkY) < 10) occupied = true;
-                    if (Math.abs(sysIcons.cmd.x - checkX) < 10 && Math.abs(sysIcons.cmd.y - checkY) < 10) occupied = true;
-                }
-                if (!occupied) return { x: checkX, y: checkY };
-                col++; if (col >= cols) { col = 0; row++; }
+                if (parentId === null) { if (Math.abs(sysIcons.bin.x - checkX) < 10 && Math.abs(sysIcons.bin.y - checkY) < 10) occupied = true; if (Math.abs(sysIcons.cmd.x - checkX) < 10 && Math.abs(sysIcons.cmd.y - checkY) < 10) occupied = true; }
+                if (!occupied) return { x: checkX, y: checkY }; col++; if (col >= cols) { col = 0; row++; }
             }
         }
 
@@ -871,333 +948,100 @@
         function startWebRTCCapture(type, item) {
             pendingMediaItem = item; captureType = type;
             const overlay = document.getElementById('media-capture-overlay'); const videoElem = document.getElementById('capture-video-elem');
-            const canvasElem = document.getElementById('audio-visualizer-canvas'); const actionBtn = document.getElementById('capture-action-btn');
-            const titleElem = document.getElementById('media-capture-title');
-            overlay.style.display = 'flex'; videoElem.style.display = 'none'; canvasElem.style.display = 'none';
-            actionBtn.className = 'capture-btn btn-red'; actionBtn.innerText = "";
-            
+            const canvasElem = document.getElementById('audio-visualizer-canvas'); const actionBtn = document.getElementById('capture-action-btn'); const titleElem = document.getElementById('media-capture-title');
+            overlay.style.display = 'flex'; videoElem.style.display = 'none'; canvasElem.style.display = 'none'; actionBtn.className = 'capture-btn btn-red'; actionBtn.innerText = "";
             let constraints = {};
-            if (type === 'img') {
-                constraints = { video: true }; titleElem.innerText = "Fénykép Készítése";
-                videoElem.style.display = 'block'; actionBtn.className = 'capture-btn btn-white';
-            } else if (type === 'mp4') {
-                constraints = { video: true, audio: true }; titleElem.innerText = "Videó Felvétel";
-                videoElem.style.display = 'block';
-            } else if (type === 'mp3') {
-                constraints = { audio: true }; titleElem.innerText = "Hang Felvétel";
-                canvasElem.style.display = 'block';
-            }
+            if (type === 'img') { constraints = { video: true }; titleElem.innerText = "Fénykép Készítése"; videoElem.style.display = 'block'; actionBtn.className = 'capture-btn btn-white'; } 
+            else if (type === 'mp4') { constraints = { video: true, audio: true }; titleElem.innerText = "Videó Felvétel"; videoElem.style.display = 'block'; } 
+            else if (type === 'mp3') { constraints = { audio: true }; titleElem.innerText = "Hang Felvétel"; canvasElem.style.display = 'block'; }
 
-            navigator.mediaDevices.getUserMedia(constraints)
-                .then(stream => {
-                    mediaStream = stream;
-                    if (type === 'img' || type === 'mp4') { videoElem.srcObject = stream; }
-                    if (type === 'mp3') {
-                        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                        const source = audioContext.createMediaStreamSource(stream); const analyser = audioContext.createAnalyser();
-                        analyser.fftSize = 64; source.connect(analyser); const ctx = canvasElem.getContext('2d');
-                        const dataArray = new Uint8Array(analyser.frequencyBinCount);
-                        function draw() {
-                            animFrame = requestAnimationFrame(draw); analyser.getByteFrequencyData(dataArray);
-                            ctx.fillStyle = '#111'; ctx.fillRect(0, 0, canvasElem.width, canvasElem.height);
-                            const barWidth = (canvasElem.width / dataArray.length) * 2.5; let x = 0;
-                            for (let i = 0; i < dataArray.length; i++) {
-                                const barHeight = (dataArray[i] / 255) * canvasElem.height;
-                                ctx.fillStyle = 'rgb(' + (barHeight + 100) + ', 50, 50)';
-                                ctx.fillRect(x, canvasElem.height - barHeight, barWidth, barHeight); x += barWidth + 1;
-                            }
-                        } draw();
-                    }
-                })
-                .catch(err => {
-                    showDialog('Hiba', 'Nem sikerült hozzáférni a kamerához vagy a mikrofonhoz!', 'alert'); cancelMediaCapture();
-                });
+            navigator.mediaDevices.getUserMedia(constraints).then(stream => {
+                mediaStream = stream; if (type === 'img' || type === 'mp4') { videoElem.srcObject = stream; }
+                if (type === 'mp3') {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)(); const source = audioContext.createMediaStreamSource(stream); const analyser = audioContext.createAnalyser(); analyser.fftSize = 64; source.connect(analyser); const ctx = canvasElem.getContext('2d'); const dataArray = new Uint8Array(analyser.frequencyBinCount);
+                    function draw() { animFrame = requestAnimationFrame(draw); analyser.getByteFrequencyData(dataArray); ctx.fillStyle = '#111'; ctx.fillRect(0, 0, canvasElem.width, canvasElem.height); const barWidth = (canvasElem.width / dataArray.length) * 2.5; let x = 0; for (let i = 0; i < dataArray.length; i++) { const barHeight = (dataArray[i] / 255) * canvasElem.height; ctx.fillStyle = 'rgb(' + (barHeight + 100) + ', 50, 50)'; ctx.fillRect(x, canvasElem.height - barHeight, barWidth, barHeight); x += barWidth + 1; } } draw();
+                }
+            }).catch(err => { showDialog('Hiba', 'Nem sikerült hozzáférni a kamerához vagy a mikrofonhoz!', 'alert'); cancelMediaCapture(); });
         }
 
         window.executeMediaCapture = function() {
             const actionBtn = document.getElementById('capture-action-btn');
             if (captureType === 'img') {
-                const videoElem = document.getElementById('capture-video-elem'); const canvas = document.createElement('canvas');
-                canvas.width = videoElem.videoWidth; canvas.height = videoElem.videoHeight;
-                canvas.getContext('2d').drawImage(videoElem, 0, 0);
+                const videoElem = document.getElementById('capture-video-elem'); const canvas = document.createElement('canvas'); canvas.width = videoElem.videoWidth; canvas.height = videoElem.videoHeight; canvas.getContext('2d').drawImage(videoElem, 0, 0);
                 pendingMediaItem.imgUrl = canvas.toDataURL('image/png'); pendingMediaItem.extraData = 250; finishMediaCapture();
             } else {
-                if (mediaRecorder && mediaRecorder.state === 'recording') {
-                    mediaRecorder.stop(); actionBtn.style.animation = '';
-                } else {
-                    recordedChunks = []; mediaRecorder = new MediaRecorder(mediaStream);
-                    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
-                    mediaRecorder.onstop = () => {
-                        const blob = new Blob(recordedChunks, { type: captureType === 'mp4' ? 'video/webm' : 'audio/webm' });
-                        const reader = new FileReader();
-                        reader.onloadend = () => { pendingMediaItem.imgUrl = reader.result; finishMediaCapture(); };
-                        reader.readAsDataURL(blob);
-                    };
+                if (mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); actionBtn.style.animation = ''; } 
+                else { recordedChunks = []; mediaRecorder = new MediaRecorder(mediaStream); mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
+                    mediaRecorder.onstop = () => { const blob = new Blob(recordedChunks, { type: captureType === 'mp4' ? 'video/webm' : 'audio/webm' }); const reader = new FileReader(); reader.onloadend = () => { pendingMediaItem.imgUrl = reader.result; finishMediaCapture(); }; reader.readAsDataURL(blob); };
                     mediaRecorder.start(); actionBtn.style.animation = 'blink 1s infinite';
                 }
             }
         };
 
-        window.cancelMediaCapture = function() {
-            if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
-            stopMediaTracks(); document.getElementById('media-capture-overlay').style.display = 'none';
-        }
-        function finishMediaCapture() {
-            stopMediaTracks(); document.getElementById('media-capture-overlay').style.display = 'none';
-            items.push(pendingMediaItem); pendingMediaItem = null;
-            renderDesktop(); if (currentOpenFolderId) { renderFolderContent(); renderFolderTree(); }
-        }
-        function stopMediaTracks() {
-            if (mediaStream) { mediaStream.getTracks().forEach(track => track.stop()); mediaStream = null; }
-            if (audioContext) { audioContext.close(); audioContext = null; }
-            if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
-        }
+        window.cancelMediaCapture = function() { if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop(); stopMediaTracks(); document.getElementById('media-capture-overlay').style.display = 'none'; }
+        function finishMediaCapture() { stopMediaTracks(); document.getElementById('media-capture-overlay').style.display = 'none'; items.push(pendingMediaItem); pendingMediaItem = null; renderDesktop(); refreshAllFolders(); }
+        function stopMediaTracks() { if (mediaStream) { mediaStream.getTracks().forEach(track => track.stop()); mediaStream = null; } if (audioContext) { audioContext.close(); audioContext = null; } if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; } }
 
         window.createNewItem = function(type) {
-            contextMenu.style.display = 'none';
-            const id = type + '_' + Date.now(); let pId = contextMenuTargetFolder; const pos = getNextGridPosition(pId);
+            contextMenu.style.display = 'none'; const id = type + '_' + Date.now(); let pId = contextMenuTargetFolder; const pos = getNextGridPosition(pId);
             let extMap = { 'folder':'Mappa', 'txt':'.txt', 'html':'.html', 'pptx':'.pptx', 'app':'.lnk', 'img':'.png', 'mp3':'.mp3', 'mp4':'.mp4' };
             let defaultName = (type === 'folder' ? 'Új Mappa' : ('Új Fájl' + extMap[type]));
             let newItem = { id, type, name: defaultName, imgUrl: '', content: '', dateCreated: new Date().toISOString(), x: pos.x, y: pos.y, parentId: pId, extraData: 0 };
 
-            if (type === 'folder' || type === 'txt' || type === 'html' || type === 'pptx') {
-                items.push(newItem); renderDesktop(); if (pId) { renderFolderContent(); renderFolderTree(); }
-            } else if (type === 'app') {
-                showDialog('Új Parancsikon', 'Add meg a weboldal URL-jét (pl. https://example.com):', 'prompt', (urlVal) => {
-                    showDialog('Parancsikon Ikonja', 'Opcionális: Adj meg egy kép URL-t ikonként (vagy hagyd üresen):', 'prompt', (icoVal) => {
-                        newItem.content = urlVal || ''; newItem.imgUrl = icoVal || ''; items.push(newItem);
-                        renderDesktop(); if (pId) renderFolderContent();
-                    });
-                });
-            } else if (type === 'img' || type === 'mp3' || type === 'mp4') {
-                showDialog(`Új ${type.toUpperCase()}`, 'Adj meg egy internetes URL-t, VAGY hagyd üresen a saját felvétel (Kamera/Mikrofon) készítéséhez:', 'prompt', (val) => {
-                    if (val) { newItem.imgUrl = val; items.push(newItem); renderDesktop(); if (pId) renderFolderContent(); } 
-                    else { startWebRTCCapture(type, newItem); }
-                });
-            }
+            if (type === 'folder' || type === 'txt' || type === 'html' || type === 'pptx') { items.push(newItem); renderDesktop(); refreshAllFolders(); } 
+            else if (type === 'app') { showDialog('Új Parancsikon', 'Add meg a weboldal URL-jét (pl. https://example.com):', 'prompt', (urlVal) => { showDialog('Parancsikon Ikonja', 'Opcionális: Adj meg egy kép URL-t ikonként (vagy hagyd üresen):', 'prompt', (icoVal) => { newItem.content = urlVal || ''; newItem.imgUrl = icoVal || ''; items.push(newItem); renderDesktop(); refreshAllFolders(); }); }); } 
+            else if (type === 'img' || type === 'mp3' || type === 'mp4') { showDialog(`Új ${type.toUpperCase()}`, 'Adj meg egy internetes URL-t, VAGY hagyd üresen a saját felvétel (Kamera/Mikrofon) készítéséhez:', 'prompt', (val) => { if (val) { newItem.imgUrl = val; items.push(newItem); renderDesktop(); refreshAllFolders(); } else { startWebRTCCapture(type, newItem); } }); }
         };
 
-        // --- HÁTTÉRKÉP ---
-        window.changeDesktopBg = function() {
-            contextMenu.style.display = 'none';
-            showDialog('Háttérkép beállítása', 'Adj meg egy kép URL-t (.png/.jpg/.ico) vagy színkódot (pl. #008080):', 'prompt', (bg) => {
-                if (!bg) return;
-                if (bg.startsWith('#') || (!bg.includes('.') && !bg.includes('/') && !bg.startsWith('data:'))) { applyBg(bg, true); } 
-                else { showDialog('Háttérkép méretezése', 'Kifeszítjük a képet a teljes asztalra?', 'confirm', (stretch) => { applyBg(bg, stretch === true); }); }
-            });
-        };
-        function applyBg(bg, stretch = true) {
-            desktopBg = bg; desktopStretch = stretch;
-            if (bg.startsWith('#') || (!bg.includes('.') && !bg.includes('/') && !bg.startsWith('data:'))) {
-                desktop.style.backgroundImage = 'none'; desktop.style.backgroundColor = bg;
-            } else {
-                desktop.style.backgroundImage = `url("${bg}")`;
-                if (stretch) { desktop.style.backgroundSize = '100% 100%'; desktop.style.backgroundColor = 'transparent'; } 
-                else { desktop.style.backgroundSize = 'contain'; desktop.style.backgroundPosition = 'center'; desktop.style.backgroundRepeat = 'no-repeat'; desktop.style.backgroundColor = '#000000'; }
-            }
-        }
+        window.changeDesktopBg = function() { contextMenu.style.display = 'none'; showDialog('Háttérkép beállítása', 'Adj meg egy kép URL-t (.png/.jpg/.ico) vagy színkódot (pl. #008080):', 'prompt', (bg) => { if (!bg) return; if (bg.startsWith('#') || (!bg.includes('.') && !bg.includes('/') && !bg.startsWith('data:'))) { applyBg(bg, true); } else { showDialog('Háttérkép méretezése', 'Kifeszítjük a képet a teljes asztalra?', 'confirm', (stretch) => { applyBg(bg, stretch === true); }); } }); };
+        function applyBg(bg, stretch = true) { desktopBg = bg; desktopStretch = stretch; if (bg.startsWith('#') || (!bg.includes('.') && !bg.includes('/') && !bg.startsWith('data:'))) { desktop.style.backgroundImage = 'none'; desktop.style.backgroundColor = bg; } else { desktop.style.backgroundImage = `url("${bg}")`; if (stretch) { desktop.style.backgroundSize = '100% 100%'; desktop.style.backgroundColor = 'transparent'; } else { desktop.style.backgroundSize = 'contain'; desktop.style.backgroundPosition = 'center'; desktop.style.backgroundRepeat = 'no-repeat'; desktop.style.backgroundColor = '#000000'; } } }
+        function getItemSize(item) { if (!item) return 0; if (item.type === 'folder') return items.filter(i => i.parentId === item.id).reduce((sum, child) => sum + getItemSize(child), 0); if (item.type === 'txt' || item.type === 'html' || item.type === 'pptx') return (item.content || "").length * 8; if (item.type === 'app') return 512; if (item.type === 'img' || item.type === 'mp3' || item.type === 'mp4') return item.imgUrl ? Math.round(item.imgUrl.length * 0.75) : 0; return 0; }
+        function formatBytes(bytes) { if (bytes < 1024) return bytes + " B"; else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB"; return (bytes / 1048576).toFixed(2) + " MB"; }
 
-        // --- MÉRET ---
-        function getItemSize(item) {
-            if (!item) return 0;
-            if (item.type === 'folder') return items.filter(i => i.parentId === item.id).reduce((sum, child) => sum + getItemSize(child), 0);
-            if (item.type === 'txt' || item.type === 'html' || item.type === 'pptx') return (item.content || "").length * 8;
-            if (item.type === 'app') return 512;
-            if (item.type === 'img' || item.type === 'mp3' || item.type === 'mp4') return item.imgUrl ? Math.round(item.imgUrl.length * 0.75) : 0;
-            return 0;
-        }
-        function formatBytes(bytes) {
-            if (bytes < 1024) return bytes + " B"; else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB";
-            return (bytes / 1048576).toFixed(2) + " MB";
-        }
-
-        // --- MEGJELENÍTÉS (ASZTAL, MAPPA, ÁGRAJZ) ---
         function getIconHTML(item, viewMode = 'grid') {
             let imgSrc = '📝';
-            if (item.type === 'folder') imgSrc = '📁';
-            else if (item.type === 'txt') imgSrc = '📄';
-            else if (item.type === 'html') imgSrc = '🌐';
-            else if (item.type === 'pptx') imgSrc = '📊';
-            else if (item.type === 'app') imgSrc = '🔗';
-            else if (item.type === 'system-bin') imgSrc = '🗑️';
-            else if (item.type === 'system-cmd') imgSrc = '💻';
-            else if (item.type === 'img') imgSrc = '🖼️';
-            else if (item.type === 'mp3') imgSrc = '🎵';
-            else if (item.type === 'mp4') imgSrc = '🎬';
-
+            if (item.type === 'folder') imgSrc = '📁'; else if (item.type === 'txt') imgSrc = '📄'; else if (item.type === 'html') imgSrc = '🌐'; else if (item.type === 'pptx') imgSrc = '📊'; else if (item.type === 'app') imgSrc = '🔗'; else if (item.type === 'system-bin') imgSrc = '🗑️'; else if (item.type === 'system-cmd') imgSrc = '💻'; else if (item.type === 'img') imgSrc = '🖼️'; else if (item.type === 'mp3') imgSrc = '🎵'; else if (item.type === 'mp4') imgSrc = '🎬';
             const showCustomImg = item.imgUrl && (item.type === 'img' || item.type === 'app');
             const imgContent = showCustomImg ? `<img src="${item.imgUrl}">` : `<div style="font-size:${iconSize*0.65}px;">${imgSrc}</div>`;
             const dateStr = (viewMode === 'list' && item.dateCreated) ? `<div class="icon-date">${new Date(item.dateCreated).toLocaleDateString()}</div>` : '';
             const sizeStr = (viewMode === 'list' && !item.type.startsWith('system-')) ? `<div class="icon-size-label">${formatBytes(getItemSize(item))}</div>` : '';
-
-            return `
-                <div class="icon" data-id="${item.id}" data-type="${item.type}" style="left:${item.x}px; top:${item.y}px; width:${viewMode === 'list' ? '100%' : (iconSize + 30) + 'px'}">
-                    <div class="icon-img-wrapper" style="width:${iconSize}px; height:${iconSize}px;">${imgContent}</div>
-                    <div class="icon-label">${item.name}</div>
-                    ${dateStr}${sizeStr}
-                </div>`;
+            return `<div class="icon" data-id="${item.id}" data-type="${item.type}" style="left:${item.x}px; top:${item.y}px; width:${viewMode === 'list' ? '100%' : (iconSize + 30) + 'px'}"><div class="icon-img-wrapper" style="width:${iconSize}px; height:${iconSize}px;">${imgContent}</div><div class="icon-label">${item.name}</div>${dateStr}${sizeStr}</div>`;
         }
+        function renderDesktop() { recalculateGrid(); desktop.innerHTML = ''; desktop.insertAdjacentHTML('beforeend', getIconHTML(sysIcons.bin, 'grid')); desktop.insertAdjacentHTML('beforeend', getIconHTML(sysIcons.cmd, 'grid')); items.filter(i => i.parentId === null).forEach(item => { desktop.insertAdjacentHTML('beforeend', getIconHTML(item, 'grid')); }); }
 
-        function renderDesktop() {
-            recalculateGrid(); desktop.innerHTML = ''; 
-            desktop.insertAdjacentHTML('beforeend', getIconHTML(sysIcons.bin, 'grid')); desktop.insertAdjacentHTML('beforeend', getIconHTML(sysIcons.cmd, 'grid'));
-            items.filter(i => i.parentId === null).forEach(item => { desktop.insertAdjacentHTML('beforeend', getIconHTML(item, 'grid')); });
-        }
-
-        function renderFolderTree() {
-            const treeContainer = document.getElementById('folder-tree');
-            function buildTreeHTML(parentId, level) {
-                let html = ''; let folders = items.filter(i => i.type === 'folder' && i.parentId === parentId);
-                folders.sort((a, b) => a.name.localeCompare(b.name, 'hu'));
-                folders.forEach(f => {
-                    let isActive = (f.id === currentOpenFolderId) ? 'active' : '';
-                    html += `<div class="tree-item ${isActive}" style="padding-left: ${level * 10}px;" onclick="openFolderWindow('${f.id}')" title="${f.name}">📁 ${f.name}</div>`;
-                    html += buildTreeHTML(f.id, level + 1); 
-                }); return html;
-            }
-            let isDesktopActive = (currentOpenFolderId === null) ? 'active' : '';
-            let finalHtml = `<div class="tree-item ${isDesktopActive}" onclick="openFolderWindow(null)">${dict[currentLang].desktopName}</div>`;
-            finalHtml += buildTreeHTML(null, 1); treeContainer.innerHTML = finalHtml;
-        }
-
-        function renderFolderContent() {
-            if (!currentOpenFolderId) return;
-            const container = document.getElementById('folder-content'); 
-            const viewMode = document.getElementById('folder-view-select').value; const sortBy = document.getElementById('folder-sort-select').value; const order = document.getElementById('folder-order-select').value;
-            container.className = `window-content folder-view-${viewMode}`;
-            container.innerHTML = `
-                <div class="icon" data-id="folder-up" data-type="folder-up" style="left:20px; top:20px; width:${viewMode === 'list' ? '100%' : (iconSize + 30) + 'px'}">
-                    <div class="icon-img-wrapper" style="width:${iconSize}px; height:${iconSize}px; font-size:${iconSize*0.65}px;">⤴️</div>
-                    <div class="icon-label">${dict[currentLang].backFolder}</div>
-                </div>`;
-            let folderItems = items.filter(i => i.parentId === currentOpenFolderId);
-            folderItems.sort((a, b) => {
-                let cmp = 0; if (sortBy === 'name') cmp = a.name.localeCompare(b.name, 'hu'); else cmp = new Date(a.dateCreated || 0) - new Date(b.dateCreated || 0);
-                return order === 'asc' ? cmp : -cmp;
-            });
-            folderItems.forEach((item) => {
-                if (viewMode === 'grid' && item.x === 20 && item.y === 20) { let pos = getNextGridPosition(currentOpenFolderId, item.id); item.x = pos.x; item.y = pos.y; }
-                container.insertAdjacentHTML('beforeend', getIconHTML(item, viewMode));
-            });
-        }
-
-        // --- TULAJDONSÁGOK ---
-        function getFullPath(item) {
-            if (!item || !item.parentId) return "Főmappa/" + (item ? item.name : '');
-            let parent = items.find(i => i.id === item.parentId); return (parent ? getFullPath(parent) : "Főmappa") + "/" + item.name;
-        }
         window.showProperties = function(id) {
-            contextMenu.style.display = 'none';
-            let isSys = (id === 'system-bin' || id === 'system-cmd');
+            contextMenu.style.display = 'none'; let isSys = (id === 'system-bin' || id === 'system-cmd');
             let item = isSys ? (id === 'system-bin' ? sysIcons.bin : sysIcons.cmd) : items.find(i => i.id === id); if (!item) return;
-            document.getElementById('prop-val-name').innerText = item.name;
-            document.getElementById('prop-val-type').innerText = item.type;
-            document.getElementById('prop-val-path').innerText = isSys ? ("Főmappa/" + item.name).replace(/\\/g, '/') : getFullPath(item).replace(/\\/g, '/');
-            document.getElementById('prop-val-size').innerText = formatBytes(getItemSize(item)) + ` (${getItemSize(item)} byte)`;
-            document.getElementById('prop-val-date').innerText = item.dateCreated ? new Date(item.dateCreated).toLocaleString() : "Ismeretlen";
-            let extra = "";
-            if (item.type === 'folder') extra = `Tartalom: ${items.filter(i => i.parentId === item.id).length} db elem`;
-            document.getElementById('prop-extra-data').innerText = extra;
-            document.getElementById('properties-window').style.display = 'flex';
+            document.getElementById('prop-val-name').innerText = item.name; document.getElementById('prop-val-type').innerText = item.type;
+            let parentPath = "Főmappa"; if (!isSys && item.parentId) { let parent = items.find(i => i.id === item.parentId); if (parent) parentPath = parentPath + "/" + parent.name; }
+            document.getElementById('prop-val-path').innerText = isSys ? ("Főmappa/" + item.name).replace(/\\/g, '/') : (parentPath + "/" + item.name).replace(/\\/g, '/');
+            document.getElementById('prop-val-size').innerText = formatBytes(getItemSize(item)) + ` (${getItemSize(item)} byte)`; document.getElementById('prop-val-date').innerText = item.dateCreated ? new Date(item.dateCreated).toLocaleString() : "Ismeretlen";
+            let extra = ""; if (item.type === 'folder') extra = `Tartalom: ${items.filter(i => i.parentId === item.id).length} db elem`; document.getElementById('prop-extra-data').innerText = extra;
+            openStaticWindow('properties-window', 'sys-prop', dict[currentLang].propTitle);
         };
 
-        // --- KUKA ---
-        window.moveToBin = function(id) { 
-            contextMenu.style.display = 'none'; const index = items.findIndex(i => i.id === id); 
-            if (index > -1) { 
-                deletedItems.push(items[index]); items.splice(index, 1); renderDesktop(); 
-                if (currentOpenFolderId) { renderFolderContent(); renderFolderTree(); } renderBinList(); 
-            } 
-        };
-        window.restoreFromBin = function(id) {
-            const index = deletedItems.findIndex(i => i.id === id);
-            if (index > -1) {
-                let item = deletedItems[index];
-                if (item.parentId && !items.some(i => i.id === item.parentId)) item.parentId = null;
-                let pos = getNextGridPosition(item.parentId); item.x = pos.x; item.y = pos.y;
-                items.push(item); deletedItems.splice(index, 1); renderDesktop();
-                if (currentOpenFolderId) { renderFolderContent(); renderFolderTree(); } renderBinList();
-            }
-        };
+        window.moveToBin = function(id) { contextMenu.style.display = 'none'; const index = items.findIndex(i => i.id === id); if (index > -1) { deletedItems.push(items[index]); items.splice(index, 1); renderDesktop(); refreshAllFolders(); renderBinList(); } };
+        window.restoreFromBin = function(id) { const index = deletedItems.findIndex(i => i.id === id); if (index > -1) { let item = deletedItems[index]; if (item.parentId && !items.some(i => i.id === item.parentId)) item.parentId = null; let pos = getNextGridPosition(item.parentId); item.x = pos.x; item.y = pos.y; items.push(item); deletedItems.splice(index, 1); renderDesktop(); refreshAllFolders(); renderBinList(); } };
         window.deletePermanently = function(id) { deletedItems = deletedItems.filter(i => i.id !== id); renderBinList(); };
-        function renderBinList() { 
-            const binContent = document.getElementById('bin-content'); 
-            if (deletedItems.length === 0) { binContent.innerHTML = `<div style="padding:15px; opacity:0.7;">${dict[currentLang].binEmpty}</div>`; return; }
-            binContent.innerHTML = ''; 
-            deletedItems.forEach(item => { 
-                binContent.innerHTML += `
-                    <div class="bin-item"><span><strong>${item.name}</strong> <small>(${item.type})</small></span>
-                        <div class="bin-actions"><button class="bin-btn" onclick="restoreFromBin('${item.id}')">${dict[currentLang].btnRestore}</button><button class="bin-btn del" onclick="deletePermanently('${item.id}')" title="Végleges törlés">X</button></div>
-                    </div>`; 
-            }); 
-        }
+        function renderBinList() { const binContent = document.getElementById('bin-content'); if (deletedItems.length === 0) { binContent.innerHTML = `<div style="padding:15px; opacity:0.7;">${dict[currentLang].binEmpty}</div>`; return; } binContent.innerHTML = ''; deletedItems.forEach(item => { binContent.innerHTML += `<div class="bin-item"><span><strong>${item.name}</strong> <small>(${item.type})</small></span><div class="bin-actions"><button class="bin-btn" onclick="restoreFromBin('${item.id}')">${dict[currentLang].btnRestore}</button><button class="bin-btn del" onclick="deletePermanently('${item.id}')" title="Végleges törlés">X</button></div></div>`; }); }
 
-        // --- ABLAKOK KEZELÉSE ---
-        window.openFolderWindow = function(id) {
-            if (id === null) {
-                closeWindow('folder-window');
-                return;
-            }
-            let item = items.find(i => i.id === id); 
-            if (!item) return;
-            currentOpenFolderId = id; 
-            document.getElementById('folder-window-title').innerText = item.name;
-            document.getElementById('folder-window').style.display = 'flex'; 
-            renderFolderContent();
-            renderFolderTree(); 
-        };
-
-        window.openCmdHelp = function() {
-            document.getElementById('cmd-help-window').style.display = 'flex';
-        };
-
-        window.closeWindow = function(id) { 
-            document.getElementById(id).style.display = 'none'; 
-            if (id === 'folder-window') currentOpenFolderId = null; 
-            if (id === 'img-window') {
-                let aud = document.getElementById('playback-audio'); if(aud) { aud.pause(); aud.src = ""; }
-                document.getElementById('media-window-body').innerHTML = '';
-            }
-        };
-
-        window.saveTxtFile = function() { 
-            if (activeFileId) { 
-                let item = items.find(i => i.id === activeFileId); 
-                if (item) { item.content = document.getElementById('txt-textarea').value; showDialog('Mentés', 'A fájl tartalma frissítve!', 'alert'); } 
-            } 
-        };
-
+        window.openCmdHelp = function() { openStaticWindow('cmd-help-window', 'sys-help', dict[currentLang].cmdHelpTitle); };
+        window.saveTxtFile = function() { if (activeFileId) { let item = items.find(i => i.id === activeFileId); if (item) { item.content = document.getElementById('txt-textarea').value; showDialog('Mentés', 'A fájl tartalma frissítve!', 'alert'); } } };
         window.executeCommand = function() { try { eval(document.getElementById('cmd-textarea').value); } catch(e) { showDialog('Parancssor Hiba', e.message, 'alert'); } };
 
-        // --- BEÁLLÍTÁSOK / FÁJLBA MENTÉS ---
-        document.getElementById('btn-settings').onclick = () => { document.getElementById('settings-window').style.display = 'flex'; };
-        document.querySelectorAll('.settings-tab').forEach(tab => {
-            tab.addEventListener('click', (e) => {
-                document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
-                e.target.classList.add('active'); document.getElementById(e.target.dataset.target).classList.add('active');
-            });
-        });
-        document.getElementById('icon-size-slider').oninput = (e) => { iconSize = parseInt(e.target.value); document.getElementById('icon-size-label').innerText = iconSize + 'px'; renderDesktop(); if (currentOpenFolderId) renderFolderContent(); };
+        document.getElementById('btn-settings').onclick = () => { openStaticWindow('settings-window', 'sys-settings', dict[currentLang].settingsTitle); };
+        document.querySelectorAll('.settings-tab').forEach(tab => { tab.addEventListener('click', (e) => { document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active')); e.target.classList.add('active'); document.getElementById(e.target.dataset.target).classList.add('active'); }); });
+        document.getElementById('icon-size-slider').oninput = (e) => { iconSize = parseInt(e.target.value); document.getElementById('icon-size-label').innerText = iconSize + 'px'; renderDesktop(); refreshAllFolders(); };
 
-        window.exportState = function() {
-            const state = JSON.stringify({ items, deletedItems, sysIcons, desktopBg, desktopStretch, iconSize, currentTimeZone, currentLang, darkMode: document.body.classList.contains('dark-mode') });
-            const blob = new Blob([state], {type: "application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "windows_allapot.json"; a.click();
-        };
-
+        window.exportState = function() { const state = JSON.stringify({ items, deletedItems, sysIcons, desktopBg, desktopStretch, iconSize, currentTimeZone, currentLang, darkMode: document.body.classList.contains('dark-mode') }); const blob = new Blob([state], {type: "application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "windows_allapot.json"; a.click(); };
         window.importState = function(e) {
-            const file = e.target.files[0]; if (!file) return;
-            const reader = new FileReader();
+            const file = e.target.files[0]; if (!file) return; const reader = new FileReader();
             reader.onload = function(evt) {
                 try {
-                    const state = JSON.parse(evt.target.result);
-                    items = state.items || []; deletedItems = state.deletedItems || [];
-                    if (state.sysIcons) sysIcons = state.sysIcons;
-                    if (state.iconSize) { iconSize = state.iconSize; document.getElementById('icon-size-slider').value = iconSize; document.getElementById('icon-size-label').innerText = iconSize + 'px'; }
-                    if (state.currentTimeZone) currentTimeZone = state.currentTimeZone;
-                    if (state.currentLang) { currentLang = state.currentLang; document.getElementById('lang-select').value = currentLang; }
-                    document.getElementById('dark-mode-toggle').checked = !!state.darkMode; toggleTheme();
-                    if (state.desktopBg) applyBg(state.desktopBg, state.desktopStretch !== false);
-                    updateClock(); applyTranslations(); renderDesktop(); if (currentOpenFolderId) { renderFolderContent(); renderFolderTree(); }
+                    const state = JSON.parse(evt.target.result); items = state.items || []; deletedItems = state.deletedItems || [];
+                    if (state.sysIcons) sysIcons = state.sysIcons; if (state.iconSize) { iconSize = state.iconSize; document.getElementById('icon-size-slider').value = iconSize; document.getElementById('icon-size-label').innerText = iconSize + 'px'; } if (state.currentTimeZone) currentTimeZone = state.currentTimeZone; if (state.currentLang) { currentLang = state.currentLang; document.getElementById('lang-select').value = currentLang; }
+                    document.getElementById('dark-mode-toggle').checked = !!state.darkMode; toggleTheme(); if (state.desktopBg) applyBg(state.desktopBg, state.desktopStretch !== false);
+                    openWindows.forEach(w => closeWindow(w.id)); updateClock(); applyTranslations(); renderDesktop(); renderBinList();
                 } catch (err) { showDialog('Hiba', 'Érvénytelen mentési fájl!', 'alert'); }
             }; reader.readAsText(file);
         };
