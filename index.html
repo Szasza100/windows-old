@@ -439,12 +439,20 @@
             renderBinList();
         }
 
-        // --- EASTER EGG ---
-        let eeClicks = 0; let eeTimer = null; let spamInterval = null;
-        function triggerEasterEgg() {
-            eeClicks++; clearTimeout(eeTimer); eeTimer = setTimeout(() => { eeClicks = 0; }, 1000);
+        // --- EASTER EGG (JAVÍTOTT SPAM VÉDELEMMEL) ---
+        let eeClicks = 0; let eeTimer = null; let spamInterval = null; let isEEActive = false;
+        window.triggerEasterEgg = function() {
+            if (isEEActive) return; // Megakadályozzuk a túlkattintásos végtelen ciklust
+            
+            eeClicks++; 
+            clearTimeout(eeTimer); 
+            eeTimer = setTimeout(() => { eeClicks = 0; }, 1000);
+            
             if (eeClicks === 5) {
-                eeClicks = 0; let spamCount = 0;
+                eeClicks = 0; 
+                isEEActive = true; 
+                let spamCount = 0;
+                
                 spamInterval = setInterval(() => {
                     let fakeWindow = document.createElement('div');
                     fakeWindow.className = 'window fake-error-window';
@@ -460,19 +468,29 @@
                         </div>`;
                     document.body.appendChild(fakeWindow); spamCount++;
                 }, 30);
+                
                 setTimeout(() => {
                     clearInterval(spamInterval);
                     document.querySelectorAll('.fake-error-window').forEach(w => w.remove());
+                    
                     const bsod = document.getElementById('bsod-screen');
                     bsod.style.display = 'block'; bsod.style.opacity = '1';
+                    
                     setTimeout(() => {
                         let opacity = 1;
                         let choppyFadeInterval = setInterval(() => {
                             opacity -= (Math.random() * 0.2 + 0.05);
                             if (opacity <= 0) {
-                                opacity = 0; clearInterval(choppyFadeInterval); bsod.style.display = 'none';
+                                opacity = 0; 
+                                clearInterval(choppyFadeInterval); 
+                                bsod.style.display = 'none';
+                                
                                 const toast = document.getElementById('toast-notification');
-                                toast.style.right = '10px'; setTimeout(() => { toast.style.right = '-320px'; }, 5000);
+                                toast.style.right = '10px'; 
+                                setTimeout(() => { 
+                                    toast.style.right = '-320px'; 
+                                    isEEActive = false; // Végzett az animáció, újra engedjük
+                                }, 5000);
                             }
                             bsod.style.opacity = opacity;
                         }, 200); 
@@ -667,20 +685,17 @@
             const analyser = audioPlayContext.createAnalyser();
             analyser.fftSize = 64;
             
-            // Ha már be lett kötve egy source ehez az audio elemhez, a böngésző dobhat hibát, így egyszerű try-catch.
             try {
                 const source = audioPlayContext.createMediaElementSource(audioElement);
                 source.connect(analyser);
                 analyser.connect(audioPlayContext.destination);
-            } catch (e) {
-                // Már bekötve, sebaj.
-            }
+            } catch (e) {}
 
             const ctx = canvasElement.getContext('2d');
             const dataArray = new Uint8Array(analyser.frequencyBinCount);
             
             function draw() {
-                if(audioElement.paused || audioElement.ended) return; // Állítsuk le a rajzolást ha vége
+                if(audioElement.paused || audioElement.ended) return; 
                 requestAnimationFrame(draw);
                 analyser.getByteFrequencyData(dataArray);
                 
@@ -828,7 +843,7 @@
             const finishRename = () => { 
                 if (isFinished) return; isFinished = true;
                 item.name = input.value.trim() || "Névtelen";
-                updateTypeByExtension(item); // Tipus frissítése a név alapján!
+                updateTypeByExtension(item); 
                 renderDesktop(); 
                 if (currentOpenFolderId) { renderFolderContent(); renderFolderTree(); }
             };
@@ -852,33 +867,19 @@
         }
 
         // --- VALÓS MÉDIA FELVÉTEL WEBRTC-vel ---
-        let mediaStream = null;
-        let mediaRecorder = null;
-        let recordedChunks = [];
-        let captureType = null;
-        let pendingMediaItem = null;
-        let audioContext = null;
-        let animFrame = null;
-
+        let mediaStream = null; let mediaRecorder = null; let recordedChunks = []; let captureType = null; let pendingMediaItem = null; let audioContext = null; let animFrame = null;
         function startWebRTCCapture(type, item) {
-            pendingMediaItem = item;
-            captureType = type;
-            const overlay = document.getElementById('media-capture-overlay');
-            const videoElem = document.getElementById('capture-video-elem');
-            const canvasElem = document.getElementById('audio-visualizer-canvas');
-            const actionBtn = document.getElementById('capture-action-btn');
+            pendingMediaItem = item; captureType = type;
+            const overlay = document.getElementById('media-capture-overlay'); const videoElem = document.getElementById('capture-video-elem');
+            const canvasElem = document.getElementById('audio-visualizer-canvas'); const actionBtn = document.getElementById('capture-action-btn');
             const titleElem = document.getElementById('media-capture-title');
-            
-            overlay.style.display = 'flex';
-            videoElem.style.display = 'none';
-            canvasElem.style.display = 'none';
-            actionBtn.className = 'capture-btn btn-red'; // alapértelmezett piros
-            actionBtn.innerText = "";
+            overlay.style.display = 'flex'; videoElem.style.display = 'none'; canvasElem.style.display = 'none';
+            actionBtn.className = 'capture-btn btn-red'; actionBtn.innerText = "";
             
             let constraints = {};
             if (type === 'img') {
                 constraints = { video: true }; titleElem.innerText = "Fénykép Készítése";
-                videoElem.style.display = 'block'; actionBtn.className = 'capture-btn btn-white'; // FEHÉR KÖR KÉPHEZ
+                videoElem.style.display = 'block'; actionBtn.className = 'capture-btn btn-white';
             } else if (type === 'mp4') {
                 constraints = { video: true, audio: true }; titleElem.innerText = "Videó Felvétel";
                 videoElem.style.display = 'block';
@@ -890,135 +891,88 @@
             navigator.mediaDevices.getUserMedia(constraints)
                 .then(stream => {
                     mediaStream = stream;
-                    if (type === 'img' || type === 'mp4') {
-                        videoElem.srcObject = stream;
-                    }
+                    if (type === 'img' || type === 'mp4') { videoElem.srcObject = stream; }
                     if (type === 'mp3') {
-                        // Hanghullám rajzoló felvétel közben
                         audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                        const source = audioContext.createMediaStreamSource(stream);
-                        const analyser = audioContext.createAnalyser();
-                        analyser.fftSize = 64;
-                        source.connect(analyser);
-                        const ctx = canvasElem.getContext('2d');
+                        const source = audioContext.createMediaStreamSource(stream); const analyser = audioContext.createAnalyser();
+                        analyser.fftSize = 64; source.connect(analyser); const ctx = canvasElem.getContext('2d');
                         const dataArray = new Uint8Array(analyser.frequencyBinCount);
-
                         function draw() {
-                            animFrame = requestAnimationFrame(draw);
-                            analyser.getByteFrequencyData(dataArray);
+                            animFrame = requestAnimationFrame(draw); analyser.getByteFrequencyData(dataArray);
                             ctx.fillStyle = '#111'; ctx.fillRect(0, 0, canvasElem.width, canvasElem.height);
-                            const barWidth = (canvasElem.width / dataArray.length) * 2.5;
-                            let x = 0;
+                            const barWidth = (canvasElem.width / dataArray.length) * 2.5; let x = 0;
                             for (let i = 0; i < dataArray.length; i++) {
                                 const barHeight = (dataArray[i] / 255) * canvasElem.height;
-                                ctx.fillStyle = 'rgb(' + (barHeight + 100) + ', 50, 50)'; // Pirosas a felvételnél
-                                ctx.fillRect(x, canvasElem.height - barHeight, barWidth, barHeight);
-                                x += barWidth + 1;
+                                ctx.fillStyle = 'rgb(' + (barHeight + 100) + ', 50, 50)';
+                                ctx.fillRect(x, canvasElem.height - barHeight, barWidth, barHeight); x += barWidth + 1;
                             }
-                        }
-                        draw();
+                        } draw();
                     }
                 })
                 .catch(err => {
-                    console.error(err);
-                    showDialog('Hiba', 'Nem sikerült hozzáférni a kamerához vagy a mikrofonhoz!', 'alert');
-                    cancelMediaCapture();
+                    showDialog('Hiba', 'Nem sikerült hozzáférni a kamerához vagy a mikrofonhoz!', 'alert'); cancelMediaCapture();
                 });
         }
 
         window.executeMediaCapture = function() {
             const actionBtn = document.getElementById('capture-action-btn');
-            
             if (captureType === 'img') {
-                // Kép készítése canvas segítségével
-                const videoElem = document.getElementById('capture-video-elem');
-                const canvas = document.createElement('canvas');
+                const videoElem = document.getElementById('capture-video-elem'); const canvas = document.createElement('canvas');
                 canvas.width = videoElem.videoWidth; canvas.height = videoElem.videoHeight;
                 canvas.getContext('2d').drawImage(videoElem, 0, 0);
-                pendingMediaItem.imgUrl = canvas.toDataURL('image/png');
-                pendingMediaItem.extraData = 250;
-                finishMediaCapture();
+                pendingMediaItem.imgUrl = canvas.toDataURL('image/png'); pendingMediaItem.extraData = 250; finishMediaCapture();
             } else {
-                // Videó vagy Hang indítása/leállítása
                 if (mediaRecorder && mediaRecorder.state === 'recording') {
-                    // Stop felvétel
-                    mediaRecorder.stop();
-                    actionBtn.style.animation = ''; // Villogás vége
+                    mediaRecorder.stop(); actionBtn.style.animation = '';
                 } else {
-                    // Indít felvétel
-                    recordedChunks = [];
-                    mediaRecorder = new MediaRecorder(mediaStream);
+                    recordedChunks = []; mediaRecorder = new MediaRecorder(mediaStream);
                     mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
                     mediaRecorder.onstop = () => {
-                        const blob = new Blob(recordedChunks, { type: captureType === 'mp4' ? 'video/webm' : 'audio/webm' }); // böngésző webm-et rögzít leginkább
-                        
-                        // Fájl mentése Base64-ként, hogy megmaradjon mentés/betöltés után is! (Lehet nagy méretű, de ez a legbiztosabb)
+                        const blob = new Blob(recordedChunks, { type: captureType === 'mp4' ? 'video/webm' : 'audio/webm' });
                         const reader = new FileReader();
-                        reader.onloadend = () => {
-                            pendingMediaItem.imgUrl = reader.result;
-                            finishMediaCapture();
-                        };
+                        reader.onloadend = () => { pendingMediaItem.imgUrl = reader.result; finishMediaCapture(); };
                         reader.readAsDataURL(blob);
                     };
-                    mediaRecorder.start();
-                    // Kis villogó animáció jelzi a felvételt
-                    actionBtn.style.animation = 'blink 1s infinite';
+                    mediaRecorder.start(); actionBtn.style.animation = 'blink 1s infinite';
                 }
             }
         };
 
         window.cancelMediaCapture = function() {
             if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
-            stopMediaTracks();
-            document.getElementById('media-capture-overlay').style.display = 'none';
+            stopMediaTracks(); document.getElementById('media-capture-overlay').style.display = 'none';
         }
-
         function finishMediaCapture() {
-            stopMediaTracks();
-            document.getElementById('media-capture-overlay').style.display = 'none';
-            items.push(pendingMediaItem);
-            pendingMediaItem = null;
-            renderDesktop(); 
-            if (currentOpenFolderId) { renderFolderContent(); renderFolderTree(); }
+            stopMediaTracks(); document.getElementById('media-capture-overlay').style.display = 'none';
+            items.push(pendingMediaItem); pendingMediaItem = null;
+            renderDesktop(); if (currentOpenFolderId) { renderFolderContent(); renderFolderTree(); }
         }
-
         function stopMediaTracks() {
             if (mediaStream) { mediaStream.getTracks().forEach(track => track.stop()); mediaStream = null; }
             if (audioContext) { audioContext.close(); audioContext = null; }
             if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
         }
 
-        // Alap elem létrehozó
         window.createNewItem = function(type) {
             contextMenu.style.display = 'none';
-            const id = type + '_' + Date.now();
-            let pId = contextMenuTargetFolder;
-            const pos = getNextGridPosition(pId);
-            
+            const id = type + '_' + Date.now(); let pId = contextMenuTargetFolder; const pos = getNextGridPosition(pId);
             let extMap = { 'folder':'Mappa', 'txt':'.txt', 'html':'.html', 'pptx':'.pptx', 'app':'.lnk', 'img':'.png', 'mp3':'.mp3', 'mp4':'.mp4' };
             let defaultName = (type === 'folder' ? 'Új Mappa' : ('Új Fájl' + extMap[type]));
-
             let newItem = { id, type, name: defaultName, imgUrl: '', content: '', dateCreated: new Date().toISOString(), x: pos.x, y: pos.y, parentId: pId, extraData: 0 };
 
             if (type === 'folder' || type === 'txt' || type === 'html' || type === 'pptx') {
                 items.push(newItem); renderDesktop(); if (pId) { renderFolderContent(); renderFolderTree(); }
-            } 
-            else if (type === 'app') {
+            } else if (type === 'app') {
                 showDialog('Új Parancsikon', 'Add meg a weboldal URL-jét (pl. https://example.com):', 'prompt', (urlVal) => {
                     showDialog('Parancsikon Ikonja', 'Opcionális: Adj meg egy kép URL-t ikonként (vagy hagyd üresen):', 'prompt', (icoVal) => {
                         newItem.content = urlVal || ''; newItem.imgUrl = icoVal || ''; items.push(newItem);
                         renderDesktop(); if (pId) renderFolderContent();
                     });
                 });
-            } 
-            else if (type === 'img' || type === 'mp3' || type === 'mp4') {
+            } else if (type === 'img' || type === 'mp3' || type === 'mp4') {
                 showDialog(`Új ${type.toUpperCase()}`, 'Adj meg egy internetes URL-t, VAGY hagyd üresen a saját felvétel (Kamera/Mikrofon) készítéséhez:', 'prompt', (val) => {
-                    if (val) {
-                        newItem.imgUrl = val; items.push(newItem); renderDesktop(); if (pId) renderFolderContent();
-                    } else {
-                        // VALÓS FELVÉTEL INDÍTÁSA
-                        startWebRTCCapture(type, newItem);
-                    }
+                    if (val) { newItem.imgUrl = val; items.push(newItem); renderDesktop(); if (pId) renderFolderContent(); } 
+                    else { startWebRTCCapture(type, newItem); }
                 });
             }
         };
@@ -1178,12 +1132,29 @@
             }); 
         }
 
-        // --- ABLAK BEZÁRÁSOK ---
+        // --- ABLAKOK KEZELÉSE ---
+        window.openFolderWindow = function(id) {
+            if (id === null) {
+                closeWindow('folder-window');
+                return;
+            }
+            let item = items.find(i => i.id === id); 
+            if (!item) return;
+            currentOpenFolderId = id; 
+            document.getElementById('folder-window-title').innerText = item.name;
+            document.getElementById('folder-window').style.display = 'flex'; 
+            renderFolderContent();
+            renderFolderTree(); 
+        };
+
+        window.openCmdHelp = function() {
+            document.getElementById('cmd-help-window').style.display = 'flex';
+        };
+
         window.closeWindow = function(id) { 
             document.getElementById(id).style.display = 'none'; 
             if (id === 'folder-window') currentOpenFolderId = null; 
             if (id === 'img-window') {
-                // Audio leállítása ha be van zárva
                 let aud = document.getElementById('playback-audio'); if(aud) { aud.pause(); aud.src = ""; }
                 document.getElementById('media-window-body').innerHTML = '';
             }
