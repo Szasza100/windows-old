@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Windows - V10 Javított Rendszer</title>
+    <title>Windows - V12 Rendszer</title>
     <style>
         :root {
             --win-bg: #c0c0c0;
@@ -32,12 +32,24 @@
         #start-button { display: flex; align-items: center; justify-content: center; padding: 0 10px; cursor: pointer; height: 100%; border-right: 2px solid var(--win-border-dark); box-shadow: inset -1px 0 0 var(--win-border-light); }
         #start-button img { height: 28px; filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.5)); transition: transform 0.1s; }
         #start-button:active img { transform: scale(0.9); }
+
+        /* KERESŐSÁV A TÁLCÁN */
+        #search-container { position: relative; display: flex; align-items: center; height: 100%; padding: 0 8px; border-right: 2px solid var(--win-border-dark); box-shadow: inset -1px 0 0 var(--win-border-light); }
+        #taskbar-search { width: 160px; height: 24px; border: 2px inset var(--win-border-dark); background: var(--win-content-bg); color: var(--win-text); padding: 0 6px; font-size: 12px; outline: none; }
+        #search-results { position: absolute; bottom: 42px; left: 5px; width: 280px; max-height: 320px; overflow-y: auto; background: var(--win-bg); color: var(--win-text); border: 2px solid; border-color: var(--win-border-light) #000 #000 var(--win-border-light); box-shadow: 2px -2px 6px rgba(0,0,0,0.5); display: none; flex-direction: column; z-index: 10005; }
+        .search-item { padding: 6px 10px; cursor: pointer; font-size: 13px; border-bottom: 1px dotted var(--win-border-dark); display: flex; align-items: center; gap: 8px; }
+        .search-item:last-child { border-bottom: none; }
+        .search-item:hover { background: var(--win-header); color: var(--win-header-text); }
+
+        /* TOTAL COMMANDER FIX TÁLCA GOMB */
+        #tc-pinned-btn { display: flex; align-items: center; gap: 6px; margin-left: 6px; padding: 2px 10px; height: 30px; background: var(--win-bg); color: var(--win-text); border: 2px solid; border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light); cursor: pointer; font-size: 12px; font-weight: bold; white-space: nowrap; flex-shrink: 0; }
+        #tc-pinned-btn:active { border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark); padding: 3px 9px 1px 11px; }
         
-        /* ÚJ TÁLCA GOMBOK DIZÁJNJA */
-        #taskbar-apps { display: flex; gap: 5px; padding-left: 10px; flex-grow: 1; overflow-x: auto; align-items: center; height: 100%; }
-        .tb-btn { background: var(--win-bg); border: 2px solid; border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light); padding: 2px 8px; cursor: pointer; font-size: 13px; font-weight: bold; white-space: nowrap; max-width: 160px; overflow: hidden; text-overflow: ellipsis; display:flex; align-items:center; gap:5px; height: 28px; box-sizing: border-box; }
+        /* TÁLCA GOMBOK */
+        #taskbar-apps { display: flex; gap: 5px; padding-left: 8px; flex-grow: 1; overflow-x: auto; align-items: center; height: 100%; }
+        .tb-btn { background: var(--win-bg); color: var(--win-text); border: 2px solid; border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light); padding: 2px 8px; cursor: pointer; font-size: 13px; font-weight: bold; white-space: nowrap; max-width: 160px; overflow: hidden; text-overflow: ellipsis; display:flex; align-items:center; gap:5px; height: 28px; box-sizing: border-box; }
         .tb-btn:active { border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark); padding: 3px 7px 1px 9px; }
-        .tb-btn.active { border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark); background: #e0e0e0; padding: 3px 7px 1px 9px; }
+        .tb-btn.active { border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark); background: rgba(0,0,0,0.12); padding: 3px 7px 1px 9px; }
         .tb-group { position: relative; height: 100%; display: flex; align-items: center; }
         .tb-popup { position: absolute; bottom: 35px; left: 0; background: var(--win-bg); border: 2px solid var(--win-border-light); box-shadow: 2px 2px 5px rgba(0,0,0,0.5); display: none; flex-direction: column; z-index: 9999; border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light); }
         .tb-popup-item { padding: 5px 15px; cursor: pointer; font-size: 13px; white-space: nowrap; border-bottom: 1px dotted var(--win-border-dark); }
@@ -45,10 +57,13 @@
         .tb-popup-item:hover { background: var(--win-header); color: var(--win-header-text); }
         .tb-group:hover .tb-popup { display: flex; }
 
-        #tray { display: flex; align-items: center; padding-right: 10px; border-left: 2px solid var(--win-border-dark); box-shadow: inset 1px 0 0 var(--win-border-light); height: 100%; padding-left: 10px; }
+        #tray { position: relative; display: flex; align-items: center; padding-right: 10px; border-left: 2px solid var(--win-border-dark); box-shadow: inset 1px 0 0 var(--win-border-light); height: 100%; padding-left: 10px; }
         .tray-btn { background: var(--win-bg); color: var(--win-text); border: 2px solid; border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light); padding: 2px 8px; margin-right: 5px; cursor: pointer; font-weight: bold; font-size: 14px; }
         .tray-btn:active { border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark); padding: 3px 7px 1px 9px; }
         #clock { font-size: 12px; margin-left: 5px; border: 2px inset var(--win-border-dark); padding: 2px 6px; background: var(--win-bg); text-align: center; cursor: pointer; line-height: 1.1; }
+
+        /* HANGERŐ FELUGRÓ ABLAK */
+        #volume-popup { position: absolute; bottom: 44px; right: 65px; background: var(--win-bg); color: var(--win-text); border: 2px solid; border-color: var(--win-border-light) #000 #000 var(--win-border-light); padding: 10px 14px; display: none; flex-direction: column; align-items: center; gap: 6px; box-shadow: 2px 2px 6px rgba(0,0,0,0.5); z-index: 10010; min-width: 140px; }
 
         .icon { position: absolute; display: flex; flex-direction: column; align-items: center; text-align: center; color: white; cursor: pointer; z-index: 10; }
         .icon-img-wrapper { background-color: transparent; display: flex; justify-content: center; align-items: center; margin-bottom: 5px; overflow: hidden; pointer-events: none; }
@@ -56,13 +71,12 @@
         .icon-label { background-color: transparent; padding: 2px 4px; font-size: 12px; text-shadow: 1px 1px 1px black; border: 1px dotted transparent; word-wrap: break-word; max-width: 100px; text-align: center; }
         .icon.selected .icon-label { background-color: #000080; border-color: yellow; color: white; text-shadow: none; }
         
-        .window { position: absolute; background: var(--win-bg); color: var(--win-text); border: 2px solid; border-color: var(--win-border-light) #000 #000 var(--win-border-light); display: none; flex-direction: column; min-width: 300px; min-height: 200px; z-index: 100; box-shadow: 2px 2px 5px rgba(0,0,0,0.5); resize: both; overflow: hidden; }
+        .window { position: absolute; background: var(--win-bg); color: var(--win-text); border: 2px solid; border-color: var(--win-border-light) #000 #000 var(--win-border-light); display: none; flex-direction: column; min-width: 220px; min-height: 120px; z-index: 100; box-shadow: 2px 2px 5px rgba(0,0,0,0.5); resize: both; overflow: hidden; }
         .window.maximized { top: 0 !important; left: 0 !important; width: 100vw !important; height: calc(100vh - 40px) !important; }
         
         .window-header { background: var(--win-header); color: var(--win-header-text); padding: 3px 5px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; cursor: move; }
         .header-btns { display: flex; align-items: center; gap: 4px; }
         
-        /* ÚJ ABLAKKEZELŐ GOMBOK */
         .win-ctrl { background: var(--win-bg); color: var(--win-text); border: 2px solid; border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light); width: 20px; height: 20px; font-weight: bold; line-height: 16px; text-align: center; cursor: pointer; display: inline-block; font-size:12px; }
         .win-ctrl:active { border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark); padding: 1px 0 0 1px; }
         .win-ctrl.close { background: #d00; color: white; }
@@ -82,12 +96,13 @@
         .folder-view-list .icon-size-label { font-size: 11px; opacity: 0.8; padding-right: 10px; width: 80px; text-align: right; }
         .folder-view-list .icon-img-wrapper { margin-bottom: 0; margin-right: 10px; }
         
-        .tree-item { padding: 2px 5px; cursor: pointer; margin-bottom: 2px; border: 1px dotted transparent; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; color: var(--win-text); }
+        .tree-item { padding: 2px 5px; cursor: pointer; margin-bottom: 2px; border: 1px dotted transparent; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; color: var(--win-text); }
         .tree-item:hover { text-decoration: underline; }
         .tree-item.active { background: #000080; color: white; border-color: yellow; font-weight: bold; }
+        .tree-file-item { opacity: 0.9; font-style: italic; }
 
-        #context-menu { position: absolute; display: none; z-index: 9999; background: var(--win-bg); color: var(--win-text); border: 2px solid; border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light); box-shadow: 2px 2px 5px rgba(0,0,0,0.5); flex-direction: column; padding: 2px; min-width: 170px; }
-        .menu-item { padding: 5px 10px; cursor: pointer; font-size: 14px; }
+        #context-menu { position: absolute; display: none; z-index: 25000; background: var(--win-bg); color: var(--win-text); border: 2px solid; border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light); box-shadow: 2px 2px 5px rgba(0,0,0,0.5); flex-direction: column; padding: 2px; min-width: 195px; }
+        .menu-item { padding: 5px 10px; cursor: pointer; font-size: 13px; }
         .menu-item:hover { background: var(--win-header); color: var(--win-header-text); }
         .menu-separator { height: 1px; background: var(--win-border-dark); margin: 2px 0; border-bottom: 1px solid var(--win-border-light); }
 
@@ -100,10 +115,10 @@
         #txt-textarea, #cmd-textarea { width: 100%; height: calc(100% - 40px); resize: none; box-sizing: border-box; background: var(--win-content-bg); color: var(--win-text); font-family: monospace; }
         #cmd-textarea { background: #000; color: #0f0; border: inset 2px var(--win-border-dark); padding: 8px; }
 
-        .settings-sidebar { width: 130px; background: var(--win-content-bg); border-right: 2px inset var(--win-border-dark); }
+        .settings-sidebar { width: 145px; background: var(--win-content-bg); border-right: 2px inset var(--win-border-dark); flex-shrink: 0; }
         .settings-tab { padding: 10px; cursor: pointer; border-bottom: 1px solid var(--win-border-dark); font-size: 13px; }
         .settings-tab.active { background: var(--win-header); color: var(--win-header-text); font-weight: bold; }
-        .settings-panel { padding: 15px; flex-grow: 1; display: none; background: var(--win-bg); }
+        .settings-panel { padding: 15px; flex-grow: 1; display: none; background: var(--win-bg); overflow-y: auto; }
         .settings-panel.active { display: block; }
         
         .bin-item { padding: 8px; border-bottom: 1px solid var(--win-border-dark); font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
@@ -131,6 +146,40 @@
         #slide-container { display:flex; flex-direction:column; align-items:center; height:100%; background:#f0f0f0; padding:10px; box-sizing:border-box;}
         #slide-editor { width: 90%; flex-grow: 1; margin: 10px 0; font-size: 18px; padding: 10px; border: 1px solid #ccc; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); resize: none;}
         .ppt-toolbar { display: flex; gap: 10px; background: var(--win-bg); padding: 5px; border: 2px solid var(--win-border-dark); width: 100%; justify-content: center;}
+
+        /* SZÁMOLÓGÉP DIZÁJN */
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; flex-grow: 1; }
+        .calc-btn { background: var(--win-bg); color: var(--win-text); border: 2px solid; border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light); font-weight: bold; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .calc-btn:active { border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark); padding: 2px 0 0 2px; }
+        .calc-btn.op { color: #000080; }
+        .calc-btn.clr { color: #b00000; }
+
+        /* KÉPMETSZŐ OVERLAY */
+        #snip-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.25); cursor: crosshair; z-index: 90000; display: none; }
+        #snip-selection-box { position: absolute; border: 2px dashed #00ffcc; background: rgba(255, 255, 255, 0.15); display: none; pointer-events: none; }
+
+        /* TOTAL COMMANDER 64 BIT STÍLUSOK */
+        .tc-wrapper { display: flex; flex-direction: column; height: 100%; background: var(--win-bg); font-family: 'Segoe UI', Tahoma, sans-serif; font-size: 12px; user-select: none; }
+        .tc-panels { display: flex; flex-grow: 1; gap: 4px; padding: 4px; overflow: hidden; background: var(--win-bg); }
+        .tc-panel { flex: 1; display: flex; flex-direction: column; border: 2px inset var(--win-border-dark); background: var(--win-content-bg); overflow: hidden; cursor: default; }
+        .tc-panel.active-panel .tc-path-bar { background: #000080; color: #fff; }
+        .tc-path-bar { background: #555; color: #ddd; padding: 4px 8px; font-weight: bold; font-family: monospace; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-bottom: 1px solid var(--win-border-dark); }
+        .tc-table-wrap { flex-grow: 1; overflow-y: auto; overflow-x: hidden; background: var(--win-content-bg); }
+        .tc-table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+        .tc-table th { position: sticky; top: 0; background: var(--win-bg); color: var(--win-text); border-bottom: 2px solid var(--win-border-dark); border-right: 1px solid var(--win-border-dark); padding: 4px 6px; text-align: left; cursor: pointer; font-weight: bold; z-index: 2; }
+        .tc-table th:hover { background: #dcdcdc; color: #000; }
+        .tc-row td { padding: 3px 6px; border-bottom: 1px dotted rgba(128,128,128,0.3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .tc-row:hover { background: rgba(0, 0, 128, 0.12); }
+        .tc-row.tc-cursor { outline: 1px dotted #000080; background: rgba(0, 0, 128, 0.2); }
+        .tc-row.tc-red-selected td { color: #ff0000 !important; font-weight: bold; }
+        .tc-footer { display: grid; grid-template-columns: repeat(7, 1fr); background: var(--win-bg); border-top: 2px solid var(--win-border-light); padding: 2px; gap: 2px; }
+        .tc-fn-btn { background: var(--win-bg); color: var(--win-text); border: 2px solid; border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light); padding: 4px 2px; font-size: 11px; font-weight: bold; text-align: center; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .tc-fn-btn:active { border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark); }
+
+        /* FUTÓ ALKALMAZÁSOK TAB */
+        .task-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; border-bottom: 1px solid var(--win-border-dark); background: var(--win-content-bg); margin-bottom: 4px; font-size: 12px; }
+        .task-kill-btn { background: #b00000; color: white; border: 2px solid; border-color: #ff6666 #550000 #550000 #ff6666; padding: 3px 8px; cursor: pointer; font-weight: bold; font-size: 11px; }
+        .task-kill-btn:active { border-color: #550000 #ff6666 #ff6666 #550000; }
     </style>
 </head>
 <body>
@@ -142,6 +191,11 @@
 
     <!-- Kékhalál képernyő -->
     <div id="bsod-screen"></div>
+
+    <!-- Képmetsző Kijelölő Réteg -->
+    <div id="snip-overlay">
+        <div id="snip-selection-box"></div>
+    </div>
 
     <!-- Rendszer értesítés (Toast) -->
     <div id="toast-notification">
@@ -163,19 +217,32 @@
     <div id="context-menu"></div>
     <div id="desktop"></div>
 
-    <!-- TÁLCA ÚJ DIZÁJNNAL -->
+    <!-- TÁLCA KERESŐSÁVVAL ÉS TOTAL COMMANDERREL -->
     <div id="taskbar">
         <div id="start-button" onclick="triggerEasterEgg()" title="Start">
             <img src="icon.png" alt="Start">
         </div>
+        <div id="search-container">
+            <input type="text" id="taskbar-search" data-i18n-ph="searchPh" placeholder="🔍 Keresés..." oninput="performSystemSearch(this.value)" onfocus="performSystemSearch(this.value)">
+            <div id="search-results"></div>
+        </div>
+        <!-- Total Commander 64 bit fixen a keresősáv után -->
+        <div id="tc-pinned-btn" onclick="openTotalCommander()" title="Total Commander 64 bit indítása">
+            <span>💾</span> <span>Total commander 64 bit</span>
+        </div>
         <div id="taskbar-apps"></div>
         <div id="tray">
             <button class="tray-btn" id="btn-settings">⚙️ <span data-i18n="settingsTitle">Beállítások</span></button>
+            <button class="tray-btn" id="btn-volume" onclick="toggleVolumePopup(event)" title="Hangerő">🔊</button>
+            <div id="volume-popup" onclick="event.stopPropagation()">
+                <div style="font-size:12px; font-weight:bold;">Hangerő: <span id="vol-label">80%</span></div>
+                <input type="range" id="vol-slider" min="1" max="100" value="80" oninput="changeSystemVolume(this.value)" style="width:120px; cursor:pointer;">
+            </div>
             <div id="clock" onclick="changeTimezone()" title="Időzóna beállítása">00:00:00</div>
         </div>
     </div>
 
-    <!-- STATIKUS ABLAKOK FEJLÉC FRISSÍTÉSSEL -->
+    <!-- STATIKUS ABLAKOK -->
     <div class="window" id="properties-window" style="top: 150px; left: 300px; width: 360px; height: 320px;">
         <div class="window-header" onmousedown="bringToFront(this.parentElement)">
             <span class="win-title" data-i18n="propTitle">Tulajdonságok</span>
@@ -196,6 +263,154 @@
         </div>
     </div>
 
+    <!-- Számológép Ablak (Csak keresőből érhető el) -->
+    <div class="window" id="calc-window" style="top: 130px; left: 420px; width: 250px; height: 320px; resize: none;">
+        <div class="window-header" onmousedown="bringToFront(this.parentElement)">
+            <span class="win-title" data-i18n="calcName">Számológép</span>
+            <div class="header-btns">
+                <div class="win-ctrl" onclick="minimizeWindow('calc-window')">_</div>
+                <div class="win-ctrl close" onclick="closeWindow('calc-window')">X</div>
+            </div>
+        </div>
+        <div class="window-content" style="background: var(--win-bg); display: flex; flex-direction: column; padding: 10px;">
+            <input type="text" id="calc-display" readonly value="0" style="width: 100%; height: 36px; text-align: right; font-family: monospace; font-size: 20px; font-weight: bold; margin-bottom: 10px; box-sizing: border-box; border: 2px inset var(--win-border-dark); background: #fff; color: #000; padding: 0 8px;">
+            <div class="calc-grid">
+                <button class="calc-btn clr" onclick="calcClear()" style="grid-column: span 2;">C</button>
+                <button class="calc-btn clr" onclick="calcBack()">⌫</button>
+                <button class="calc-btn op" onclick="calcInput('/')">÷</button>
+                <button class="calc-btn" onclick="calcInput('7')">7</button>
+                <button class="calc-btn" onclick="calcInput('8')">8</button>
+                <button class="calc-btn" onclick="calcInput('9')">9</button>
+                <button class="calc-btn op" onclick="calcInput('*')">×</button>
+                <button class="calc-btn" onclick="calcInput('4')">4</button>
+                <button class="calc-btn" onclick="calcInput('5')">5</button>
+                <button class="calc-btn" onclick="calcInput('6')">6</button>
+                <button class="calc-btn op" onclick="calcInput('-')">-</button>
+                <button class="calc-btn" onclick="calcInput('1')">1</button>
+                <button class="calc-btn" onclick="calcInput('2')">2</button>
+                <button class="calc-btn" onclick="calcInput('3')">3</button>
+                <button class="calc-btn op" onclick="calcInput('+')">+</button>
+                <button class="calc-btn" onclick="calcInput('0')" style="grid-column: span 2;">0</button>
+                <button class="calc-btn" onclick="calcInput('.')">.</button>
+                <button class="calc-btn op" onclick="calcSolve()">=</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Képmetsző Ablak (Csak keresőből érhető el, jobb felső sarokban nyílik) -->
+    <div class="window" id="snip-window" style="top: 15px; right: 15px; left: auto; width: 250px; height: 185px; resize: none;">
+        <div class="window-header" onmousedown="bringToFront(this.parentElement)">
+            <span class="win-title">✂️ Képmetsző</span>
+            <div class="header-btns">
+                <div class="win-ctrl" onclick="minimizeWindow('snip-window')">_</div>
+                <div class="win-ctrl close" onclick="closeWindow('snip-window')">X</div>
+            </div>
+        </div>
+        <div class="window-content" style="background: var(--win-bg); display: flex; flex-direction: column; gap: 8px; padding: 10px; font-size: 12px;">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+                <button class="app-btn" style="width: 55px; height: 36px; font-size: 22px; margin: 0; color: #008000;" onclick="initiateSnip()" title="Új képmetszés indítása">+</button>
+                <div style="flex-grow: 1; padding-left: 10px;">
+                    <label style="cursor:pointer; font-weight:bold;"><input type="checkbox" id="snip-delay-chk"> Késleltetés</label>
+                    <div style="margin-top:4px;">
+                        Idő: <input type="number" id="snip-delay-sec" min="1" max="45" value="45" style="width:45px; padding:2px;"> mp (max 45)
+                    </div>
+                </div>
+            </div>
+            <div id="snip-status" style="font-weight:bold; color:#000080; text-align:center; padding-top:4px; border-top:1px solid var(--win-border-dark);">
+                Kattints a „+” jelre a vágáshoz!
+            </div>
+        </div>
+    </div>
+
+    <!-- Rajzolt Valósághű PAC-MAN Ablak -->
+    <div class="window" id="pacman-window" style="top: 40px; left: 260px; width: 460px; height: 560px; resize: none;">
+        <div class="window-header" onmousedown="bringToFront(this.parentElement)">
+            <span class="win-title">🍒 Packman (Arcade)</span>
+            <div class="header-btns">
+                <div class="win-ctrl" onclick="minimizeWindow('pacman-window')">_</div>
+                <div class="win-ctrl close" onclick="closeWindow('pacman-window')">X</div>
+            </div>
+        </div>
+        <div class="window-content" style="background: #000; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 8px; overflow: hidden;">
+            <div style="display:flex; justify-content:space-between; width:100%; font-family:monospace; font-size:15px; font-weight:bold; padding: 2px 10px; box-sizing:border-box; background:#111; border:1px solid #333;">
+                <span>SCORE: <span id="pac-score" style="color:yellow;">0</span></span>
+                <span id="pac-status" style="color:#00ffcc;">READY!</span>
+                <span>LIVES: <span id="pac-lives">🟡🟡🟡</span></span>
+            </div>
+            <canvas id="pacman-canvas" width="418" height="462" style="background:#000; border: 2px solid #1919a6; margin: 4px 0;"></canvas>
+            <div style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:12px;">
+                <span>Irányítás: <b>Nyilak</b> vagy <b>W, A, S, D</b></span>
+                <button class="help-btn" onclick="initPacmanGame()">🔄 Új játék</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Commander 64 bit Ablak -->
+    <div class="window" id="tc-window" style="top: 45px; left: 90px; width: 880px; height: 520px;">
+        <div class="window-header" onmousedown="bringToFront(this.parentElement)">
+            <span class="win-title">💾 Total Commander 64 bit</span>
+            <div class="header-btns">
+                <div class="win-ctrl" onclick="minimizeWindow('tc-window')">_</div>
+                <div class="win-ctrl" onclick="maximizeWindow('tc-window')">□</div>
+                <div class="win-ctrl close" onclick="closeWindow('tc-window')">X</div>
+            </div>
+        </div>
+        <div class="window-content" style="padding:0; overflow:hidden;">
+            <div class="tc-wrapper">
+                <div style="background:var(--win-bg); padding:3px 8px; font-size:11px; border-bottom:1px solid var(--win-border-dark); display:flex; justify-content:space-between;">
+                    <span>💡 Tipp: <b>Rövid jobb klikk</b> = Piros kijelölés | <b>Hosszú jobb klikk</b> = Teljes menü | <b>F + 3..8</b> = Gyorsgombok</span>
+                    <span id="tc-clipboard-info" style="font-weight:bold; color:#000080;"></span>
+                </div>
+                <div class="tc-panels">
+                    <!-- BAL PANEL -->
+                    <div class="tc-panel active-panel" id="tc-panel-left" onmousedown="setTcActiveSide('left')">
+                        <div class="tc-path-bar" id="tc-path-left">Főmappa</div>
+                        <div class="tc-table-wrap" id="tc-wrap-left">
+                            <table class="tc-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width:42%;" onclick="sortTcPanel('left','name')">Név</th>
+                                        <th style="width:16%;" onclick="sortTcPanel('left','ext')">Kiterj.</th>
+                                        <th style="width:18%;" onclick="sortTcPanel('left','size')">Méret</th>
+                                        <th style="width:24%;" onclick="sortTcPanel('left','date')">Dátum</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tc-tbody-left"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- JOBB PANEL -->
+                    <div class="tc-panel" id="tc-panel-right" onmousedown="setTcActiveSide('right')">
+                        <div class="tc-path-bar" id="tc-path-right">Főmappa</div>
+                        <div class="tc-table-wrap" id="tc-wrap-right">
+                            <table class="tc-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width:42%;" onclick="sortTcPanel('right','name')">Név</th>
+                                        <th style="width:16%;" onclick="sortTcPanel('right','ext')">Kiterj.</th>
+                                        <th style="width:18%;" onclick="sortTcPanel('right','size')">Méret</th>
+                                        <th style="width:24%;" onclick="sortTcPanel('right','date')">Dátum</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tc-tbody-right"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- ALSÓ FUNKCIÓGOMB SÁV -->
+                <div class="tc-footer">
+                    <div class="tc-fn-btn" onclick="tcActionF3()">F3 Nézőke (F+3)</div>
+                    <div class="tc-fn-btn" onclick="tcActionF4()">F4 Szerk. (F+4)</div>
+                    <div class="tc-fn-btn" onclick="tcActionF5()">F5 Másolás (F+5)</div>
+                    <div class="tc-fn-btn" onclick="tcActionF6()">F6 Áthelyez (F+6)</div>
+                    <div class="tc-fn-btn" onclick="tcActionF7()">F7 Új mappa (F+7)</div>
+                    <div class="tc-fn-btn" onclick="tcActionF8()">F8 Törlés (F+8)</div>
+                    <div class="tc-fn-btn" onclick="closeWindow('tc-window')">Alt+F4 Kilépés</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="window" id="txt-window" style="top: 150px; left: 350px; width: 420px; height: 320px;">
         <div class="window-header" onmousedown="bringToFront(this.parentElement)">
             <span class="win-title" id="txt-title" data-i18n="txtDocTitle">Szöveges dokumentum</span>
@@ -211,10 +426,11 @@
         </div>
     </div>
 
-    <div class="window" id="html-window" style="top: 80px; left: 200px; width: 720px; height: 500px;">
+    <div class="window" id="html-window" style="top: 60px; left: 180px; width: 760px; height: 520px;">
         <div class="window-header" onmousedown="bringToFront(this.parentElement)">
             <span class="win-title" id="html-title">Weboldal Megjelenítő</span>
             <div class="header-btns">
+                <button class="help-btn" id="external-web-btn" style="display:none;" onclick="openCurrentIframeExternal()">🌐 Külső megnyitás</button>
                 <div class="win-ctrl" onclick="minimizeWindow('html-window')">_</div>
                 <div class="win-ctrl" onclick="maximizeWindow('html-window')">□</div>
                 <div class="win-ctrl close" onclick="closeWindow('html-window')">X</div>
@@ -307,7 +523,7 @@
         <div class="window-content" id="bin-content" style="display: block; overflow-y: auto;"></div>
     </div>
 
-    <div class="window" id="settings-window" style="top: 100px; left: 120px; width: 480px; height: 340px;">
+    <div class="window" id="settings-window" style="top: 100px; left: 120px; width: 560px; height: 380px;">
         <div class="window-header" onmousedown="bringToFront(this.parentElement)">
             <span class="win-title" data-i18n="settingsTitle">Beállítások</span>
             <div class="header-btns">
@@ -320,6 +536,7 @@
             <div class="settings-sidebar">
                 <div class="settings-tab active" data-target="panel-appearance" data-i18n="tabApp">Megjelenés</div>
                 <div class="settings-tab" data-target="panel-system" data-i18n="tabSys">Nyelv & Óra</div>
+                <div class="settings-tab" data-target="panel-running" data-i18n="tabRunning">Futó alkalmazások</div>
                 <div class="settings-tab" data-target="panel-save" data-i18n="tabSave">Mentés / Betöltés</div>
             </div>
             <div class="settings-panel active" id="panel-appearance">
@@ -344,6 +561,12 @@
                     </select>
                 </label>
             </div>
+            <!-- FUTÓ ALKALMAZÁSOK PANEL -->
+            <div class="settings-panel" id="panel-running">
+                <h3 style="margin-top:0;">Futó alkalmazások és folyamatok</h3>
+                <div id="running-apps-summary" style="font-size:12px; margin-bottom:8px; font-weight:bold;"></div>
+                <div id="running-apps-list"></div>
+            </div>
             <div class="settings-panel" id="panel-save">
                 <h3 style="margin-top:0;" data-i18n="setSaveInfoTitle">Rendszerállapot Fájlba</h3>
                 <p style="font-size:12px;" data-i18n="setSaveInfo">A böngészőbe semmi nem mentődik automatikusan. Itt tudod fájlba menteni és visszatölteni a munkádat:</p>
@@ -355,29 +578,32 @@
     </div>
 
     <!-- Egyedi Windows Dialog -->
-    <div class="window" id="dialog-window" style="top: 30%; left: 38%; width: 370px; min-height: 160px; z-index: 15000;">
+    <div class="window" id="dialog-window" style="top: 28%; left: 36%; width: 390px; min-height: 160px; z-index: 26000;">
         <div class="window-header"><span id="dialog-title" data-i18n="sysMsgTitle">Rendszerüzenet</span></div>
         <div class="window-content" style="background:var(--win-bg); display:flex; flex-direction:column; justify-content:space-between;">
             <p id="dialog-text" style="margin-top:0; font-size:14px;"></p>
             <input type="text" id="dialog-input" style="display:none; width:100%; box-sizing:border-box; padding:5px; margin-bottom:10px;">
             <select id="dialog-select" style="display:none; width:100%; padding:5px; margin-bottom:10px;"></select>
             <div id="dialog-custom-html"></div>
-            <div style="display:flex; justify-content:center; gap:10px; margin-top:10px;">
-                <button class="app-btn" id="dialog-btn-ok" style="width:100px;" data-i18n="btnOk">OK / Igen</button>
-                <button class="app-btn" id="dialog-btn-cancel" style="width:100px; display:none;" data-i18n="btnCancel">Mégse / Nem</button>
+            <div id="dialog-std-btns" style="display:flex; justify-content:center; gap:10px; margin-top:10px;">
+                <button class="app-btn" id="dialog-btn-ok" style="width:120px;" data-i18n="btnOk">OK / Igen</button>
+                <button class="app-btn" id="dialog-btn-cancel" style="width:120px; display:none;" data-i18n="btnCancel">Mégse / Nem</button>
             </div>
         </div>
     </div>
 
     <script>
-        // ALAP ALKALMAZÁSOK BETÖLTÉSE: A kért Minecraft!
+        // ALAP ALKALMAZÁSOK: Minecraft (Minecraft.png), Terep2 (Terep2.png) és Packman (Packman.png + Rajzolt motor)
         let items = [
-            { id: 'app_minecraft', type: 'app', name: 'Minecraft', imgUrl: 'Minecraft.png', content: 'https://classic.minecraft.net/', dateCreated: new Date().toISOString(), x: 20, y: 240, parentId: null, extraData: 0 }
+            { id: 'app_minecraft', type: 'app', name: 'Minecraft', imgUrl: 'Minecraft.png', content: 'https://classic.minecraft.net/', dateCreated: new Date().toISOString(), x: 20, y: 240, parentId: null, extraData: 0 },
+            { id: 'app_terep2', type: 'app', name: 'Terep2', imgUrl: 'Terep2.png', content: 'https://terep2.hu/', dateCreated: new Date().toISOString(), x: 20, y: 350, parentId: null, extraData: 0 },
+            { id: 'app_packman', type: 'pacman', name: 'Packman', imgUrl: 'Packman.png', content: 'BUILTIN_PACMAN', dateCreated: new Date().toISOString(), x: 108, y: 20, parentId: null, extraData: 0 }
         ]; 
         
         let deletedItems = []; 
         let customMenuItems = [];
-        let openWindows = []; // Tálca logikához: { id, type, itemId, title, elem, isDynamic, minimized, maximized }
+        let openWindows = []; 
+        let systemClipboard = { item: null, mode: null }; // 'copy' vagy 'cut'
         
         let activeFileId = null;
         let iconSize = 48; 
@@ -387,29 +613,102 @@
         let desktopStretch = true;
         let currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         let currentLang = 'hu';
+        let currentExternalAppUrl = '';
+        let systemVolume = 80; // 1 - 100%
 
+        // Asztali rendszerikonok (Számológép és Képmetsző NINCS az asztalon, csak keresőben!)
         let sysIcons = {
             bin: { id: 'system-bin', type: 'system-bin', name: 'Kuka', x: 20, y: 20, parentId: null, dateCreated: new Date().toISOString() },
             cmd: { id: 'system-cmd', type: 'system-cmd', name: 'Parancssor', x: 20, y: 130, parentId: null, dateCreated: new Date().toISOString() }
         };
+
+        // Rejtett, csak keresőből elérhető alkalmazások
+        let hiddenSearchApps = [
+            { id: 'system-calc', type: 'system-calc', name: 'Számológép' },
+            { id: 'system-snip', type: 'system-snip', name: 'Képmetsző' },
+            { id: 'system-tc', type: 'system-tc', name: 'Total commander 64 bit' }
+        ];
 
         const desktop = document.getElementById('desktop');
         const contextMenu = document.getElementById('context-menu');
 
         const dict = {
             'hu': { 
-                newFolder: '📁 Új Mappa', newTxt: '📄 Új Szöveg (.txt)', newHtml: '🌐 Új Weboldal (.html)', newPptx: '📊 Új Prezi (.pptx)', newApp: '🔗 Új Parancsikon', newImg: '🖼️ Új Kép (.png)', newMp3: '🎵 Új Hang (.mp3)', newMp4: '🎬 Új Videó (.mp4)', bgSet: '🖼️ Háttérkép beállítása', open: '📂 Megnyitás', rename: '✏️ Átnevezés', prop: 'ℹ️ Tulajdonságok', del: '🗑️ Törlés (Kukába)', emptyErr: 'Nem található tartalom!',
-                settingsTitle: 'Beállítások', propTitle: 'Tulajdonságok', propName: 'Név:', propExt: 'Típus:', propPath: 'Elérési út:', propSize: 'Helyfoglalás:', propDate: 'Készült:', txtDocTitle: 'Szöveges dokumentum', btnSaveFile: 'Fájl Mentése', cmdTitle: 'Rendszer Parancssor (CMD)', btnHelp: '❓ Súgó', cmdPlaceholder: '// Írj ide JavaScript parancsokat...', btnRun: 'Futtatás', cmdHelpTitle: 'Parancssor Súgó - Példák', cmdHelp1: 'Másold be ezeket a Parancssorba és nyomj Futtatást:', cmdHelp2: '1. Új menüpont hozzáadása a jobb klikk menühöz:', cmdHelp3: '2. Asztal háttérszínének megváltoztatása:', mediaTitle: 'Média Megjelenítő', folderTitle: 'Mappa', lblView: 'Nézet:', optGrid: 'Rács', optList: 'Lista', lblSort: 'Rendezés:', optName: 'Név szerint', optDate: 'Dátum szerint', lblOrder: 'Irány:', optAsc: 'Növekvő (A-Z / Régi-Új)', optDesc: 'Csökkenő (Z-A / Új-Régi)', binTitle: 'Kuka Tartalma', tabApp: 'Megjelenés', tabSys: 'Nyelv & Óra', tabSave: 'Mentés / Betöltés', setTheme: 'Téma és Ikonok', setDark: 'Sötét Mód (Dark Mode)', setIconSize: 'Ikonok mérete:', setLangTime: 'Nyelv és Idő', setLang: 'Rendszer nyelve:', setTimeFmt: 'Óra formátuma:', opt24: '24 órás', opt12: '12 órás (AM/PM)', setSaveInfoTitle: 'Rendszerállapot Fájlba', setSaveInfo: 'A böngészőbe semmi nem mentődik automatikusan. Itt tudod fájlba menteni és visszatölteni a munkádat:', btnExport: '💾 Mentés Fájlba (.json)', btnImport: '📂 Betöltés Fájlból', sysMsgTitle: 'Rendszerüzenet', sysRestored: 'A rendszer újra működésre kész és a hibát kijavítottuk.', btnOk: 'OK / Igen', btnCancel: 'Mégse / Nem', binName: 'Kuka', cmdName: 'Parancssor', errorCritical: 'Windows xp ERROR', backFolder: 'Vissza (Kifelé)', binEmpty: 'A kuka jelenleg üres.', btnRestore: '♻️ Visszaállítás', desktopName: '🖥️ Főmappa', iframeError: 'Egyes külső weboldalak elutasíthatják a beágyazást (üres lap jelenik meg). Ha nem töltött be, meg szeretnéd nyitni új ablakban? (Ezzel elhagyod a rendszert)'
+                newFolder: '📁 Új Mappa', newTxt: '📄 Új Szöveg (.txt)', newHtml: '🌐 Új Weboldal (.html)', newPptx: '📊 Új Prezi (.pptx)', newApp: '🔗 Új Parancsikon (.lnk)', newEfa: '📱🖥️ Új EFA App (.efa)', newImg: '🖼️ Új Kép (.png)', newMp3: '🎵 Új Hang (.mp3)', newMp4: '🎬 Új Videó (.mp4)', bgSet: '🖼️ Háttérkép beállítása', open: '📂 Megnyitás', modify: '⚙️ Módosítás', rename: '✏️ Átnevezés', prop: 'ℹ️ Tulajdonságok', del: '🗑️ Törlés (Kukába)', emptyErr: 'Nem található tartalom!',
+                settingsTitle: 'Beállítások', propTitle: 'Tulajdonságok', propName: 'Név:', propExt: 'Típus:', propPath: 'Elérési út:', propSize: 'Helyfoglalás:', propDate: 'Készült:', txtDocTitle: 'Szöveges dokumentum', btnSaveFile: 'Fájl Mentése', cmdTitle: 'Rendszer Parancssor (CMD)', btnHelp: '❓ Súgó', cmdPlaceholder: '// Írj ide JavaScript parancsokat...', btnRun: 'Futtatás', cmdHelpTitle: 'Parancssor Súgó - Példák', cmdHelp1: 'Másold be ezeket a Parancssorba és nyomj Futtatást:', cmdHelp2: '1. Új menüpont hozzáadása a jobb klikk menühöz:', cmdHelp3: '2. Asztal háttérszínének megváltoztatása:', mediaTitle: 'Média Megjelenítő', folderTitle: 'Mappa', lblView: 'Nézet:', optGrid: 'Rács', optList: 'Lista', lblSort: 'Rendezés:', optName: 'Név szerint', optDate: 'Dátum szerint', lblOrder: 'Irány:', optAsc: 'Növekvő (A-Z / Régi-Új)', optDesc: 'Csökkenő (Z-A / Új-Régi)', binTitle: 'Kuka Tartalma', tabApp: 'Megjelenés', tabSys: 'Nyelv & Óra', tabRunning: 'Futó alkalmazások', tabSave: 'Mentés / Betöltés', setTheme: 'Téma és Ikonok', setDark: 'Sötét Mód (Dark Mode)', setIconSize: 'Ikonok mérete:', setLangTime: 'Nyelv és Idő', setLang: 'Rendszer nyelve:', setTimeFmt: 'Óra formátuma:', opt24: '24 órás', opt12: '12 órás (AM/PM)', setSaveInfoTitle: 'Rendszerállapot Fájlba', setSaveInfo: 'A böngészőbe semmi nem mentődik automatikusan. Itt tudod fájlba menteni és visszatölteni a munkádat:', btnExport: '💾 Mentés Fájlba (.json)', btnImport: '📂 Betöltés Fájlból', sysMsgTitle: 'Rendszerüzenet', sysRestored: 'A rendszer újra működésre kész és a hibát kijavítottuk.', btnOk: 'OK / Igen', btnCancel: 'Mégse / Nem', binName: 'Kuka', cmdName: 'Parancssor', calcName: 'Számológép', snipName: 'Képmetsző', searchPh: '🔍 Keresés...', errorCritical: 'Windows xp ERROR', backFolder: 'Vissza (Kifelé)', binEmpty: 'A kuka jelenleg üres.', btnRestore: '♻️ Visszaállítás', desktopName: '🖥️ Főmappa', iframeError: 'Egyes külső weboldalak elutasíthatják a beágyazást (üres lap jelenik meg). Ha nem töltött be, meg szeretnéd nyitni új ablakban? (Ezzel elhagyod a rendszert)', dupNameWarn: 'Ebben a mappában vagy az asztalon már létezik ilyen nevű elem! A rendszer automatikusan átnevezte erre: '
             },
             'en': { 
-                newFolder: '📁 New Folder', newTxt: '📄 New Text (.txt)', newHtml: '🌐 New Webpage (.html)', newPptx: '📊 New Presentation (.pptx)', newApp: '🔗 New Shortcut', newImg: '🖼️ New Image (.png)', newMp3: '🎵 New Audio (.mp3)', newMp4: '🎬 New Video (.mp4)', bgSet: '🖼️ Set Background', open: '📂 Open', rename: '✏️ Rename', prop: 'ℹ️ Properties', del: '🗑️ Delete (To Bin)', emptyErr: 'No content found!',
-                settingsTitle: 'Settings', propTitle: 'Properties', propName: 'Name:', propExt: 'Type:', propPath: 'Path:', propSize: 'Size:', propDate: 'Created:', txtDocTitle: 'Text Document', btnSaveFile: 'Save File', cmdTitle: 'Command Prompt (CMD)', btnHelp: '❓ Help', cmdPlaceholder: '// Write JavaScript commands here...', btnRun: 'Run', cmdHelpTitle: 'CMD Help - Examples', cmdHelp1: 'Copy these to CMD and press Run:', cmdHelp2: '1. Add custom right-click menu item:', cmdHelp3: '2. Change desktop background:', mediaTitle: 'Media Viewer', folderTitle: 'Folder', lblView: 'View:', optGrid: 'Grid', optList: 'List', lblSort: 'Sort:', optName: 'By Name', optDate: 'By Date', lblOrder: 'Order:', optAsc: 'Ascending (A-Z / Old-New)', optDesc: 'Descending (Z-A / New-Old)', binTitle: 'Recycle Bin', tabApp: 'Appearance', tabSys: 'Language & Time', tabSave: 'Save / Load', setTheme: 'Theme and Icons', setDark: 'Dark Mode', setIconSize: 'Icon size:', setLangTime: 'Language and Time', setLang: 'System language:', setTimeFmt: 'Clock format:', opt24: '24-hour', opt12: '12-hour (AM/PM)', setSaveInfoTitle: 'System State to File', setSaveInfo: 'Nothing saves automatically in the browser. Save or load your work here:', btnExport: '💾 Save to File (.json)', btnImport: '📂 Load from File', sysMsgTitle: 'System Message', sysRestored: 'System ready again, error fixed.', btnOk: 'OK / Yes', btnCancel: 'Cancel / No', binName: 'Recycle Bin', cmdName: 'Command Prompt', errorCritical: 'Windows xp ERROR', backFolder: 'Back (Up)', binEmpty: 'Recycle bin is empty.', btnRestore: '♻️ Restore', desktopName: '🖥️ Desktop', iframeError: 'Some websites reject embedding (showing a blank page). If it didn\'t load, do you want to open it in a new window? (Leaving the system)'
+                newFolder: '📁 New Folder', newTxt: '📄 New Text (.txt)', newHtml: '🌐 New Webpage (.html)', newPptx: '📊 New Presentation (.pptx)', newApp: '🔗 New Shortcut (.lnk)', newEfa: '📱🖥️ New EFA App (.efa)', newImg: '🖼️ New Image (.png)', newMp3: '🎵 New Audio (.mp3)', newMp4: '🎬 New Video (.mp4)', bgSet: '🖼️ Set Background', open: '📂 Open', modify: '⚙️ Modify', rename: '✏️ Rename', prop: 'ℹ️ Properties', del: '🗑️ Delete (To Bin)', emptyErr: 'No content found!',
+                settingsTitle: 'Settings', propTitle: 'Properties', propName: 'Name:', propExt: 'Type:', propPath: 'Path:', propSize: 'Size:', propDate: 'Created:', txtDocTitle: 'Text Document', btnSaveFile: 'Save File', cmdTitle: 'Command Prompt (CMD)', btnHelp: '❓ Help', cmdPlaceholder: '// Write JavaScript commands here...', btnRun: 'Run', cmdHelpTitle: 'CMD Help - Examples', cmdHelp1: 'Copy these to CMD and press Run:', cmdHelp2: '1. Add custom right-click menu item:', cmdHelp3: '2. Change desktop background:', mediaTitle: 'Media Viewer', folderTitle: 'Folder', lblView: 'View:', optGrid: 'Grid', optList: 'List', lblSort: 'Sort:', optName: 'By Name', optDate: 'By Date', lblOrder: 'Order:', optAsc: 'Ascending (A-Z / Old-New)', optDesc: 'Descending (Z-A / New-Old)', binTitle: 'Recycle Bin', tabApp: 'Appearance', tabSys: 'Language & Time', tabRunning: 'Running Apps', tabSave: 'Save / Load', setTheme: 'Theme and Icons', setDark: 'Dark Mode', setIconSize: 'Icon size:', setLangTime: 'Language and Time', setLang: 'System language:', setTimeFmt: 'Clock format:', opt24: '24-hour', opt12: '12-hour (AM/PM)', setSaveInfoTitle: 'System State to File', setSaveInfo: 'Nothing saves automatically in the browser. Save or load your work here:', btnExport: '💾 Save to File (.json)', btnImport: '📂 Load from File', sysMsgTitle: 'System Message', sysRestored: 'System ready again, error fixed.', btnOk: 'OK / Yes', btnCancel: 'Cancel / No', binName: 'Recycle Bin', cmdName: 'Command Prompt', calcName: 'Calculator', snipName: 'Snipping Tool', searchPh: '🔍 Search...', errorCritical: 'Windows xp ERROR', backFolder: 'Back (Up)', binEmpty: 'Recycle bin is empty.', btnRestore: '♻️ Restore', desktopName: '🖥️ Desktop', iframeError: 'Some websites reject embedding (showing a blank page). If it didn\'t load, do you want to open it in a new window? (Leaving the system)', dupNameWarn: 'An item with this name already exists here! Automatically renamed to: '
             },
             'de': { 
-                newFolder: '📁 Neuer Ordner', newTxt: '📄 Neuer Text (.txt)', newHtml: '🌐 Neue Webseite (.html)', newPptx: '📊 Neue Präsentation (.pptx)', newApp: '🔗 Neue Verknüpfung', newImg: '🖼️ Neues Bild (.png)', newMp3: '🎵 Neues Audio (.mp3)', newMp4: '🎬 Neues Video (.mp4)', bgSet: '🖼️ Hintergrund einstellen', open: '📂 Öffnen', rename: '✏️ Umbenennen', prop: 'ℹ️ Eigenschaften', del: '🗑️ Löschen', emptyErr: 'Keine Inhalte gefunden!',
-                settingsTitle: 'Einstellungen', propTitle: 'Eigenschaften', propName: 'Name:', propExt: 'Typ:', propPath: 'Pfad:', propSize: 'Größe:', propDate: 'Erstellt:', txtDocTitle: 'Textdokument', btnSaveFile: 'Datei speichern', cmdTitle: 'Eingabeaufforderung (CMD)', btnHelp: '❓ Hilfe', cmdPlaceholder: '// Schreiben Sie hier JavaScript-Befehle...', btnRun: 'Ausführen', cmdHelpTitle: 'CMD Hilfe - Beispiele', cmdHelp1: 'Kopieren und Ausführen drücken:', cmdHelp2: '1. Neues Rechtsklick-Menü hinzufügen:', cmdHelp3: '2. Hintergrundbild ändern:', mediaTitle: 'Medienbetrachter', folderTitle: 'Ordner', lblView: 'Ansicht:', optGrid: 'Raster', optList: 'Liste', lblSort: 'Sortieren:', optName: 'Nach Name', optDate: 'Nach Datum', lblOrder: 'Richtung:', optAsc: 'Aufsteigend (A-Z / Alt-Neu)', optDesc: 'Absteigend (Z-A / Neu-Alt)', binTitle: 'Papierkorb', tabApp: 'Design', tabSys: 'Sprache & Zeit', tabSave: 'Speichern / Laden', setTheme: 'Design und Symbole', setDark: 'Dunkelmodus', setIconSize: 'Symbolgröße:', setLangTime: 'Sprache und Zeit', setLang: 'Systemsprache:', setTimeFmt: 'Zeitformat:', opt24: '24-Stunden', opt12: '12-Stunden (AM/PM)', setSaveInfoTitle: 'Systemstatus in Datei', setSaveInfo: 'Nichts wird automatisch gespeichert. Hier speichern und laden:', btnExport: '💾 In Datei speichern (.json)', btnImport: '📂 Aus Datei laden', sysMsgTitle: 'Systemmeldung', sysRestored: 'System wieder bereit, Fehler behoben.', btnOk: 'OK / Ja', btnCancel: 'Abbrechen / Nein', binName: 'Papierkorb', cmdName: 'Eingabeaufforderung', errorCritical: 'Windows xp ERROR', backFolder: 'Zurück (Nach oben)', binEmpty: 'Papierkorb ist leer.', btnRestore: '♻️ Wiederherstellen', desktopName: '🖥️ Hauptordner', iframeError: 'Einige Websites blockieren die Einbettung (leere Seite). In neuem Fenster öffnen? (System verlassen)'
+                newFolder: '📁 Neuer Ordner', newTxt: '📄 Neuer Text (.txt)', newHtml: '🌐 Neue Webseite (.html)', newPptx: '📊 Neue Präsentation (.pptx)', newApp: '🔗 Neue Verknüpfung (.lnk)', newEfa: '📱🖥️ Neue EFA App (.efa)', newImg: '🖼️ Neues Bild (.png)', newMp3: '🎵 Neues Audio (.mp3)', newMp4: '🎬 Neues Video (.mp4)', bgSet: '🖼️ Hintergrund einstellen', open: '📂 Öffnen', modify: '⚙️ Bearbeiten', rename: '✏️ Umbenennen', prop: 'ℹ️ Eigenschaften', del: '🗑️ Löschen', emptyErr: 'Keine Inhalte gefunden!',
+                settingsTitle: 'Einstellungen', propTitle: 'Eigenschaften', propName: 'Name:', propExt: 'Typ:', propPath: 'Pfad:', propSize: 'Größe:', propDate: 'Erstellt:', txtDocTitle: 'Textdokument', btnSaveFile: 'Datei speichern', cmdTitle: 'Eingabeaufforderung (CMD)', btnHelp: '❓ Hilfe', cmdPlaceholder: '// Schreiben Sie hier JavaScript-Befehle...', btnRun: 'Ausführen', cmdHelpTitle: 'CMD Hilfe - Beispiele', cmdHelp1: 'Kopieren und Ausführen drücken:', cmdHelp2: '1. Neues Rechtsklick-Menü hinzufügen:', cmdHelp3: '2. Hintergrundbild ändern:', mediaTitle: 'Medienbetrachter', folderTitle: 'Ordner', lblView: 'Ansicht:', optGrid: 'Raster', optList: 'Liste', lblSort: 'Sortieren:', optName: 'Nach Name', optDate: 'Nach Datum', lblOrder: 'Richtung:', optAsc: 'Aufsteigend (A-Z / Alt-Neu)', optDesc: 'Absteigend (Z-A / Neu-Alt)', binTitle: 'Papierkorb', tabApp: 'Design', tabSys: 'Sprache & Zeit', tabRunning: 'Laufende Apps', tabSave: 'Speichern / Laden', setTheme: 'Design und Symbole', setDark: 'Dunkelmodus', setIconSize: 'Symbolgröße:', setLangTime: 'Sprache und Zeit', setLang: 'Systemsprache:', setTimeFmt: 'Zeitformat:', opt24: '24-Stunden', opt12: '12-Stunden (AM/PM)', setSaveInfoTitle: 'Systemstatus in Datei', setSaveInfo: 'Nichts wird automatisch gespeichert. Hier speichern und laden:', btnExport: '💾 In Datei speichern (.json)', btnImport: '📂 Aus Datei laden', sysMsgTitle: 'Systemmeldung', sysRestored: 'System wieder bereit, Fehler behoben.', btnOk: 'OK / Ja', btnCancel: 'Abbrechen / Nein', binName: 'Papierkorb', cmdName: 'Eingabeaufforderung', calcName: 'Rechner', snipName: 'Snipping Tool', searchPh: '🔍 Suchen...', errorCritical: 'Windows xp ERROR', backFolder: 'Zurück (Nach oben)', binEmpty: 'Papierkorb ist leer.', btnRestore: '♻️ Wiederherstellen', desktopName: '🖥️ Hauptordner', iframeError: 'Einige Websites blockieren die Einbettung (leere Seite). In neuem Fenster öffnen? (System verlassen)', dupNameWarn: 'Ein Element mit diesem Namen existiert hier bereits! Automatisch umbenannt in: '
             }
         };
+
+        // --- HANGERŐ KEZELÉS (1-100%) ---
+        window.toggleVolumePopup = function(e) {
+            e.stopPropagation();
+            const pop = document.getElementById('volume-popup');
+            pop.style.display = (pop.style.display === 'flex') ? 'none' : 'flex';
+        };
+        window.changeSystemVolume = function(val) {
+            systemVolume = Math.max(1, Math.min(100, parseInt(val) || 1));
+            document.getElementById('vol-label').innerText = systemVolume + '%';
+            const btn = document.getElementById('btn-volume');
+            if (systemVolume < 33) btn.innerText = '🔈';
+            else if (systemVolume < 66) btn.innerText = '🔉';
+            else btn.innerText = '🔊';
+            document.querySelectorAll('audio, video').forEach(el => { el.volume = systemVolume / 100; });
+        };
+
+        // --- TELJES ELÉRÉSI ÚT GENERÁLÓ (Főmappa/mappák/játékok/valami) ---
+        function getFolderPathString(folderId) {
+            if (!folderId) return "Főmappa";
+            let parts = [];
+            let curr = items.find(i => i.id === folderId);
+            let safety = 0;
+            while (curr && safety < 50) {
+                parts.unshift(curr.name);
+                curr = items.find(i => i.id === curr.parentId);
+                safety++;
+            }
+            return "Főmappa/" + parts.join("/");
+        }
+
+        function getFullItemPathString(item, isSys = false) {
+            if (isSys) return "Főmappa/" + item.name;
+            let folderPath = getFolderPathString(item.parentId);
+            return folderPath + "/" + item.name;
+        }
+
+        // --- EGYEDI NÉV ELLENŐRZŐ FÜGGVÉNY ---
+        function isNameTaken(name, parentId, ignoreId = null) {
+            let lower = name.toLowerCase();
+            if (parentId === null) {
+                for (let s of Object.values(sysIcons)) {
+                    if (s.id !== ignoreId && s.name.toLowerCase() === lower) return true;
+                }
+            }
+            return items.some(i => i.id !== ignoreId && (i.parentId || null) === (parentId || null) && i.name.toLowerCase() === lower);
+        }
+
+        function getUniqueName(desiredName, parentId, ignoreId = null) {
+            let clean = (desiredName || "Névtelen").trim();
+            if (!isNameTaken(clean, parentId, ignoreId)) return clean;
+
+            let dotIdx = clean.lastIndexOf('.');
+            let hasExt = dotIdx > 0;
+            let base = hasExt ? clean.substring(0, dotIdx) : clean;
+            let ext = hasExt ? clean.substring(dotIdx) : '';
+
+            let num = 2;
+            while (isNameTaken(base + num + ext, parentId, ignoreId)) {
+                num++;
+            }
+            return base + num + ext;
+        }
 
         function applyTranslations() {
             const langData = dict[currentLang];
@@ -423,8 +722,9 @@
             });
             sysIcons.bin.name = langData.binName;
             sysIcons.cmd.name = langData.cmdName;
+            hiddenSearchApps[0].name = langData.calcName;
+            hiddenSearchApps[1].name = langData.snipName;
             
-            // Frissítsük a már megnyitott dinamikus mappák és ablakok címét is
             openWindows.forEach(w => {
                 if(w.type === 'folder') {
                     let item = items.find(i => i.id === w.itemId);
@@ -438,14 +738,1000 @@
         function getFileTypeFromName(name) {
             let parts = name.split('.'); if (parts.length < 2) return 'unknown';
             let ext = parts.pop().toLowerCase();
-            let map = { 'txt':'txt', 'html':'html', 'pptx':'pptx', 'png':'img', 'jpg':'img', 'jpeg':'img', 'mp3':'mp3', 'wav':'mp3', 'mp4':'mp4', 'lnk':'app' };
+            let map = { 'txt':'txt', 'html':'html', 'pptx':'pptx', 'png':'img', 'jpg':'img', 'jpeg':'img', 'mp3':'mp3', 'wav':'mp3', 'mp4':'mp4', 'lnk':'app', 'efa':'efa', 'zip':'zip' };
             return map[ext] || 'unknown';
         }
 
         function updateTypeByExtension(item) {
-            if (item.id.startsWith('system-') || item.type === 'folder') return;
+            if (item.id.startsWith('system-') || item.type === 'folder' || item.type === 'pacman') return;
             let newType = getFileTypeFromName(item.name);
-            if (newType !== 'unknown') { item.type = newType; }
+            if (newType !== 'unknown') {
+                item.type = newType;
+                if (newType === 'efa') {
+                    if (typeof item.pcUrl === 'undefined') item.pcUrl = item.content || '';
+                    if (typeof item.touchUrl === 'undefined') item.touchUrl = '';
+                }
+            }
+        }
+
+        // --- KERESŐSÁV A TÁLCÁN (BENNE A REJTETT SZÁMOLÓGÉP ÉS KÉPMETSZŐ) ---
+        function escapeRegExp(string) { return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+        window.performSystemSearch = function(query) {
+            const resBox = document.getElementById('search-results');
+            if (!query || !query.trim()) { resBox.style.display = 'none'; return; }
+            const q = query.trim();
+            const qLower = q.toLowerCase();
+
+            let allSearchable = [
+                sysIcons.bin,
+                sysIcons.cmd,
+                ...hiddenSearchApps,
+                ...items
+            ];
+
+            let matches = [];
+            allSearchable.forEach(item => {
+                let idx = item.name.toLowerCase().indexOf(qLower);
+                if (idx !== -1) {
+                    let matchedSub = item.name.substr(idx, q.length);
+                    let hasUpper = matchedSub !== matchedSub.toLowerCase();
+                    let allUpper = matchedSub === matchedSub.toUpperCase() && matchedSub !== matchedSub.toLowerCase();
+                    matches.push({ item, idx, hasUpper, allUpper });
+                }
+            });
+
+            matches.sort((a, b) => {
+                if (a.allUpper !== b.allUpper) return a.allUpper ? -1 : 1;
+                if (a.hasUpper !== b.hasUpper) return a.hasUpper ? -1 : 1;
+                if (a.idx !== b.idx) return a.idx - b.idx;
+                return a.item.name.localeCompare(b.item.name, 'hu');
+            });
+
+            if (matches.length === 0) {
+                resBox.innerHTML = `<div style="padding:8px; opacity:0.7; font-size:12px;">Nincs találat...</div>`;
+                resBox.style.display = 'flex';
+                return;
+            }
+
+            const regex = new RegExp(`(${escapeRegExp(q)})`, 'gi');
+            resBox.innerHTML = '';
+            matches.forEach(m => {
+                let highlightedName = m.item.name.replace(regex, '<b>$1</b>');
+                let iconChar = getIconForType(m.item.type);
+                let div = document.createElement('div');
+                div.className = 'search-item';
+                div.innerHTML = `<span>${iconChar}</span> <span>${highlightedName}</span>`;
+                div.onclick = () => {
+                    resBox.style.display = 'none';
+                    document.getElementById('taskbar-search').value = '';
+                    handleDblClick(m.item.id, null);
+                };
+                resBox.appendChild(div);
+            });
+            resBox.style.display = 'flex';
+        };
+
+        // --- SZÁMOLÓGÉP LOGIKA ---
+        let calcExpr = "";
+        window.calcInput = function(v) {
+            const disp = document.getElementById('calc-display');
+            if (disp.value === "0" && !['+','-','*','/','.'].includes(v)) calcExpr = v;
+            else calcExpr += v;
+            disp.value = calcExpr;
+        };
+        window.calcClear = function() { calcExpr = ""; document.getElementById('calc-display').value = "0"; };
+        window.calcBack = function() {
+            calcExpr = calcExpr.slice(0, -1);
+            document.getElementById('calc-display').value = calcExpr || "0";
+        };
+        window.calcSolve = function() {
+            try {
+                let res = Function('"use strict";return (' + (calcExpr || "0") + ')')();
+                calcExpr = String(Number(res.toFixed(8)));
+                document.getElementById('calc-display').value = calcExpr;
+            } catch(e) {
+                document.getElementById('calc-display').value = "Error";
+                calcExpr = "";
+            }
+        };
+
+        // --- KÉPMETSZŐ LOGIKA (IDŐZÍTÉSSEL ÉS KÉPERNYŐMENTÉSSEL) ---
+        let snipTimerInterval = null;
+        let isSnippingDrag = false;
+        let snipStartX = 0, snipStartY = 0;
+
+        window.openSnippingTool = function() {
+            const win = document.getElementById('snip-window');
+            win.style.top = '15px';
+            win.style.left = (window.innerWidth - 270) + 'px';
+            openStaticWindow('snip-window', 'sys-snip', 'Képmetsző');
+        };
+
+        window.initiateSnip = function() {
+            if (snipTimerInterval) { clearInterval(snipTimerInterval); snipTimerInterval = null; }
+            const useDelay = document.getElementById('snip-delay-chk').checked;
+            let delaySec = parseInt(document.getElementById('snip-delay-sec').value) || 0;
+            if (delaySec > 45) { delaySec = 45; document.getElementById('snip-delay-sec').value = 45; }
+            if (delaySec < 1) delaySec = 1;
+
+            const statusEl = document.getElementById('snip-status');
+            if (useDelay) {
+                let rem = delaySec;
+                statusEl.innerText = `⏳ Felvétel indul: ${rem} mp...`;
+                snipTimerInterval = setInterval(() => {
+                    rem--;
+                    if (rem <= 0) {
+                        clearInterval(snipTimerInterval);
+                        snipTimerInterval = null;
+                        statusEl.innerText = '✂️ Jelöld ki a területet!';
+                        startSnipOverlay();
+                    } else {
+                        statusEl.innerText = `⏳ Felvétel indul: ${rem} mp...`;
+                    }
+                }, 1000);
+            } else {
+                statusEl.innerText = '✂️ Jelöld ki a területet!';
+                startSnipOverlay();
+            }
+        };
+
+        function startSnipOverlay() {
+            const snipWin = document.getElementById('snip-window');
+            snipWin.style.display = 'none';
+            const ov = document.getElementById('snip-overlay');
+            const box = document.getElementById('snip-selection-box');
+            box.style.display = 'none';
+            ov.style.display = 'block';
+        }
+
+        const snipOverlay = document.getElementById('snip-overlay');
+        const snipBox = document.getElementById('snip-selection-box');
+
+        snipOverlay.addEventListener('mousedown', (e) => {
+            isSnippingDrag = true;
+            snipStartX = e.clientX;
+            snipStartY = e.clientY;
+            snipBox.style.left = snipStartX + 'px';
+            snipBox.style.top = snipStartY + 'px';
+            snipBox.style.width = '0px';
+            snipBox.style.height = '0px';
+            snipBox.style.display = 'block';
+        });
+
+        snipOverlay.addEventListener('mousemove', (e) => {
+            if (!isSnippingDrag) return;
+            let x = Math.min(e.clientX, snipStartX);
+            let y = Math.min(e.clientY, snipStartY);
+            let w = Math.abs(e.clientX - snipStartX);
+            let h = Math.abs(e.clientY - snipStartY);
+            snipBox.style.left = x + 'px';
+            snipBox.style.top = y + 'px';
+            snipBox.style.width = w + 'px';
+            snipBox.style.height = h + 'px';
+        });
+
+        snipOverlay.addEventListener('mouseup', (e) => {
+            if (!isSnippingDrag) return;
+            isSnippingDrag = false;
+            let x = Math.min(e.clientX, snipStartX);
+            let y = Math.min(e.clientY, snipStartY);
+            let w = Math.max(20, Math.abs(e.clientX - snipStartX));
+            let h = Math.max(20, Math.abs(e.clientY - snipStartY));
+            snipOverlay.style.display = 'none';
+            snipBox.style.display = 'none';
+            captureDesktopRegionToImage(x, y, w, h);
+        });
+
+        function captureDesktopRegionToImage(rx, ry, rw, rh) {
+            const fullCanvas = document.createElement('canvas');
+            fullCanvas.width = window.innerWidth;
+            fullCanvas.height = window.innerHeight;
+            const ctx = fullCanvas.getContext('2d');
+
+            // 1. Asztal háttér
+            ctx.fillStyle = desktopBg.startsWith('#') ? desktopBg : '#008080';
+            ctx.fillRect(0, 0, fullCanvas.width, fullCanvas.height);
+
+            // 2. Asztali ikonok
+            ctx.font = '12px Segoe UI, sans-serif';
+            ctx.textAlign = 'center';
+            document.querySelectorAll('#desktop .icon').forEach(ic => {
+                let ix = parseFloat(ic.style.left) || 20;
+                let iy = parseFloat(ic.style.top) || 20;
+                let label = ic.querySelector('.icon-label') ? ic.querySelector('.icon-label').innerText : '';
+                ctx.fillStyle = 'rgba(255,255,255,0.2)';
+                ctx.fillRect(ix + 10, iy, iconSize, iconSize);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText('📄', ix + 10 + iconSize/2, iy + iconSize/2 + 6);
+                ctx.fillText(label, ix + 10 + iconSize/2, iy + iconSize + 15);
+            });
+
+            // 3. Nyitott ablakok
+            openWindows.forEach(w => {
+                if (w.minimized || w.id === 'snip-window' || w.elem.style.display === 'none') return;
+                let rect = w.elem.getBoundingClientRect();
+                ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#2b2b2b' : '#c0c0c0';
+                ctx.fillRect(rect.left, rect.top, rect.width, rect.height);
+                ctx.strokeStyle = '#ffffff';
+                ctx.strokeRect(rect.left, rect.top, rect.width, rect.height);
+                ctx.fillStyle = '#000080';
+                ctx.fillRect(rect.left + 2, rect.top + 2, rect.width - 4, 24);
+                ctx.fillStyle = '#ffffff';
+                ctx.textAlign = 'left';
+                ctx.font = 'bold 12px Segoe UI, sans-serif';
+                ctx.fillText(w.title, rect.left + 8, rect.top + 18);
+
+                // Ha Pacman ablak, rajzoljuk bele a canvasát is
+                if (w.id === 'pacman-window') {
+                    const pCan = document.getElementById('pacman-canvas');
+                    if (pCan) {
+                        let pRect = pCan.getBoundingClientRect();
+                        ctx.drawImage(pCan, pRect.left, pRect.top, pRect.width, pRect.height);
+                    }
+                }
+            });
+
+            // 4. Tálca
+            ctx.fillStyle = '#c0c0c0';
+            ctx.fillRect(0, window.innerHeight - 40, window.innerWidth, 40);
+
+            // Kivágás a kijelölt régióra
+            const cropCanvas = document.createElement('canvas');
+            cropCanvas.width = rw;
+            cropCanvas.height = rh;
+            cropCanvas.getContext('2d').drawImage(fullCanvas, rx, ry, rw, rh, 0, 0, rw, rh);
+
+            let dataUrl = cropCanvas.toDataURL('image/png');
+            let fileName = getUniqueName('Képmetszet.png', null);
+            let pos = getNextGridPosition(null);
+
+            items.push({
+                id: 'img_snip_' + Date.now(),
+                type: 'img',
+                name: fileName,
+                imgUrl: dataUrl,
+                content: '',
+                dateCreated: new Date().toISOString(),
+                x: pos.x,
+                y: pos.y,
+                parentId: null,
+                extraData: Math.round(dataUrl.length * 0.75)
+            });
+
+            renderDesktop();
+            refreshAllFolders();
+            renderTcAll();
+
+            const snipWin = document.getElementById('snip-window');
+            snipWin.style.display = 'flex';
+            bringToFront(snipWin);
+            document.getElementById('snip-status').innerText = `✅ Mentve: ${fileName}`;
+        }
+
+        // --- VALÓSÁGHŰ RAJZOLT PAC-MAN MOTOR ---
+        let pacAnimId = null;
+        let pacAudioCtx = null;
+
+        function playPacSound(freq, duration = 0.08, type = 'triangle') {
+            try {
+                if (!pacAudioCtx) pacAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (pacAudioCtx.state === 'suspended') pacAudioCtx.resume();
+                const osc = pacAudioCtx.createOscillator();
+                const gain = pacAudioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, pacAudioCtx.currentTime);
+                gain.gain.setValueAtTime((systemVolume / 100) * 0.12, pacAudioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, pacAudioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(pacAudioCtx.destination);
+                osc.start();
+                osc.stop(pacAudioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        const PAC_MAP_TEMPLATE = [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,3,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,3,1],
+            [1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1],
+            [1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,1,1,2,1,2,1,1,1,1,1,2,1,2,1,1,2,1],
+            [1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1],
+            [1,1,1,1,2,1,1,1,0,1,0,1,1,1,2,1,1,1,1],
+            [0,0,0,1,2,1,0,0,0,0,0,0,0,1,2,1,0,0,0],
+            [1,1,1,1,2,1,0,1,1,0,1,1,0,1,2,1,1,1,1],
+            [0,0,0,0,2,0,0,1,0,0,0,1,0,0,2,0,0,0,0],
+            [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
+            [0,0,0,1,2,1,0,0,0,0,0,0,0,1,2,1,0,0,0],
+            [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
+            [1,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,1],
+            [1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1],
+            [1,3,2,1,2,2,2,2,2,0,2,2,2,2,2,1,2,3,1],
+            [1,1,2,1,2,1,2,1,1,1,1,1,2,1,2,1,2,1,1],
+            [1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1],
+            [1,2,1,1,1,1,1,1,2,1,2,1,1,1,1,1,1,2,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ];
+
+        let pacState = {
+            grid: [],
+            score: 0,
+            lives: 3,
+            gameOver: false,
+            won: false,
+            frightenedTimer: 0,
+            pac: { x: 9, y: 16, dirX: 0, dirY: 0, nextX: 0, nextY: 0, mouth: 0.2, mouthDir: 1 },
+            ghosts: []
+        };
+
+        function resetPacPositions() {
+            pacState.pac = { x: 9, y: 16, dirX: 0, dirY: 0, nextX: 0, nextY: 0, mouth: 0.2, mouthDir: 1 };
+            pacState.ghosts = [
+                { x: 9, y: 8, dirX: 1, dirY: 0, color: '#ff0000', name: 'Blinky' },
+                { x: 8, y: 10, dirX: 0, dirY: -1, color: '#ffb8ff', name: 'Pinky' },
+                { x: 9, y: 10, dirX: 0, dirY: -1, color: '#00ffff', name: 'Inky' },
+                { x: 10, y: 10, dirX: 0, dirY: -1, color: '#ffb852', name: 'Clyde' }
+            ];
+        }
+
+        window.initPacmanGame = function() {
+            if (pacAnimId) clearInterval(pacAnimId);
+            pacState.grid = PAC_MAP_TEMPLATE.map(r => [...r]);
+            pacState.score = 0;
+            pacState.lives = 3;
+            pacState.gameOver = false;
+            pacState.won = false;
+            pacState.frightenedTimer = 0;
+            resetPacPositions();
+            updatePacHud();
+            pacAnimId = setInterval(stepPacmanGame, 165);
+        };
+
+        function updatePacHud() {
+            document.getElementById('pac-score').innerText = pacState.score;
+            document.getElementById('pac-lives').innerText = '🟡'.repeat(Math.max(0, pacState.lives));
+            const st = document.getElementById('pac-status');
+            if (pacState.won) { st.innerText = 'GYŐZELEM! 🎉'; st.style.color = '#00ff00'; }
+            else if (pacState.gameOver) { st.innerText = 'GAME OVER!'; st.style.color = '#ff3333'; }
+            else if (pacState.frightenedTimer > 0) { st.innerText = 'POWER MODE!'; st.style.color = '#55ffff'; }
+            else { st.innerText = 'PLAYING'; st.style.color = '#00ffcc'; }
+        }
+
+        function canMoveCell(cx, cy) {
+            if (cy === 10 && (cx < 0 || cx >= 19)) return true; // Alagút
+            if (cy < 0 || cy >= 21 || cx < 0 || cx >= 19) return false;
+            return pacState.grid[cy][cx] !== 1;
+        }
+
+        function stepPacmanGame() {
+            const win = document.getElementById('pacman-window');
+            if (!win || win.style.display === 'none' || pacState.gameOver || pacState.won) return;
+
+            let p = pacState.pac;
+            if ((p.nextX !== 0 || p.nextY !== 0) && canMoveCell(p.x + p.nextX, p.y + p.nextY)) {
+                p.dirX = p.nextX;
+                p.dirY = p.nextY;
+            }
+            if (canMoveCell(p.x + p.dirX, p.y + p.dirY)) {
+                p.x += p.dirX;
+                p.y += p.dirY;
+                if (p.x < 0) p.x = 18;
+                if (p.x >= 19) p.x = 0;
+            }
+
+            p.mouth += 0.12 * p.mouthDir;
+            if (p.mouth > 0.38 || p.mouth < 0.05) p.mouthDir *= -1;
+
+            // Pontok megevése
+            let cell = pacState.grid[p.y][p.x];
+            if (cell === 2) {
+                pacState.grid[p.y][p.x] = 0;
+                pacState.score += 10;
+                playPacSound(520, 0.05, 'triangle');
+            } else if (cell === 3) {
+                pacState.grid[p.y][p.x] = 0;
+                pacState.score += 50;
+                pacState.frightenedTimer = 42;
+                playPacSound(780, 0.15, 'sine');
+            }
+
+            if (pacState.frightenedTimer > 0) pacState.frightenedTimer--;
+
+            // Maradt még bogyó?
+            let dotsLeft = false;
+            for (let r = 0; r < 21; r++) {
+                for (let c = 0; c < 19; c++) {
+                    if (pacState.grid[r][c] === 2 || pacState.grid[r][c] === 3) { dotsLeft = true; break; }
+                }
+            }
+            if (!dotsLeft) {
+                pacState.won = true;
+                playPacSound(880, 0.3, 'square');
+                updatePacHud();
+                drawPacmanCanvas();
+                return;
+            }
+
+            // Szellemek mozgása és ütközés
+            pacState.ghosts.forEach((g, idx) => {
+                // Ütközés előtte
+                if (g.x === p.x && g.y === p.y) handlePacGhostHit(g, idx);
+
+                const dirs = [{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}];
+                let valid = dirs.filter(d => canMoveCell(g.x + d.x, g.y + d.y) && !(d.x === -g.dirX && d.y === -g.dirY));
+                if (valid.length === 0) valid = dirs.filter(d => canMoveCell(g.x + d.x, g.y + d.y));
+
+                if (valid.length > 0) {
+                    // Ha szellem-házban van, menjen kifelé
+                    if (g.y >= 9 && g.y <= 10 && g.x >= 8 && g.x <= 10 && canMoveCell(9, 8)) {
+                        g.x = 9; g.y = 8; g.dirX = (idx % 2 === 0 ? 1 : -1); g.dirY = 0;
+                    } else {
+                        let chosen = valid[Math.floor(Math.random() * valid.length)];
+                        if (pacState.frightenedTimer === 0 && Math.random() < 0.55) {
+                            valid.sort((a, b) => Math.hypot((g.x+a.x)-p.x, (g.y+a.y)-p.y) - Math.hypot((g.x+b.x)-p.x, (g.y+b.y)-p.y));
+                            chosen = valid[0];
+                        }
+                        g.dirX = chosen.x;
+                        g.dirY = chosen.y;
+                        g.x += g.dirX;
+                        g.y += g.dirY;
+                        if (g.x < 0) g.x = 18;
+                        if (g.x >= 19) g.x = 0;
+                    }
+                }
+
+                if (g.x === p.x && g.y === p.y) handlePacGhostHit(g, idx);
+            });
+
+            updatePacHud();
+            drawPacmanCanvas();
+        }
+
+        function handlePacGhostHit(g, idx) {
+            if (pacState.frightenedTimer > 0) {
+                pacState.score += 200;
+                playPacSound(960, 0.18, 'square');
+                g.x = 9; g.y = 10;
+            } else {
+                pacState.lives--;
+                playPacSound(160, 0.35, 'sawtooth');
+                if (pacState.lives <= 0) {
+                    pacState.gameOver = true;
+                } else {
+                    resetPacPositions();
+                }
+            }
+        }
+
+        function drawPacmanCanvas() {
+            const canvas = document.getElementById('pacman-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const T = 22;
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Pálya
+            for (let r = 0; r < 21; r++) {
+                for (let c = 0; c < 19; c++) {
+                    let v = pacState.grid[r][c];
+                    let x = c * T;
+                    let y = r * T;
+                    if (v === 1) {
+                        ctx.fillStyle = '#1919a6';
+                        ctx.fillRect(x + 1, y + 1, T - 2, T - 2);
+                        ctx.strokeStyle = '#3333ff';
+                        ctx.strokeRect(x + 2, y + 2, T - 4, T - 4);
+                    } else if (v === 2) {
+                        ctx.fillStyle = '#ffb8ae';
+                        ctx.beginPath();
+                        ctx.arc(x + T/2, y + T/2, 3, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else if (v === 3) {
+                        ctx.fillStyle = '#ffb8ae';
+                        ctx.beginPath();
+                        ctx.arc(x + T/2, y + T/2, 6.5, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+            }
+
+            // Pac-Man rajzolása
+            let p = pacState.pac;
+            let px = p.x * T + T/2;
+            let py = p.y * T + T/2;
+            let angle = 0;
+            if (p.dirX === 1) angle = 0;
+            else if (p.dirX === -1) angle = Math.PI;
+            else if (p.dirY === -1) angle = -Math.PI / 2;
+            else if (p.dirY === 1) angle = Math.PI / 2;
+
+            ctx.fillStyle = '#ffff00';
+            ctx.beginPath();
+            ctx.arc(px, py, T/2 - 1, angle + p.mouth * Math.PI, angle + (2 - p.mouth) * Math.PI);
+            ctx.lineTo(px, py);
+            ctx.closePath();
+            ctx.fill();
+
+            // Szellemek rajzolása
+            pacState.ghosts.forEach(g => {
+                let gx = g.x * T + T/2;
+                let gy = g.y * T + T/2;
+                let r = T/2 - 1;
+                ctx.fillStyle = pacState.frightenedTimer > 0 ? (pacState.frightenedTimer < 10 && pacState.frightenedTimer % 2 === 0 ? '#ffffff' : '#2121ff') : g.color;
+                ctx.beginPath();
+                ctx.arc(gx, gy - 2, r, Math.PI, 0, false);
+                ctx.lineTo(gx + r, gy + r);
+                ctx.lineTo(gx + r/2, gy + r - 3);
+                ctx.lineTo(gx, gy + r);
+                ctx.lineTo(gx - r/2, gy + r - 3);
+                ctx.lineTo(gx - r, gy + r);
+                ctx.closePath();
+                ctx.fill();
+
+                // Szemek
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(gx - 3.5, gy - 3, 3, 0, Math.PI * 2);
+                ctx.arc(gx + 3.5, gy - 3, 3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#0000aa';
+                ctx.beginPath();
+                ctx.arc(gx - 3.5 + g.dirX, gy - 3 + g.dirY, 1.5, 0, Math.PI * 2);
+                ctx.arc(gx + 3.5 + g.dirX, gy - 3 + g.dirY, 1.5, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        // --- TOTAL COMMANDER 64 BIT LOGIKA ---
+        let tcState = {
+            activeSide: 'left',
+            left: { folderId: null, sortBy: 'name', order: 'asc', cursorId: null, selectedIds: new Set() },
+            right: { folderId: null, sortBy: 'name', order: 'asc', cursorId: null, selectedIds: new Set() }
+        };
+        let isFKeyHeld = false;
+
+        window.openTotalCommander = function() {
+            openStaticWindow('tc-window', 'sys-tc', 'Total Commander 64 bit');
+            renderTcAll();
+        };
+
+        window.setTcActiveSide = function(side) {
+            tcState.activeSide = side;
+            document.getElementById('tc-panel-left').classList.toggle('active-panel', side === 'left');
+            document.getElementById('tc-panel-right').classList.toggle('active-panel', side === 'right');
+        };
+
+        function getTcExtension(item) {
+            if (item.type === 'folder') return '<DIR>';
+            let parts = item.name.split('.');
+            if (parts.length > 1) return parts.pop().toUpperCase();
+            return item.type.toUpperCase();
+        }
+
+        function getTcBaseName(item) {
+            if (item.type === 'folder') return item.name;
+            let idx = item.name.lastIndexOf('.');
+            return idx > 0 ? item.name.substring(0, idx) : item.name;
+        }
+
+        window.sortTcPanel = function(side, col) {
+            let st = tcState[side];
+            if (st.sortBy === col) st.order = (st.order === 'asc' ? 'desc' : 'asc');
+            else { st.sortBy = col; st.order = 'asc'; }
+            renderTcPanel(side);
+        };
+
+        function renderTcAll() {
+            const win = document.getElementById('tc-window');
+            if (!win || win.style.display === 'none') return;
+            renderTcPanel('left');
+            renderTcPanel('right');
+            const clipEl = document.getElementById('tc-clipboard-info');
+            if (systemClipboard.item) {
+                clipEl.innerText = `📋 Vágólap: ${systemClipboard.item.name} (${systemClipboard.mode === 'cut' ? 'Kivágva' : 'Másolva'})`;
+            } else {
+                clipEl.innerText = '';
+            }
+        }
+
+        function renderTcPanel(side) {
+            let st = tcState[side];
+            document.getElementById(`tc-path-${side}`).innerText = getFolderPathString(st.folderId);
+            const tbody = document.getElementById(`tc-tbody-${side}`);
+            tbody.innerHTML = '';
+
+            // Szülőmappa sor (..)
+            if (st.folderId !== null) {
+                let upTr = document.createElement('tr');
+                upTr.className = 'tc-row';
+                upTr.innerHTML = `<td>⤴️ [..]</td><td>&lt;DIR&gt;</td><td>-</td><td>-</td>`;
+                upTr.ondblclick = () => {
+                    let curr = items.find(i => i.id === st.folderId);
+                    st.folderId = curr ? (curr.parentId || null) : null;
+                    st.selectedIds.clear();
+                    renderTcPanel(side);
+                };
+                tbody.appendChild(upTr);
+            }
+
+            let list = items.filter(i => (i.parentId || null) === st.folderId);
+            list.sort((a, b) => {
+                // Mappák előre, kivéve ha nem kívánt
+                let cmp = 0;
+                if (st.sortBy === 'name') cmp = getTcBaseName(a).localeCompare(getTcBaseName(b), 'hu');
+                else if (st.sortBy === 'ext') cmp = getTcExtension(a).localeCompare(getTcExtension(b), 'hu');
+                else if (st.sortBy === 'size') cmp = getItemSize(a) - getItemSize(b);
+                else if (st.sortBy === 'date') cmp = new Date(a.dateCreated || 0) - new Date(b.dateCreated || 0);
+                return st.order === 'asc' ? cmp : -cmp;
+            });
+
+            if (!st.cursorId && list.length > 0) st.cursorId = list[0].id;
+
+            list.forEach(item => {
+                let tr = document.createElement('tr');
+                tr.className = 'tc-row';
+                if (st.cursorId === item.id) tr.classList.add('tc-cursor');
+                if (st.selectedIds.has(item.id)) tr.classList.add('tc-red-selected');
+
+                let ico = getIconForType(item.type);
+                let ext = getTcExtension(item);
+                let sizeTxt = item.type === 'folder' ? '<DIR>' : formatBytes(getItemSize(item));
+                let dateTxt = item.dateCreated ? new Date(item.dateCreated).toLocaleDateString() : '-';
+
+                tr.innerHTML = `
+                    <td>${ico} ${getTcBaseName(item)}</td>
+                    <td>${ext === '<DIR>' ? '&lt;DIR&gt;' : ext}</td>
+                    <td>${sizeTxt}</td>
+                    <td>${dateTxt}</td>
+                `;
+
+                tr.onclick = () => {
+                    setTcActiveSide(side);
+                    st.cursorId = item.id;
+                    renderTcPanel(side);
+                };
+
+                tr.ondblclick = () => {
+                    if (item.type === 'folder') {
+                        st.folderId = item.id;
+                        st.cursorId = null;
+                        st.selectedIds.clear();
+                        renderTcPanel(side);
+                    } else {
+                        handleDblClick(item.id, null);
+                    }
+                };
+
+                // Jobb klikk: Rövid = Piros kijelölés | Hosszú = Teljes helyi menü
+                let rTimer = null;
+                let longFired = false;
+                tr.addEventListener('mousedown', (ev) => {
+                    if (ev.button === 2) {
+                        ev.stopPropagation();
+                        setTcActiveSide(side);
+                        st.cursorId = item.id;
+                        longFired = false;
+                        rTimer = setTimeout(() => {
+                            longFired = true;
+                            showTcContextMenu(ev.clientX, ev.clientY, item, side);
+                        }, 550);
+                    }
+                });
+                tr.addEventListener('mouseup', (ev) => {
+                    if (ev.button === 2) {
+                        ev.stopPropagation();
+                        if (rTimer) { clearTimeout(rTimer); rTimer = null; }
+                        if (!longFired) {
+                            if (st.selectedIds.has(item.id)) st.selectedIds.delete(item.id);
+                            else st.selectedIds.add(item.id);
+                            renderTcPanel(side);
+                        }
+                    }
+                });
+                tr.addEventListener('contextmenu', (ev) => {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                });
+
+                tbody.appendChild(tr);
+            });
+
+            // Üres helyre hosszú jobb klikk a panelben (pl. Beillesztéshez)
+            const wrap = document.getElementById(`tc-wrap-${side}`);
+            wrap.oncontextmenu = (ev) => {
+                ev.preventDefault();
+                ev.stopPropagation();
+                showTcContextMenu(ev.clientX, ev.clientY, null, side);
+            };
+        }
+
+        function showTcContextMenu(cx, cy, item, side) {
+            let folderId = tcState[side].folderId;
+            contextMenu.innerHTML = '';
+
+            if (item) {
+                let canModify = ['app', 'efa', 'html', 'img', 'mp3', 'mp4', 'txt'].includes(item.type);
+                let isZip = item.type === 'zip';
+                contextMenu.innerHTML = `
+                    <div style="display:flex; gap:4px; padding:4px; border-bottom:1px solid var(--win-border-dark);">
+                        <button class="bin-btn" style="flex:1;" onclick="copyOrCutItem('${item.id}', 'copy')">📋 Másolás</button>
+                        <button class="bin-btn" style="flex:1;" onclick="copyOrCutItem('${item.id}', 'cut')">✂️ Kivágás</button>
+                    </div>
+                    <div class="menu-item" onclick="handleDblClick('${item.id}', null)">📂 Megnyitás</div>
+                    ${canModify ? `<div class="menu-item" onclick="modifyItem('${item.id}')">⚙️ Módosítás</div>` : ''}
+                    <div class="menu-item" onclick="promptRenameItem('${item.id}')">✏️ Átnevezés</div>
+                    ${!isZip ? `<div class="menu-item" onclick="compressItemToZip('${item.id}')">🗜️ Csomagolás ZIP-be (.zip)</div>` : `<div class="menu-item" onclick="extractZipItem('${item.id}')">📦 ZIP Kicsomagolása ide</div>`}
+                    ${systemClipboard.item ? `<div class="menu-item" onclick="pasteItemToFolder(${folderId ? `'${folderId}'` : 'null'})">📥 Beillesztés ide</div>` : ''}
+                    <div class="menu-separator"></div>
+                    <div class="menu-item" onclick="showProperties('${item.id}')">ℹ️ Tulajdonságok</div>
+                    <div class="menu-item" onclick="moveToBin('${item.id}')" style="color:red;">🗑️ Törlés</div>
+                `;
+            } else {
+                contextMenu.innerHTML = `
+                    ${systemClipboard.item ? `<div class="menu-item" onclick="pasteItemToFolder(${folderId ? `'${folderId}'` : 'null'})">📥 Beillesztés ide (${systemClipboard.item.name})</div><div class="menu-separator"></div>` : ''}
+                    <div class="menu-item" onclick="tcActionF7()">📁 Új Mappa (F+7)</div>
+                `;
+            }
+
+            contextMenu.style.display = 'flex';
+            contextMenu.style.left = Math.min(cx, window.innerWidth - 210) + 'px';
+            contextMenu.style.top = Math.min(cy, window.innerHeight - 280) + 'px';
+        }
+
+        function getTcTargetItems(side) {
+            let st = tcState[side];
+            if (st.selectedIds.size > 0) {
+                return items.filter(i => st.selectedIds.has(i.id));
+            }
+            if (st.cursorId) {
+                let single = items.find(i => i.id === st.cursorId && (i.parentId || null) === st.folderId);
+                return single ? [single] : [];
+            }
+            return [];
+        }
+
+        // Total Commander F3 - F8 műveletek
+        window.tcActionF3 = function() {
+            let targets = getTcTargetItems(tcState.activeSide);
+            if (targets.length === 0) return showDialog('Total Commander', 'Nincs kijelölt fájl a megtekintéshez!', 'alert');
+            handleDblClick(targets[0].id, null);
+        };
+        window.tcActionF4 = function() {
+            let targets = getTcTargetItems(tcState.activeSide);
+            if (targets.length === 0) return showDialog('Total Commander', 'Nincs kijelölt fájl a szerkesztéshez!', 'alert');
+            let it = targets[0];
+            if (it.type === 'txt' || it.type === 'html') {
+                activeFileId = it.id;
+                document.getElementById('txt-title').innerText = it.name + " (F4 Szerkesztő)";
+                document.getElementById('txt-textarea').value = it.content || "";
+                openStaticWindow('txt-window', 'txt', it.name);
+            } else {
+                modifyItem(it.id);
+            }
+        };
+        window.tcActionF5 = function() {
+            let srcSide = tcState.activeSide;
+            let dstSide = srcSide === 'left' ? 'right' : 'left';
+            let dstFolderId = tcState[dstSide].folderId;
+            let targets = getTcTargetItems(srcSide);
+            if (targets.length === 0) return showDialog('Total Commander', 'Nincs kijelölt elem a másoláshoz!', 'alert');
+            targets.forEach(item => cloneItemToTarget(item, dstFolderId));
+            tcState[srcSide].selectedIds.clear();
+            renderDesktop(); refreshAllFolders(); renderTcAll();
+        };
+        window.tcActionF6 = function() {
+            let srcSide = tcState.activeSide;
+            let dstSide = srcSide === 'left' ? 'right' : 'left';
+            let dstFolderId = tcState[dstSide].folderId;
+            let targets = getTcTargetItems(srcSide);
+            if (targets.length === 0) return showDialog('Total Commander', 'Nincs kijelölt elem az áthelyezéshez!', 'alert');
+            targets.forEach(item => {
+                if (item.id === dstFolderId) return;
+                item.parentId = dstFolderId;
+                item.name = getUniqueName(item.name, dstFolderId, item.id);
+                let pos = getNextGridPosition(dstFolderId, item.id);
+                item.x = pos.x; item.y = pos.y;
+            });
+            tcState[srcSide].selectedIds.clear();
+            renderDesktop(); refreshAllFolders(); renderTcAll();
+        };
+        window.tcActionF7 = function() {
+            let folderId = tcState[tcState.activeSide].folderId;
+            showDialog('Új Mappa (F7)', 'Add meg az új mappa nevét:', 'prompt', (val) => {
+                if (!val) return;
+                let uName = getUniqueName(val, folderId);
+                let pos = getNextGridPosition(folderId);
+                items.push({ id: 'folder_' + Date.now(), type: 'folder', name: uName, imgUrl: '', content: '', dateCreated: new Date().toISOString(), x: pos.x, y: pos.y, parentId: folderId, extraData: 0 });
+                renderDesktop(); refreshAllFolders(); renderTcAll();
+            }, '', 'Új Mappa');
+        };
+        window.tcActionF8 = function() {
+            let targets = getTcTargetItems(tcState.activeSide);
+            if (targets.length === 0) return showDialog('Total Commander', 'Nincs kijelölt elem a törléshez!', 'alert');
+            targets.forEach(item => moveToBin(item.id));
+            tcState[tcState.activeSide].selectedIds.clear();
+            renderTcAll();
+        };
+
+        // --- MÁSOLÁS, KIVÁGÁS, BEILLESZTÉS ÉS ZIP TÖMÖRÍTÉS ---
+        window.copyOrCutItem = function(id, mode) {
+            contextMenu.style.display = 'none';
+            let item = items.find(i => i.id === id);
+            if (!item) return;
+            systemClipboard = { item: item, mode: mode };
+            renderTcAll();
+        };
+
+        function cloneItemToTarget(srcItem, targetParentId) {
+            let copy = JSON.parse(JSON.stringify(srcItem));
+            copy.id = srcItem.type + '_copy_' + Date.now() + '_' + Math.floor(Math.random()*1000);
+            copy.parentId = targetParentId;
+            copy.name = getUniqueName(srcItem.name, targetParentId);
+            let pos = getNextGridPosition(targetParentId);
+            copy.x = pos.x; copy.y = pos.y;
+            copy.dateCreated = new Date().toISOString();
+            items.push(copy);
+
+            if (srcItem.type === 'folder') {
+                let children = items.filter(i => i.parentId === srcItem.id);
+                children.forEach(ch => cloneItemToTarget(ch, copy.id));
+            }
+        }
+
+        window.pasteItemToFolder = function(targetFolderId) {
+            contextMenu.style.display = 'none';
+            if (!systemClipboard.item) return;
+            let src = items.find(i => i.id === systemClipboard.item.id);
+            if (!src) { systemClipboard = { item: null, mode: null }; return; }
+
+            if (systemClipboard.mode === 'cut') {
+                if (src.id === targetFolderId) return;
+                src.parentId = targetFolderId;
+                src.name = getUniqueName(src.name, targetFolderId, src.id);
+                let pos = getNextGridPosition(targetFolderId, src.id);
+                src.x = pos.x; src.y = pos.y;
+                systemClipboard = { item: null, mode: null };
+            } else {
+                cloneItemToTarget(src, targetFolderId);
+            }
+            renderDesktop(); refreshAllFolders(); renderTcAll();
+        };
+
+        window.promptRenameItem = function(id) {
+            contextMenu.style.display = 'none';
+            let item = items.find(i => i.id === id);
+            if (!item) return;
+            showDialog('Átnevezés', 'Add meg az új nevet:', 'prompt', (val) => {
+                if (!val) return;
+                item.name = getUniqueName(val, item.parentId, item.id);
+                updateTypeByExtension(item);
+                renderDesktop(); refreshAllFolders(); renderTcAll();
+            }, '', item.name);
+        };
+
+        function collectSubtreeForZip(rootItem) {
+            let list = [JSON.parse(JSON.stringify(rootItem))];
+            if (rootItem.type === 'folder') {
+                items.filter(i => i.parentId === rootItem.id).forEach(ch => {
+                    list.push(...collectSubtreeForZip(ch));
+                });
+            }
+            return list;
+        }
+
+        window.compressItemToZip = function(id) {
+            contextMenu.style.display = 'none';
+            let item = items.find(i => i.id === id);
+            if (!item) return;
+            let base = item.name.includes('.') ? item.name.substring(0, item.name.lastIndexOf('.')) : item.name;
+            let zipName = getUniqueName(base + '.zip', item.parentId);
+            let pos = getNextGridPosition(item.parentId);
+            let archiveData = collectSubtreeForZip(item);
+
+            items.push({
+                id: 'zip_' + Date.now(),
+                type: 'zip',
+                name: zipName,
+                imgUrl: '',
+                content: JSON.stringify({ rootId: item.id, entries: archiveData }),
+                dateCreated: new Date().toISOString(),
+                x: pos.x,
+                y: pos.y,
+                parentId: item.parentId,
+                extraData: 0
+            });
+            renderDesktop(); refreshAllFolders(); renderTcAll();
+        };
+
+        window.extractZipItem = function(id) {
+            contextMenu.style.display = 'none';
+            let zipItem = items.find(i => i.id === id);
+            if (!zipItem) return;
+            try {
+                let parsed = JSON.parse(zipItem.content);
+                let entries = parsed.entries || [];
+                if (entries.length === 0) return showDialog('ZIP Kicsomagolás', 'A ZIP archívum üres!', 'alert');
+
+                let idMap = {};
+                entries.forEach(e => {
+                    idMap[e.id] = e.type + '_unz_' + Date.now() + '_' + Math.floor(Math.random()*10000);
+                });
+
+                entries.forEach(e => {
+                    let copy = JSON.parse(JSON.stringify(e));
+                    let isRoot = (e.id === parsed.rootId);
+                    copy.id = idMap[e.id];
+                    copy.parentId = isRoot ? zipItem.parentId : (idMap[e.parentId] || zipItem.parentId);
+                    copy.name = getUniqueName(copy.name, copy.parentId);
+                    let pos = getNextGridPosition(copy.parentId);
+                    copy.x = pos.x; copy.y = pos.y;
+                    copy.dateCreated = new Date().toISOString();
+                    items.push(copy);
+                });
+
+                renderDesktop(); refreshAllFolders(); renderTcAll();
+                showDialog('ZIP Kicsomagolás', `A(z) <b>${zipItem.name}</b> sikeresen kicsomagolva!`, 'alert');
+            } catch(err) {
+                showDialog('Hiba', 'Sérült vagy érvénytelen ZIP fájl!', 'alert');
+            }
+        };
+
+        // --- FUTÓ ALKALMAZÁSOK (FELADATKEZELŐ A BEÁLLÍTÁSOKBAN) ---
+        function getWindowLoadPercent(w) {
+            let base = 4;
+            if (w.id === 'pacman-window') base = 24;
+            else if (w.id === 'html-window') base = 29;
+            else if (w.id === 'tc-window') base = 14;
+            else if (w.id === 'img-window') base = 16;
+            else if (w.id === 'pptx-window') base = 11;
+            let jitter = Math.floor(Math.sin(Date.now() / 1000 + w.openedAt) * 2);
+            return Math.max(1, base + jitter);
+        }
+
+        function formatElapsedUptime(openedAt) {
+            let sec = Math.max(0, Math.floor((Date.now() - (openedAt || Date.now())) / 1000));
+            let m = Math.floor(sec / 60);
+            let s = sec % 60;
+            let h = Math.floor(m / 60);
+            m = m % 60;
+            if (h > 0) return `${h} óra ${m} p ${s} mp`;
+            if (m > 0) return `${m} perc ${s} mp`;
+            return `${s} másodperc`;
+        }
+
+        function renderRunningAppsPanel() {
+            const listEl = document.getElementById('running-apps-list');
+            const sumEl = document.getElementById('running-apps-summary');
+            if (!listEl || !sumEl) return;
+
+            if (openWindows.length === 0) {
+                sumEl.innerText = 'Összesített rendszerterhelés: 1%';
+                listEl.innerHTML = `<div style="padding:10px; opacity:0.7;">Jelenleg nincs megnyitott alkalmazás.</div>`;
+                return;
+            }
+
+            let totalLoad = 0;
+            let html = '';
+            openWindows.forEach(w => {
+                let load = getWindowLoadPercent(w);
+                totalLoad += load;
+                let ico = getIconForType(w.type);
+                let uptime = formatElapsedUptime(w.openedAt);
+                html += `
+                    <div class="task-row">
+                        <div>
+                            <strong>${ico} ${w.title}</strong><br>
+                            <span style="opacity:0.8;">Nyitva: <b>${uptime}</b> | Terhelés: <b style="color:${load > 20 ? '#d00000' : '#008000'};">${load}%</b></span>
+                        </div>
+                        <button class="task-kill-btn" onclick="closeWindow('${w.id}')">Feladat befejezése</button>
+                    </div>
+                `;
+            });
+            totalLoad = Math.min(100, totalLoad);
+            sumEl.innerText = `Aktív folyamatok: ${openWindows.length} db | Összesített gépterhelés: ${totalLoad}%`;
+            listEl.innerHTML = html;
         }
 
         // --- ÓRA ÉS IDŐZÓNA ---
@@ -454,6 +1740,7 @@
             const options = { timeZone: currentTimeZone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: is12 };
             const locale = currentLang === 'hu' ? 'hu-HU' : (currentLang === 'de' ? 'de-DE' : 'en-US');
             document.getElementById('clock').innerHTML = new Intl.DateTimeFormat(locale, options).format(now).replace(', ', '<br>');
+            renderRunningAppsPanel();
         }
         setInterval(updateClock, 1000);
 
@@ -471,7 +1758,7 @@
             applyTranslations(); updateClock(); renderDesktop(); refreshAllFolders(); renderBinList();
         }
 
-        // --- EASTER EGG (JAVÍTOTT SPAM VÉDELEMMEL) ---
+        // --- EASTER EGG ---
         let eeClicks = 0; let eeTimer = null; let spamInterval = null; let isEEActive = false;
         window.triggerEasterEgg = function() {
             if (isEEActive) return; 
@@ -516,7 +1803,7 @@
 
         // --- ABLAKKEZELÉS ÉS TÁLCA LOGIKA ---
         function getIconForType(type) {
-            let map = { 'folder':'📁', 'txt':'📄', 'html':'🌐', 'pptx':'📊', 'app':'🔗', 'img':'🖼️', 'mp3':'🎵', 'mp4':'🎬', 'sys-bin':'🗑️', 'sys-cmd':'💻', 'sys-settings':'⚙️', 'sys-help':'❓', 'sys-prop':'ℹ️' };
+            let map = { 'folder':'📁', 'txt':'📄', 'html':'🌐', 'pptx':'📊', 'app':'🔗', 'pacman':'🍒', 'efa':'📱', 'img':'🖼️', 'mp3':'🎵', 'mp4':'🎬', 'zip':'🗜️', 'sys-bin':'🗑️', 'system-bin':'🗑️', 'sys-cmd':'💻', 'system-cmd':'💻', 'sys-calc':'🧮', 'system-calc':'🧮', 'sys-snip':'✂️', 'system-snip':'✂️', 'sys-tc':'💾', 'system-tc':'💾', 'sys-settings':'⚙️', 'sys-help':'❓', 'sys-prop':'ℹ️' };
             return map[type] || '📝';
         }
 
@@ -551,9 +1838,12 @@
                 else {
                     w.elem.style.display = 'none';
                     if (id === 'img-window') { let aud = document.getElementById('playback-audio'); if(aud) { aud.pause(); aud.src = ""; } document.getElementById('media-window-body').innerHTML = ''; }
-                    if (id === 'html-window') { const iframe = document.getElementById('html-iframe'); iframe.removeAttribute('srcdoc'); iframe.removeAttribute('src'); }
+                    if (id === 'html-window') { const iframe = document.getElementById('html-iframe'); iframe.removeAttribute('srcdoc'); iframe.removeAttribute('src'); document.getElementById('external-web-btn').style.display = 'none'; }
+                    if (id === 'pacman-window' && pacAnimId) { clearInterval(pacAnimId); pacAnimId = null; }
                 }
-                openWindows = openWindows.filter(x => x.id !== id); renderTaskbar();
+                openWindows = openWindows.filter(x => x.id !== id);
+                renderTaskbar();
+                renderRunningAppsPanel();
             }
         };
 
@@ -565,7 +1855,6 @@
             for(let t in groups) {
                 let wins = groups[t]; let icon = getIconForType(t);
                 if (t === 'folder' && wins.length > 1) { 
-                    // Több mappa csoportosítása
                     let groupDiv = document.createElement('div'); groupDiv.className = 'tb-group';
                     let btn = document.createElement('div'); btn.className = 'tb-btn';
                     btn.innerHTML = `<span>${icon}</span> ${wins.length} Mappa`;
@@ -591,20 +1880,26 @@
 
         function openStaticWindow(id, type, title) {
             let win = document.getElementById(id); win.style.display = 'flex'; bringToFront(win);
-            if (!openWindows.find(w => w.id === id)) { openWindows.push({ id, type, title, elem: win, isDynamic: false, minimized: false, maximized: false }); } 
-            else { let w = openWindows.find(w => w.id === id); w.minimized = false; w.title = title; win.querySelector('.win-title').innerText = title; }
+            if (!openWindows.find(w => w.id === id)) {
+                openWindows.push({ id, type, title, elem: win, isDynamic: false, minimized: false, maximized: false, openedAt: Date.now() });
+            } else {
+                let w = openWindows.find(w => w.id === id);
+                w.minimized = false; w.title = title;
+                win.querySelector('.win-title').innerText = title;
+            }
             renderTaskbar();
+            renderRunningAppsPanel();
         }
 
-        // --- DINAMIKUS MAPPÁK ---
+        // --- DINAMIKUS MAPPÁK (FA NÉZETBEN A FÁJLOKKAL ÉS FELSŐ ELÉRÉSI ÚTTAL) ---
         window.openFolderWindow = function(folderId) {
-            if (folderId === null) return; // Nem asztalt nyitunk magára
+            if (folderId === null) return;
             let title = folderId ? items.find(i => i.id === folderId).name : dict[currentLang].desktopName;
             let winId = 'folder_' + Date.now() + Math.floor(Math.random()*1000);
             
             let win = document.createElement('div'); win.className = 'window app-window'; win.id = winId;
             win.style.top = (70 + (openWindows.length * 20) % 150) + 'px'; win.style.left = (100 + (openWindows.length * 20) % 200) + 'px';
-            win.style.width = '720px'; win.style.height = '450px'; win.style.display = 'flex';
+            win.style.width = '740px'; win.style.height = '470px'; win.style.display = 'flex';
 
             win.innerHTML = `
                 <div class="window-header" onmousedown="bringToFront(this.parentElement)">
@@ -615,20 +1910,21 @@
                         <div class="win-ctrl close" onclick="closeWindow('${winId}')">X</div>
                     </div>
                 </div>
+                <div style="background:#000080; color:#fff; font-family:monospace; font-size:12px; padding:3px 8px; font-weight:bold;" class="folder-path-header">${getFolderPathString(folderId)}</div>
                 <div class="folder-toolbar">
                     <label><span>${dict[currentLang].lblView}</span> <select class="f-view" onchange="renderSingleFolder('${winId}')"><option value="grid">${dict[currentLang].optGrid}</option><option value="list">${dict[currentLang].optList}</option></select></label>
                     <label><span>${dict[currentLang].lblSort}</span> <select class="f-sort" onchange="renderSingleFolder('${winId}')"><option value="name">${dict[currentLang].optName}</option><option value="date">${dict[currentLang].optDate}</option></select></label>
                     <label><span>${dict[currentLang].lblOrder}</span> <select class="f-order" onchange="renderSingleFolder('${winId}')"><option value="asc">${dict[currentLang].optAsc}</option><option value="desc">${dict[currentLang].optDesc}</option></select></label>
                 </div>
                 <div style="display:flex; flex-grow:1; overflow:hidden;">
-                    <div class="folder-tree" style="width: 170px; background: var(--win-content-bg); border-right: 2px inset var(--win-border-dark); padding: 5px; overflow-y: auto;"></div>
+                    <div class="folder-tree" style="width: 195px; background: var(--win-content-bg); border-right: 2px inset var(--win-border-dark); padding: 5px; overflow-y: auto;"></div>
                     <div class="window-content folder-view-grid folder-content" style="flex-grow:1;" id="content_${winId}"></div>
                 </div>
             `;
             document.body.appendChild(win);
-            openWindows.push({ id: winId, type: 'folder', itemId: folderId, title: title, elem: win, isDynamic: true, minimized: false, maximized: false });
+            openWindows.push({ id: winId, type: 'folder', itemId: folderId, title: title, elem: win, isDynamic: true, minimized: false, maximized: false, openedAt: Date.now() });
             
-            renderSingleFolder(winId); renderSingleTree(winId); bringToFront(win); renderTaskbar();
+            renderSingleFolder(winId); renderSingleTree(winId); bringToFront(win); renderTaskbar(); renderRunningAppsPanel();
         };
 
         window.navigateFolder = function(winId, newFolderId) {
@@ -636,11 +1932,15 @@
             w.itemId = newFolderId; let item = items.find(i => i.id === newFolderId);
             w.title = item ? item.name : dict[currentLang].desktopName;
             w.elem.querySelector('.win-title').innerText = w.title;
+            let pathHdr = w.elem.querySelector('.folder-path-header');
+            if (pathHdr) pathHdr.innerText = getFolderPathString(newFolderId);
             renderSingleFolder(winId); renderSingleTree(winId); renderTaskbar();
         };
 
         window.renderSingleFolder = function(winId) {
             let w = openWindows.find(x => x.id === winId); if (!w) return;
+            let pathHdr = w.elem.querySelector('.folder-path-header');
+            if (pathHdr) pathHdr.innerText = getFolderPathString(w.itemId);
             let container = w.elem.querySelector('.folder-content');
             let viewMode = w.elem.querySelector('.f-view').value; let sortBy = w.elem.querySelector('.f-sort').value; let order = w.elem.querySelector('.f-order').value;
             container.className = `window-content folder-view-${viewMode} folder-content`;
@@ -659,17 +1959,26 @@
             });
         };
 
+        // MAPPASZERKEZET: Mappák ÉS a bennük lévő fájlok megjelenítése!
         window.renderSingleTree = function(winId) {
             let w = openWindows.find(x => x.id === winId); if (!w) return;
             let treeContainer = w.elem.querySelector('.folder-tree');
             function buildTreeHTML(parentId, level) {
-                let html = ''; let folders = items.filter(i => i.type === 'folder' && i.parentId === parentId);
-                folders.sort((a, b) => a.name.localeCompare(b.name, 'hu'));
+                let html = '';
+                let children = items.filter(i => (i.parentId || null) === parentId);
+                let folders = children.filter(i => i.type === 'folder').sort((a, b) => a.name.localeCompare(b.name, 'hu'));
+                let files = children.filter(i => i.type !== 'folder').sort((a, b) => a.name.localeCompare(b.name, 'hu'));
+
                 folders.forEach(f => {
                     let isActive = (f.id === w.itemId) ? 'active' : '';
-                    html += `<div class="tree-item ${isActive}" style="padding-left: ${level * 10}px;" onclick="navigateFolder('${winId}', '${f.id}')" title="${f.name}">📁 ${f.name}</div>`;
-                    html += buildTreeHTML(f.id, level + 1); 
-                }); return html;
+                    html += `<div class="tree-item ${isActive}" style="padding-left: ${level * 12}px;" onclick="navigateFolder('${winId}', '${f.id}')" title="${f.name}">📁 ${f.name}</div>`;
+                    html += buildTreeHTML(f.id, level + 1);
+                });
+                files.forEach(file => {
+                    let ico = getIconForType(file.type);
+                    html += `<div class="tree-item tree-file-item" style="padding-left: ${level * 12}px;" onclick="handleDblClick('${file.id}', '${winId}')" title="${file.name}">${ico} ${file.name}</div>`;
+                });
+                return html;
             }
             let isDesktopActive = (w.itemId === null) ? 'active' : '';
             let finalHtml = `<div class="tree-item ${isDesktopActive}" onclick="navigateFolder('${winId}', null)">${dict[currentLang].desktopName}</div>`;
@@ -678,19 +1987,60 @@
 
         function refreshAllFolders() {
             openWindows.filter(w => w.type === 'folder').forEach(w => { renderSingleFolder(w.id); renderSingleTree(w.id); });
+            renderTcAll();
         }
 
         // --- WINDOWS DIALOG ---
         let dialogCallback = null;
-        function showDialog(title, text, type = 'alert', callback = null, customHtml = '') {
-            document.getElementById('dialog-title').innerText = title; document.getElementById('dialog-text').innerText = text;
-            const inp = document.getElementById('dialog-input'); const sel = document.getElementById('dialog-select'); const cust = document.getElementById('dialog-custom-html');
-            inp.style.display = type === 'prompt' ? 'block' : 'none'; sel.style.display = type === 'select' ? 'block' : 'none'; cust.innerHTML = customHtml || '';
+        function showDialog(title, text, type = 'alert', callback = null, customHtml = '', defaultValue = '') {
+            document.getElementById('dialog-title').innerText = title;
+            document.getElementById('dialog-text').innerHTML = text;
+            const inp = document.getElementById('dialog-input');
+            const sel = document.getElementById('dialog-select');
+            const cust = document.getElementById('dialog-custom-html');
+            const stdBtns = document.getElementById('dialog-std-btns');
+            
+            stdBtns.style.display = 'flex';
+            inp.style.display = type === 'prompt' ? 'block' : 'none';
+            sel.style.display = type === 'select' ? 'block' : 'none';
+            cust.innerHTML = customHtml || '';
             document.getElementById('dialog-btn-cancel').style.display = (type !== 'alert') ? 'block' : 'none';
-            if (type === 'prompt') inp.value = '';
+            if (type === 'prompt') inp.value = defaultValue || '';
+            
             document.getElementById('dialog-window').style.display = 'flex';
-            if (type === 'prompt') setTimeout(() => inp.focus(), 50); dialogCallback = callback;
+            if (type === 'prompt') setTimeout(() => { inp.focus(); inp.select(); }, 50);
+            dialogCallback = callback;
         }
+
+        function showChoiceDialog(title, htmlText, buttons) {
+            document.getElementById('dialog-title').innerText = title;
+            document.getElementById('dialog-text').innerHTML = htmlText;
+            document.getElementById('dialog-input').style.display = 'none';
+            document.getElementById('dialog-select').style.display = 'none';
+            document.getElementById('dialog-std-btns').style.display = 'none';
+            
+            const cust = document.getElementById('dialog-custom-html');
+            cust.innerHTML = '';
+            let btnWrap = document.createElement('div');
+            btnWrap.style.display = 'flex';
+            btnWrap.style.flexDirection = 'column';
+            btnWrap.style.gap = '6px';
+            btnWrap.style.marginTop = '10px';
+
+            buttons.forEach(b => {
+                let btn = document.createElement('button');
+                btn.className = 'app-btn';
+                btn.innerHTML = b.label;
+                btn.onclick = () => {
+                    document.getElementById('dialog-window').style.display = 'none';
+                    if (b.action) b.action();
+                };
+                btnWrap.appendChild(btn);
+            });
+            cust.appendChild(btnWrap);
+            document.getElementById('dialog-window').style.display = 'flex';
+        }
+        
         document.getElementById('dialog-btn-ok').onclick = () => {
             document.getElementById('dialog-window').style.display = 'none';
             if (dialogCallback) {
@@ -702,20 +2052,119 @@
         };
         document.getElementById('dialog-btn-cancel').onclick = () => { document.getElementById('dialog-window').style.display = 'none'; if (dialogCallback) { const cb = dialogCallback; dialogCallback = null; cb(null); } };
 
-        // --- JOBB KLIKK MENÜ ---
+        function createBackupCopy(item) {
+            let backupName = getUniqueName(item.name, item.parentId);
+            let pos = getNextGridPosition(item.parentId);
+            let backupItem = JSON.parse(JSON.stringify(item));
+            backupItem.id = item.type + '_backup_' + Date.now();
+            backupItem.name = backupName;
+            backupItem.x = pos.x;
+            backupItem.y = pos.y;
+            backupItem.dateCreated = new Date().toISOString();
+            items.push(backupItem);
+            renderDesktop();
+            refreshAllFolders();
+        }
+
+        window.modifyItem = function(id) {
+            contextMenu.style.display = 'none';
+            let item = items.find(i => i.id === id);
+            if (!item) return;
+
+            if (item.type === 'app') {
+                showDialog('Parancsikon Módosítása', 'Add meg a weboldal URL-jét:', 'prompt', (urlVal) => {
+                    if (urlVal === null) return;
+                    showDialog('Parancsikon Ikonja', 'Opcionális: Adj meg egy kép URL-t ikonként:', 'prompt', (icoVal) => {
+                        if (icoVal === null) return;
+                        item.content = urlVal;
+                        item.imgUrl = icoVal;
+                        renderDesktop(); refreshAllFolders();
+                    }, '', item.imgUrl || '');
+                }, '', item.content || '');
+            } 
+            else if (item.type === 'efa') {
+                showDialog('EFA Alkalmazás Módosítása (1/3)', 'Add meg a PC-s (Billentyűzetes) verzió linkjét:', 'prompt', (pcVal) => {
+                    if (pcVal === null) return;
+                    showDialog('EFA Alkalmazás Módosítása (2/3)', 'Add meg az Érintőképernyős verzió linkjét:', 'prompt', (touchVal) => {
+                        if (touchVal === null) return;
+                        showDialog('EFA Alkalmazás Ikonja (3/3)', 'Opcionális: Adj meg egy kép URL-t ikonként:', 'prompt', (icoVal) => {
+                            if (icoVal === null) return;
+                            item.pcUrl = pcVal;
+                            item.touchUrl = touchVal;
+                            item.imgUrl = icoVal;
+                            renderDesktop(); refreshAllFolders();
+                        }, '', item.imgUrl || '');
+                    }, '', item.touchUrl || '');
+                }, '', item.pcUrl || '');
+            }
+            else if (item.type === 'html' || item.type === 'txt') {
+                activeFileId = item.id;
+                document.getElementById('txt-title').innerText = item.name + " (Szerkesztés)";
+                document.getElementById('txt-textarea').value = item.content || "";
+                openStaticWindow('txt-window', 'txt', item.name);
+            }
+            else if (item.type === 'img' || item.type === 'mp3' || item.type === 'mp4') {
+                let warnHtml = `<span style="color:#d00000; font-weight:bold;">⚠️ FIGYELEM! Az előző fájl a módosítás során törlődni fog! Ajánlott biztonsági mentést csinálni!</span>`;
+                showChoiceDialog('Média Módosítása - Figyelmeztetés', warnHtml, [
+                    {
+                        label: '💾 Biztonsági mentés és Módosítás',
+                        action: () => {
+                            createBackupCopy(item);
+                            promptMediaSourceUpdate(item);
+                        }
+                    },
+                    {
+                        label: '⏩ Kihagyás (Módosítás mentés nélkül)',
+                        action: () => {
+                            promptMediaSourceUpdate(item);
+                        }
+                    },
+                    {
+                        label: '❌ Mégse',
+                        action: () => {}
+                    }
+                ]);
+            }
+        };
+
+        function promptMediaSourceUpdate(item) {
+            let currentUrl = (item.imgUrl && !item.imgUrl.startsWith('data:')) ? item.imgUrl : '';
+            showDialog(`${item.name} módosítása`, 'Adj meg egy új internetes URL-t, VAGY töröld ki (hagyd üresen) az új Kamera/Mikrofon felvétel készítéséhez:', 'prompt', (val) => {
+                if (val === null) return;
+                if (val) {
+                    item.imgUrl = val;
+                    renderDesktop(); refreshAllFolders();
+                } else {
+                    startWebRTCCapture(item.type, item, true);
+                }
+            }, '', currentUrl);
+        }
+
+        // --- JOBB KLIKK MENÜ (ASZTALON ÉS MAPPÁKBAN, ZIP ÉS VÁGÓLAP FUNKCIÓKKAL) ---
         let contextMenuTargetFolder = null; let contextMenuTargetIcon = null;
         document.addEventListener('contextmenu', (e) => {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return; 
-            if (e.target.closest('.window-content') && e.target.closest('.window.app-window')) return;
+            if (e.target.closest('#tc-window')) return; // A Total Commander saját jobb klikket használ
+            if (e.target.closest('.window-content') && !e.target.closest('.folder-content')) return;
             e.preventDefault();
             const icon = e.target.closest('.icon'); contextMenu.innerHTML = ''; 
             if (icon) {
                 contextMenuTargetIcon = icon.dataset.id;
+                let itemObj = items.find(i => i.id === contextMenuTargetIcon);
                 let isSystem = icon.dataset.type && (icon.dataset.type.startsWith('system-') || icon.dataset.type === 'folder-up');
+                let canModify = itemObj && ['app', 'efa', 'html', 'img', 'mp3', 'mp4'].includes(itemObj.type);
+                let isZip = itemObj && itemObj.type === 'zip';
                 let winElem = icon.closest('.window'); let sourceWinId = winElem ? winElem.id : null;
                 contextMenu.innerHTML = `
+                    ${!isSystem ? `<div style="display:flex; gap:4px; padding:4px; border-bottom:1px solid var(--win-border-dark);">
+                        <button class="bin-btn" style="flex:1;" onclick="copyOrCutItem('${contextMenuTargetIcon}', 'copy')">📋 Másolás</button>
+                        <button class="bin-btn" style="flex:1;" onclick="copyOrCutItem('${contextMenuTargetIcon}', 'cut')">✂️ Kivágás</button>
+                    </div>` : ''}
                     <div class="menu-item" onclick="handleDblClick('${contextMenuTargetIcon}', '${sourceWinId}')">${dict[currentLang].open}</div>
+                    ${canModify ? `<div class="menu-separator"></div><div class="menu-item" onclick="modifyItem('${contextMenuTargetIcon}')">${dict[currentLang].modify}</div>` : ''}
                     ${!isSystem ? `<div class="menu-separator"></div><div class="menu-item" onclick="triggerRename('${contextMenuTargetIcon}')">${dict[currentLang].rename}</div>` : ''}
+                    ${!isSystem && !isZip ? `<div class="menu-separator"></div><div class="menu-item" onclick="compressItemToZip('${contextMenuTargetIcon}')">🗜️ Csomagolás ZIP-be (.zip)</div>` : ''}
+                    ${isZip ? `<div class="menu-separator"></div><div class="menu-item" onclick="extractZipItem('${contextMenuTargetIcon}')">📦 ZIP Kicsomagolása</div>` : ''}
                     ${icon.dataset.type !== 'folder-up' ? `<div class="menu-separator"></div><div class="menu-item" onclick="showProperties('${contextMenuTargetIcon}')">${dict[currentLang].prop}</div>` : ''}
                     ${!isSystem ? `<div class="menu-separator"></div><div class="menu-item" onclick="moveToBin('${contextMenuTargetIcon}')" style="color:red;">${dict[currentLang].del}</div>` : ''}
                 `;
@@ -724,11 +2173,13 @@
                 let winElem = folderContent ? folderContent.closest('.window') : null;
                 contextMenuTargetFolder = winElem ? openWindows.find(w => w.id === winElem.id).itemId : null; contextMenuTargetIcon = null;
                 let menuHTML = `
+                    ${systemClipboard.item ? `<div class="menu-item" onclick="pasteItemToFolder(${contextMenuTargetFolder ? `'${contextMenuTargetFolder}'` : 'null'})">📥 Beillesztés (${systemClipboard.item.name})</div><div class="menu-separator"></div>` : ''}
                     <div class="menu-item" onclick="createNewItem('folder')">${dict[currentLang].newFolder}</div>
                     <div class="menu-item" onclick="createNewItem('txt')">${dict[currentLang].newTxt}</div>
                     <div class="menu-item" onclick="createNewItem('html')">${dict[currentLang].newHtml}</div>
                     <div class="menu-item" onclick="createNewItem('pptx')">${dict[currentLang].newPptx}</div>
                     <div class="menu-item" onclick="createNewItem('app')">${dict[currentLang].newApp}</div>
+                    <div class="menu-item" onclick="createNewItem('efa')">${dict[currentLang].newEfa}</div>
                     <div class="menu-item" onclick="createNewItem('img')">${dict[currentLang].newImg}</div>
                     <div class="menu-item" onclick="createNewItem('mp3')">${dict[currentLang].newMp3}</div>
                     <div class="menu-item" onclick="createNewItem('mp4')">${dict[currentLang].newMp4}</div>
@@ -737,31 +2188,64 @@
                 if (customMenuItems.length > 0) { menuHTML += `<div class="menu-separator"></div>`; customMenuItems.forEach((cItem, idx) => { menuHTML += `<div class="menu-item" onclick="runCustomMenu(${idx})">${cItem.label}</div>`; }); }
                 contextMenu.innerHTML = menuHTML;
             }
-            contextMenu.style.display = 'flex'; contextMenu.style.left = Math.min(e.clientX, window.innerWidth - 180) + 'px'; contextMenu.style.top = Math.min(e.clientY, window.innerHeight - 220) + 'px';
+            contextMenu.style.display = 'flex'; contextMenu.style.left = Math.min(e.clientX, window.innerWidth - 205) + 'px'; contextMenu.style.top = Math.min(e.clientY, window.innerHeight - 300) + 'px';
         });
 
         window.runCustomMenu = function(idx) { contextMenu.style.display = 'none'; if (customMenuItems[idx] && customMenuItems[idx].action) customMenuItems[idx].action(); };
         document.addEventListener('click', (e) => {
             if (!e.target.closest('#context-menu')) contextMenu.style.display = 'none';
+            if (!e.target.closest('#search-container')) document.getElementById('search-results').style.display = 'none';
+            if (!e.target.closest('#volume-popup') && !e.target.closest('#btn-volume')) document.getElementById('volume-popup').style.display = 'none';
             if (!e.target.closest('.window-header') && e.target.tagName !== 'INPUT' && !e.target.closest('#media-capture-overlay')) {
                 const icon = e.target.closest('.icon');
                 if (icon) { clearSelection(); icon.classList.add('selected'); } else if (e.target === desktop || e.target.closest('.folder-content')) { clearSelection(); }
             }
         });
 
+        // BILLENTYŰZET: Pac-Man irányítás + Total Commander F+Szám kombinációk
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Delete' && !document.activeElement.matches('input, textarea')) {
+            if (document.activeElement && document.activeElement.matches('input, textarea')) return;
+
+            if (e.key.toLowerCase() === 'f') isFKeyHeld = true;
+
+            // Pac-Man irányítás ha nyitva van
+            const pacWin = document.getElementById('pacman-window');
+            if (pacWin && pacWin.style.display !== 'none' && pacWin.style.zIndex == 500) {
+                if (e.key === 'ArrowUp' || e.key.toLowerCase() === 'w') { pacState.pac.nextX = 0; pacState.pac.nextY = -1; e.preventDefault(); }
+                if (e.key === 'ArrowDown' || e.key.toLowerCase() === 's') { pacState.pac.nextX = 0; pacState.pac.nextY = 1; e.preventDefault(); }
+                if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') { pacState.pac.nextX = -1; pacState.pac.nextY = 0; e.preventDefault(); }
+                if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') { pacState.pac.nextX = 1; pacState.pac.nextY = 0; e.preventDefault(); }
+            }
+
+            // Total Commander F + 3..8 kombinációk
+            const tcWin = document.getElementById('tc-window');
+            if (tcWin && tcWin.style.display !== 'none') {
+                if ((isFKeyHeld && e.key === '3') || e.key === 'F3') { e.preventDefault(); tcActionF3(); }
+                if ((isFKeyHeld && e.key === '4') || e.key === 'F4') { e.preventDefault(); tcActionF4(); }
+                if ((isFKeyHeld && e.key === '5') || e.key === 'F5') { e.preventDefault(); tcActionF5(); }
+                if ((isFKeyHeld && e.key === '6') || e.key === 'F6') { e.preventDefault(); tcActionF6(); }
+                if ((isFKeyHeld && e.key === '7') || e.key === 'F7') { e.preventDefault(); tcActionF7(); }
+                if ((isFKeyHeld && e.key === '8') || e.key === 'F8') { e.preventDefault(); tcActionF8(); }
+                if ((e.altKey && e.key === 'F4') || (isFKeyHeld && e.key === '9')) { e.preventDefault(); closeWindow('tc-window'); }
+            }
+
+            if (e.key === 'Delete') {
                 const selected = document.querySelector('.icon.selected');
                 if (selected && selected.dataset.id && !selected.dataset.id.startsWith('system-') && selected.dataset.type !== 'folder-up') { moveToBin(selected.dataset.id); }
             }
         });
 
+        document.addEventListener('keyup', (e) => {
+            if (e.key.toLowerCase() === 'f') isFKeyHeld = false;
+        });
+
         function recalculateGrid() { GRID_W = iconSize + 40; GRID_H = iconSize + 60; }
+        function clearSelection() { document.querySelectorAll('.icon.selected').forEach(el => el.classList.remove('selected')); }
         
         let draggedElement = null, isDragging = false, wasDragging = false, startX, startY, origX, origY, offsetX, offsetY; let pressTimer = null, renameTriggered = false;
         
         document.addEventListener('mousedown', (e) => {
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA' || e.target.closest('#context-menu') || e.target.closest('.folder-tree')) return;
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA' || e.target.closest('#context-menu') || e.target.closest('.folder-tree') || e.target.closest('#search-container') || e.target.closest('#snip-overlay')) return;
             const icon = e.target.closest('.icon'); const winHeader = e.target.closest('.window-header');
             if (icon && e.button === 0) { 
                 draggedElement = icon; isDragging = false; wasDragging = false; renameTriggered = false;
@@ -794,23 +2278,30 @@
             if (draggedElement) {
                 if (isDragging && draggedElement.classList.contains('icon')) {
                     wasDragging = true; setTimeout(() => wasDragging = false, 150); 
-                    const id = draggedElement.dataset.id; let isSys = (id === 'system-bin' || id === 'system-cmd');
-                    let item = isSys ? (id === 'system-bin' ? sysIcons.bin : sysIcons.cmd) : items.find(i => i.id === id);
+                    const id = draggedElement.dataset.id;
+                    let isSys = id.startsWith('system-');
+                    let item = isSys ? Object.values(sysIcons).find(s => s.id === id) : items.find(i => i.id === id);
                     if (item) {
                         let rawX = parseFloat(draggedElement.style.left); let rawY = parseFloat(draggedElement.style.top);
                         let targetX = Math.round((rawX - 20) / GRID_W) * GRID_W + 20; let targetY = Math.round((rawY - 20) / GRID_H) * GRID_H + 20;
                         const pId = item.parentId || null;
                         if (pId !== null && !isSys && Math.abs(rawX - 20) < 45 && Math.abs(rawY - 20) < 45) {
-                            let currentFolder = items.find(f => f.id === pId); item.parentId = currentFolder ? (currentFolder.parentId || null) : null;
+                            let currentFolder = items.find(f => f.id === pId);
+                            let newParentId = currentFolder ? (currentFolder.parentId || null) : null;
+                            item.parentId = newParentId;
+                            item.name = getUniqueName(item.name, newParentId, item.id);
                             let freePos = getNextGridPosition(item.parentId, item.id); item.x = freePos.x; item.y = freePos.y;
                         } else {
                             let droppedOnFolder = items.find(i => i.type === 'folder' && i.id !== id && i.parentId === pId && Math.abs(i.x - rawX) < 45 && Math.abs(i.y - rawY) < 45);
                             if (droppedOnFolder && !isSys) {
-                                item.parentId = droppedOnFolder.id; let pos = getNextGridPosition(item.parentId, item.id); item.x = pos.x; item.y = pos.y;
+                                item.parentId = droppedOnFolder.id;
+                                item.name = getUniqueName(item.name, droppedOnFolder.id, item.id);
+                                let pos = getNextGridPosition(item.parentId, item.id); item.x = pos.x; item.y = pos.y;
                             } else {
                                 let conflict = items.some(i => i.id !== id && i.parentId === pId && Math.abs(i.x - targetX) < 10 && Math.abs(i.y - targetY) < 10);
-                                if (pId === null) { if (id !== 'system-bin' && Math.abs(sysIcons.bin.x - targetX) < 10 && Math.abs(sysIcons.bin.y - targetY) < 10) conflict = true; if (id !== 'system-cmd' && Math.abs(sysIcons.cmd.x - targetX) < 10 && Math.abs(sysIcons.cmd.y - targetY) < 10) conflict = true; } 
-                                else { if (Math.abs(20 - targetX) < 10 && Math.abs(20 - targetY) < 10) conflict = true; }
+                                if (pId === null) {
+                                    Object.values(sysIcons).forEach(s => { if (s.id !== id && Math.abs(s.x - targetX) < 10 && Math.abs(s.y - targetY) < 10) conflict = true; });
+                                } else { if (Math.abs(20 - targetX) < 10 && Math.abs(20 - targetY) < 10) conflict = true; }
                                 if (conflict) { item.x = origX; item.y = origY; } else { item.x = Math.max(20, targetX); item.y = Math.max(20, targetY); }
                             }
                         }
@@ -831,6 +2322,7 @@
 
         let audioPlayContext = null;
         function setupAudioVisualizerForPlayback(audioElement, canvasElement) {
+            audioElement.volume = systemVolume / 100;
             if (!audioPlayContext) audioPlayContext = new (window.AudioContext || window.webkitAudioContext)();
             const analyser = audioPlayContext.createAnalyser(); analyser.fftSize = 64;
             try { const source = audioPlayContext.createMediaElementSource(audioElement); source.connect(analyser); analyser.connect(audioPlayContext.destination); } catch (e) {}
@@ -858,16 +2350,58 @@
             if(currentPptxItem) { slidesData[currentSlideIndex] = document.getElementById('slide-editor').value; currentPptxItem.content = JSON.stringify(slidesData); showDialog('Mentés', 'Prezentáció elmentve!', 'alert'); }
         };
 
+        window.openCurrentIframeExternal = function() {
+            if (currentExternalAppUrl) window.open(currentExternalAppUrl, '_blank');
+        };
+
+        function launchUrlInWindow(title, rawUrl, typeKey = 'app') {
+            let url = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
+            currentExternalAppUrl = url;
+            document.getElementById('html-title').innerText = title;
+            document.getElementById('external-web-btn').style.display = 'inline-block';
+            const iframe = document.getElementById('html-iframe');
+            iframe.removeAttribute('srcdoc');
+            iframe.src = url;
+            openStaticWindow('html-window', typeKey, title);
+
+            if (!url.includes('classic.minecraft.net')) {
+                setTimeout(() => {
+                    let w = openWindows.find(x => x.id === 'html-window');
+                    if (w && !w.minimized && document.getElementById('html-title').innerText === title) {
+                        showDialog('Rendszerüzenet', dict[currentLang].iframeError, 'confirm', (res) => {
+                            if (res) { window.open(url, '_blank'); closeWindow('html-window'); }
+                        });
+                    }
+                }, 2000);
+            }
+        }
+
         window.handleDblClick = function(id, sourceWinId) {
             contextMenu.style.display = 'none';
             if (id === 'system-bin') return openStaticWindow('bin-window', 'sys-bin', dict[currentLang].binName);
             if (id === 'system-cmd') return openStaticWindow('cmd-window', 'sys-cmd', dict[currentLang].cmdName);
+            if (id === 'system-calc') return openStaticWindow('calc-window', 'sys-calc', dict[currentLang].calcName);
+            if (id === 'system-snip') return openSnippingTool();
+            if (id === 'system-tc') return openTotalCommander();
             if (id === 'folder-up') {
                 if (sourceWinId) { let w = openWindows.find(x => x.id === sourceWinId); if (w && w.itemId) { let current = items.find(i => i.id === w.itemId); navigateFolder(sourceWinId, current ? current.parentId : null); } }
                 return;
             }
             let item = items.find(i => i.id === id); if (!item) return;
 
+            if (item.type === 'pacman' || item.id === 'app_packman') {
+                openStaticWindow('pacman-window', 'pacman', 'Packman');
+                initPacmanGame();
+                return;
+            }
+            if (item.type === 'zip') {
+                showChoiceDialog(item.name + ' (ZIP Archívum)', 'Mit szeretnél tenni ezzel a tömörített ZIP fájllal?', [
+                    { label: '📦 Kicsomagolás ide', action: () => extractZipItem(item.id) },
+                    { label: 'ℹ️ Tulajdonságok', action: () => showProperties(item.id) },
+                    { label: '❌ Mégse', action: () => {} }
+                ]);
+                return;
+            }
             if (item.type === 'folder') { 
                 if (sourceWinId && sourceWinId.startsWith('folder_')) navigateFolder(sourceWinId, id); else openFolderWindow(id);
                 return; 
@@ -877,23 +2411,45 @@
                 openStaticWindow('txt-window', 'txt', item.name); return;
             }
             if (item.type === 'html') {
-                document.getElementById('html-title').innerText = item.name; const iframe = document.getElementById('html-iframe');
+                document.getElementById('html-title').innerText = item.name;
+                document.getElementById('external-web-btn').style.display = 'none';
+                const iframe = document.getElementById('html-iframe');
                 iframe.removeAttribute('src'); iframe.srcdoc = item.content || "<h1>Üres HTML fájl</h1>"; openStaticWindow('html-window', 'html', item.name); return;
             }
             if (item.type === 'app') {
                 if (!item.content) { showDialog('Hiba', dict[currentLang].emptyErr, 'alert'); } 
-                else { 
-                    let url = item.content.startsWith('http') ? item.content : 'https://' + item.content; 
-                    document.getElementById('html-title').innerText = item.name; const iframe = document.getElementById('html-iframe');
-                    iframe.removeAttribute('srcdoc'); iframe.src = url; openStaticWindow('html-window', 'app', item.name);
-                    
-                    setTimeout(() => {
-                        let w = openWindows.find(x => x.id === 'html-window');
-                        if (w && !w.minimized && document.getElementById('html-title').innerText === item.name) {
-                            showDialog('Rendszerüzenet', dict[currentLang].iframeError, 'confirm', (res) => { if (res) { window.open(url, '_blank'); closeWindow('html-window'); } });
-                        }
-                    }, 2000);
-                } return;
+                else { launchUrlInWindow(item.name, item.content, 'app'); }
+                return;
+            }
+            if (item.type === 'efa') {
+                let hasPc = !!(item.pcUrl && item.pcUrl.trim());
+                let hasTouch = !!(item.touchUrl && item.touchUrl.trim());
+
+                if (!hasPc && !hasTouch) {
+                    showChoiceDialog(item.name + ' - Hiányzó forrás', 'Ehhez az EFA alkalmazáshoz még egyetlen link sincs megadva! Szeretnéd most módosítani a forrását?', [
+                        { label: '⚙️ Forrás módosítása', action: () => modifyItem(item.id) },
+                        { label: '❌ Mégse', action: () => {} }
+                    ]);
+                } else if (hasPc && !hasTouch) {
+                    showChoiceDialog(item.name + ' - Hiányzó érintőképernyős link', 'Csak a <b>PC-s (billentyűzetes)</b> link van megadva. Módosítani szeretnéd a forrását, vagy elindítod a PC-s funkciót?', [
+                        { label: '🖥️ PC-s funkció indítása', action: () => launchUrlInWindow(item.name + ' (PC)', item.pcUrl, 'efa') },
+                        { label: '⚙️ Forrás módosítása', action: () => modifyItem(item.id) },
+                        { label: '❌ Mégse', action: () => {} }
+                    ]);
+                } else if (!hasPc && hasTouch) {
+                    showChoiceDialog(item.name + ' - Hiányzó PC-s link', 'Csak az <b>Érintőképernyős</b> link van megadva. Módosítani szeretnéd a forrását, vagy elindítod az érintőképernyős funkciót?', [
+                        { label: '📱 Érintőképernyős funkció indítása', action: () => launchUrlInWindow(item.name + ' (Érintő)', item.touchUrl, 'efa') },
+                        { label: '⚙️ Forrás módosítása', action: () => modifyItem(item.id) },
+                        { label: '❌ Mégse', action: () => {} }
+                    ]);
+                } else {
+                    showChoiceDialog(item.name + ' - Eszköz választása', 'Milyen eszközön szeretnéd használni az alkalmazást?', [
+                        { label: '🖥️ PC-n (Billentyűzet + Egér)', action: () => launchUrlInWindow(item.name + ' (PC)', item.pcUrl, 'efa') },
+                        { label: '📱 Érintőképernyőn (Mobil / Tablet)', action: () => launchUrlInWindow(item.name + ' (Érintő)', item.touchUrl, 'efa') },
+                        { label: '❌ Mégse', action: () => {} }
+                    ]);
+                }
+                return;
             }
             if (item.type === 'pptx') {
                 currentPptxItem = item; document.getElementById('pptx-title').innerText = item.name + " - Szerkesztő";
@@ -913,20 +2469,30 @@
                 if (item.type === 'mp3') {
                     body.innerHTML = `<canvas id="playback-visualizer" style="width:80%; height:150px; background:#111; border: 2px solid #555; border-radius:5px; margin-bottom:15px;"></canvas><audio id="playback-audio" controls autoplay src="${item.imgUrl}"></audio><p>${item.name}</p>`;
                     setTimeout(() => { const aud = document.getElementById('playback-audio'); const can = document.getElementById('playback-visualizer'); setupAudioVisualizerForPlayback(aud, can); }, 100);
-                } else { body.innerHTML = `<video controls autoplay src="${item.imgUrl}" style="max-width:100%; max-height:85%;"></video>`; }
+                } else {
+                    body.innerHTML = `<video id="playback-video" controls autoplay src="${item.imgUrl}" style="max-width:100%; max-height:85%;"></video>`;
+                    setTimeout(() => { const vid = document.getElementById('playback-video'); if(vid) vid.volume = systemVolume / 100; }, 50);
+                }
                 openStaticWindow('img-window', item.type, item.name); return;
             }
         };
 
         window.triggerRename = function(id) {
-            let item = (id === 'system-bin') ? sysIcons.bin : (id === 'system-cmd' ? sysIcons.cmd : items.find(i => i.id === id)); if (!item) return;
+            let isSys = id.startsWith('system-');
+            let item = isSys ? Object.values(sysIcons).find(s => s.id === id) : items.find(i => i.id === id); if (!item) return;
             const iconEl = document.querySelector(`.icon[data-id="${id}"]`); if (!iconEl) return;
             const labelDiv = iconEl.querySelector('.icon-label'); labelDiv.innerHTML = `<input type="text" id="rename-input" class="rename-input" value="${item.name}">`;
             const input = document.getElementById('rename-input'); input.focus(); input.select();
             input.addEventListener('mousedown', e => e.stopPropagation()); input.addEventListener('dblclick', e => e.stopPropagation());
             let isFinished = false;
             const finishRename = () => { 
-                if (isFinished) return; isFinished = true; item.name = input.value.trim() || "Névtelen";
+                if (isFinished) return; isFinished = true;
+                let desired = input.value.trim() || "Névtelen";
+                let unique = getUniqueName(desired, isSys ? null : item.parentId, item.id);
+                if (unique.toLowerCase() !== desired.toLowerCase()) {
+                    showDialog(dict[currentLang].sysMsgTitle, dict[currentLang].dupNameWarn + '<b>' + unique + '</b>', 'alert');
+                }
+                item.name = unique;
                 updateTypeByExtension(item); renderDesktop(); refreshAllFolders();
             };
             input.addEventListener('blur', finishRename); input.addEventListener('keydown', (e) => { if (e.key === 'Enter') finishRename(); });
@@ -938,15 +2504,17 @@
                 let checkX = col * GRID_W + 20; let checkY = row * GRID_H + 20;
                 if (parentId !== null && checkX === 20 && checkY === 20) { col++; continue; }
                 let occupied = items.some(s => s.id !== ignoreId && s.parentId === parentId && Math.abs((s.x||0) - checkX) < 10 && Math.abs((s.y||0) - checkY) < 10);
-                if (parentId === null) { if (Math.abs(sysIcons.bin.x - checkX) < 10 && Math.abs(sysIcons.bin.y - checkY) < 10) occupied = true; if (Math.abs(sysIcons.cmd.x - checkX) < 10 && Math.abs(sysIcons.cmd.y - checkY) < 10) occupied = true; }
+                if (parentId === null) {
+                    Object.values(sysIcons).forEach(s => { if (Math.abs(s.x - checkX) < 10 && Math.abs(s.y - checkY) < 10) occupied = true; });
+                }
                 if (!occupied) return { x: checkX, y: checkY }; col++; if (col >= cols) { col = 0; row++; }
             }
         }
 
         // --- VALÓS MÉDIA FELVÉTEL WEBRTC-vel ---
-        let mediaStream = null; let mediaRecorder = null; let recordedChunks = []; let captureType = null; let pendingMediaItem = null; let audioContext = null; let animFrame = null;
-        function startWebRTCCapture(type, item) {
-            pendingMediaItem = item; captureType = type;
+        let mediaStream = null; let mediaRecorder = null; let recordedChunks = []; let captureType = null; let pendingMediaItem = null; let isModifyingExistingMedia = false; let audioContext = null; let animFrame = null;
+        function startWebRTCCapture(type, item, isModify = false) {
+            pendingMediaItem = item; captureType = type; isModifyingExistingMedia = isModify;
             const overlay = document.getElementById('media-capture-overlay'); const videoElem = document.getElementById('capture-video-elem');
             const canvasElem = document.getElementById('audio-visualizer-canvas'); const actionBtn = document.getElementById('capture-action-btn'); const titleElem = document.getElementById('media-capture-title');
             overlay.style.display = 'flex'; videoElem.style.display = 'none'; canvasElem.style.display = 'none'; actionBtn.className = 'capture-btn btn-red'; actionBtn.innerText = "";
@@ -979,49 +2547,124 @@
         };
 
         window.cancelMediaCapture = function() { if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop(); stopMediaTracks(); document.getElementById('media-capture-overlay').style.display = 'none'; }
-        function finishMediaCapture() { stopMediaTracks(); document.getElementById('media-capture-overlay').style.display = 'none'; items.push(pendingMediaItem); pendingMediaItem = null; renderDesktop(); refreshAllFolders(); }
+        function finishMediaCapture() {
+            stopMediaTracks(); document.getElementById('media-capture-overlay').style.display = 'none';
+            if (!isModifyingExistingMedia && pendingMediaItem) {
+                pendingMediaItem.name = getUniqueName(pendingMediaItem.name, pendingMediaItem.parentId);
+                items.push(pendingMediaItem);
+            }
+            pendingMediaItem = null; isModifyingExistingMedia = false; renderDesktop(); refreshAllFolders();
+        }
         function stopMediaTracks() { if (mediaStream) { mediaStream.getTracks().forEach(track => track.stop()); mediaStream = null; } if (audioContext) { audioContext.close(); audioContext = null; } if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; } }
 
         window.createNewItem = function(type) {
             contextMenu.style.display = 'none'; const id = type + '_' + Date.now(); let pId = contextMenuTargetFolder; const pos = getNextGridPosition(pId);
-            let extMap = { 'folder':'Mappa', 'txt':'.txt', 'html':'.html', 'pptx':'.pptx', 'app':'.lnk', 'img':'.png', 'mp3':'.mp3', 'mp4':'.mp4' };
-            let defaultName = (type === 'folder' ? 'Új Mappa' : ('Új Fájl' + extMap[type]));
+            let extMap = { 'folder':'Mappa', 'txt':'.txt', 'html':'.html', 'pptx':'.pptx', 'app':'.lnk', 'efa':'.efa', 'img':'.png', 'mp3':'.mp3', 'mp4':'.mp4' };
+            let rawDefaultName = (type === 'folder' ? 'Új Mappa' : (type === 'efa' ? 'Alkalmazás.efa' : 'Új Fájl' + extMap[type]));
+            let defaultName = getUniqueName(rawDefaultName, pId);
             let newItem = { id, type, name: defaultName, imgUrl: '', content: '', dateCreated: new Date().toISOString(), x: pos.x, y: pos.y, parentId: pId, extraData: 0 };
 
             if (type === 'folder' || type === 'txt' || type === 'html' || type === 'pptx') { items.push(newItem); renderDesktop(); refreshAllFolders(); } 
-            else if (type === 'app') { showDialog('Új Parancsikon', 'Add meg a weboldal URL-jét (pl. https://example.com):', 'prompt', (urlVal) => { showDialog('Parancsikon Ikonja', 'Opcionális: Adj meg egy kép URL-t ikonként (vagy hagyd üresen):', 'prompt', (icoVal) => { newItem.content = urlVal || ''; newItem.imgUrl = icoVal || ''; items.push(newItem); renderDesktop(); refreshAllFolders(); }); }); } 
-            else if (type === 'img' || type === 'mp3' || type === 'mp4') { showDialog(`Új ${type.toUpperCase()}`, 'Adj meg egy internetes URL-t, VAGY hagyd üresen a saját felvétel (Kamera/Mikrofon) készítéséhez:', 'prompt', (val) => { if (val) { newItem.imgUrl = val; items.push(newItem); renderDesktop(); refreshAllFolders(); } else { startWebRTCCapture(type, newItem); } }); }
+            else if (type === 'app') {
+                showDialog('Új Parancsikon', 'Add meg a weboldal URL-jét (pl. https://example.com):', 'prompt', (urlVal) => {
+                    if (urlVal === null) return;
+                    showDialog('Új Parancsikon Ikonja', 'Opcionális: Adj meg egy kép URL-t ikonként (vagy hagyd üresen):', 'prompt', (icoVal) => {
+                        newItem.content = urlVal || ''; newItem.imgUrl = icoVal || '';
+                        newItem.name = getUniqueName(newItem.name, pId);
+                        items.push(newItem); renderDesktop(); refreshAllFolders();
+                    });
+                });
+            }
+            else if (type === 'efa') {
+                showDialog('Új EFA Alkalmazás (1/3)', 'Add meg a PC-s (Billentyűzetes) verzió linkjét:', 'prompt', (pcVal) => {
+                    if (pcVal === null) return;
+                    showDialog('Új EFA Alkalmazás (2/3)', 'Add meg az Érintőképernyős verzió linkjét:', 'prompt', (touchVal) => {
+                        if (touchVal === null) return;
+                        showDialog('Új EFA Alkalmazás Ikonja (3/3)', 'Opcionális: Adj meg egy kép URL-t ikonként:', 'prompt', (icoVal) => {
+                            newItem.pcUrl = pcVal || '';
+                            newItem.touchUrl = touchVal || '';
+                            newItem.imgUrl = icoVal || '';
+                            newItem.name = getUniqueName(newItem.name, pId);
+                            items.push(newItem); renderDesktop(); refreshAllFolders();
+                        });
+                    });
+                });
+            }
+            else if (type === 'img' || type === 'mp3' || type === 'mp4') {
+                showDialog(`Új ${type.toUpperCase()}`, 'Adj meg egy internetes URL-t, VAGY hagyd üresen a saját felvétel (Kamera/Mikrofon) készítéséhez:', 'prompt', (val) => {
+                    if (val === null) return;
+                    if (val) {
+                        newItem.imgUrl = val;
+                        newItem.name = getUniqueName(newItem.name, pId);
+                        items.push(newItem); renderDesktop(); refreshAllFolders();
+                    } 
+                    else { startWebRTCCapture(type, newItem, false); }
+                });
+            }
         };
 
         window.changeDesktopBg = function() { contextMenu.style.display = 'none'; showDialog('Háttérkép beállítása', 'Adj meg egy kép URL-t (.png/.jpg/.ico) vagy színkódot (pl. #008080):', 'prompt', (bg) => { if (!bg) return; if (bg.startsWith('#') || (!bg.includes('.') && !bg.includes('/') && !bg.startsWith('data:'))) { applyBg(bg, true); } else { showDialog('Háttérkép méretezése', 'Kifeszítjük a képet a teljes asztalra?', 'confirm', (stretch) => { applyBg(bg, stretch === true); }); } }); };
         function applyBg(bg, stretch = true) { desktopBg = bg; desktopStretch = stretch; if (bg.startsWith('#') || (!bg.includes('.') && !bg.includes('/') && !bg.startsWith('data:'))) { desktop.style.backgroundImage = 'none'; desktop.style.backgroundColor = bg; } else { desktop.style.backgroundImage = `url("${bg}")`; if (stretch) { desktop.style.backgroundSize = '100% 100%'; desktop.style.backgroundColor = 'transparent'; } else { desktop.style.backgroundSize = 'contain'; desktop.style.backgroundPosition = 'center'; desktop.style.backgroundRepeat = 'no-repeat'; desktop.style.backgroundColor = '#000000'; } } }
-        function getItemSize(item) { if (!item) return 0; if (item.type === 'folder') return items.filter(i => i.parentId === item.id).reduce((sum, child) => sum + getItemSize(child), 0); if (item.type === 'txt' || item.type === 'html' || item.type === 'pptx') return (item.content || "").length * 8; if (item.type === 'app') return 512; if (item.type === 'img' || item.type === 'mp3' || item.type === 'mp4') return item.imgUrl ? Math.round(item.imgUrl.length * 0.75) : 0; return 0; }
+        function getItemSize(item) { if (!item) return 0; if (item.type === 'folder') return items.filter(i => i.parentId === item.id).reduce((sum, child) => sum + getItemSize(child), 0); if (item.type === 'txt' || item.type === 'html' || item.type === 'pptx' || item.type === 'zip') return (item.content || "").length * 4; if (item.type === 'app' || item.type === 'efa' || item.type === 'pacman') return 512; if (item.type === 'img' || item.type === 'mp3' || item.type === 'mp4') return item.imgUrl ? Math.round(item.imgUrl.length * 0.75) : 0; return 0; }
         function formatBytes(bytes) { if (bytes < 1024) return bytes + " B"; else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB"; return (bytes / 1048576).toFixed(2) + " MB"; }
 
         function getIconHTML(item, viewMode = 'grid') {
             let imgSrc = '📝';
-            if (item.type === 'folder') imgSrc = '📁'; else if (item.type === 'txt') imgSrc = '📄'; else if (item.type === 'html') imgSrc = '🌐'; else if (item.type === 'pptx') imgSrc = '📊'; else if (item.type === 'app') imgSrc = '🔗'; else if (item.type === 'system-bin') imgSrc = '🗑️'; else if (item.type === 'system-cmd') imgSrc = '💻'; else if (item.type === 'img') imgSrc = '🖼️'; else if (item.type === 'mp3') imgSrc = '🎵'; else if (item.type === 'mp4') imgSrc = '🎬';
-            const showCustomImg = item.imgUrl && (item.type === 'img' || item.type === 'app');
-            const imgContent = showCustomImg ? `<img src="${item.imgUrl}">` : `<div style="font-size:${iconSize*0.65}px;">${imgSrc}</div>`;
+            if (item.type === 'folder') imgSrc = '📁';
+            else if (item.type === 'txt') imgSrc = '📄';
+            else if (item.type === 'html') imgSrc = '🌐';
+            else if (item.type === 'pptx') imgSrc = '📊';
+            else if (item.type === 'app') imgSrc = '🔗';
+            else if (item.type === 'pacman') imgSrc = '🍒';
+            else if (item.type === 'efa') imgSrc = '📱';
+            else if (item.type === 'zip') imgSrc = '🗜️';
+            else if (item.type === 'system-bin') imgSrc = '🗑️';
+            else if (item.type === 'system-cmd') imgSrc = '💻';
+            else if (item.type === 'img') imgSrc = '🖼️';
+            else if (item.type === 'mp3') imgSrc = '🎵';
+            else if (item.type === 'mp4') imgSrc = '🎬';
+
+            const showCustomImg = item.imgUrl && (item.type === 'img' || item.type === 'app' || item.type === 'efa' || item.type === 'pacman');
+            const imgContent = showCustomImg ? `<img src="${item.imgUrl}" onerror="this.outerHTML='<div style=\\'font-size:${iconSize*0.65}px;\\'>${imgSrc}</div>'">` : `<div style="font-size:${iconSize*0.65}px;">${imgSrc}</div>`;
             const dateStr = (viewMode === 'list' && item.dateCreated) ? `<div class="icon-date">${new Date(item.dateCreated).toLocaleDateString()}</div>` : '';
             const sizeStr = (viewMode === 'list' && !item.type.startsWith('system-')) ? `<div class="icon-size-label">${formatBytes(getItemSize(item))}</div>` : '';
             return `<div class="icon" data-id="${item.id}" data-type="${item.type}" style="left:${item.x}px; top:${item.y}px; width:${viewMode === 'list' ? '100%' : (iconSize + 30) + 'px'}"><div class="icon-img-wrapper" style="width:${iconSize}px; height:${iconSize}px;">${imgContent}</div><div class="icon-label">${item.name}</div>${dateStr}${sizeStr}</div>`;
         }
-        function renderDesktop() { recalculateGrid(); desktop.innerHTML = ''; desktop.insertAdjacentHTML('beforeend', getIconHTML(sysIcons.bin, 'grid')); desktop.insertAdjacentHTML('beforeend', getIconHTML(sysIcons.cmd, 'grid')); items.filter(i => i.parentId === null).forEach(item => { desktop.insertAdjacentHTML('beforeend', getIconHTML(item, 'grid')); }); }
+
+        function renderDesktop() {
+            recalculateGrid(); desktop.innerHTML = '';
+            Object.values(sysIcons).forEach(s => desktop.insertAdjacentHTML('beforeend', getIconHTML(s, 'grid')));
+            items.filter(i => i.parentId === null).forEach(item => { desktop.insertAdjacentHTML('beforeend', getIconHTML(item, 'grid')); });
+        }
 
         window.showProperties = function(id) {
-            contextMenu.style.display = 'none'; let isSys = (id === 'system-bin' || id === 'system-cmd');
-            let item = isSys ? (id === 'system-bin' ? sysIcons.bin : sysIcons.cmd) : items.find(i => i.id === id); if (!item) return;
-            document.getElementById('prop-val-name').innerText = item.name; document.getElementById('prop-val-type').innerText = item.type;
-            let parentPath = "Főmappa"; if (!isSys && item.parentId) { let parent = items.find(i => i.id === item.parentId); if (parent) parentPath = parentPath + "/" + parent.name; }
-            document.getElementById('prop-val-path').innerText = isSys ? ("Főmappa/" + item.name).replace(/\\/g, '/') : (parentPath + "/" + item.name).replace(/\\/g, '/');
-            document.getElementById('prop-val-size').innerText = formatBytes(getItemSize(item)) + ` (${getItemSize(item)} byte)`; document.getElementById('prop-val-date').innerText = item.dateCreated ? new Date(item.dateCreated).toLocaleString() : "Ismeretlen";
-            let extra = ""; if (item.type === 'folder') extra = `Tartalom: ${items.filter(i => i.parentId === item.id).length} db elem`; document.getElementById('prop-extra-data').innerText = extra;
+            contextMenu.style.display = 'none';
+            let isSys = id.startsWith('system-');
+            let item = isSys ? Object.values(sysIcons).find(s => s.id === id) : items.find(i => i.id === id); if (!item) return;
+            document.getElementById('prop-val-name').innerText = item.name;
+            document.getElementById('prop-val-type').innerText = item.type === 'folder' ? 'DIR (Mappa)' : (item.type === 'efa' ? '.efa (Eszköztől Függő App)' : item.type.toUpperCase());
+            document.getElementById('prop-val-path').innerText = getFullItemPathString(item, isSys);
+            document.getElementById('prop-val-size').innerText = formatBytes(getItemSize(item)) + ` (${getItemSize(item)} byte)`;
+            document.getElementById('prop-val-date').innerText = item.dateCreated ? new Date(item.dateCreated).toLocaleString() : "Ismeretlen";
+            let extra = "";
+            if (item.type === 'folder') extra = `Tartalom: ${items.filter(i => i.parentId === item.id).length} db elem`;
+            if (item.type === 'efa') extra = `PC link: ${item.pcUrl || 'Nincs'} | Érintő link: ${item.touchUrl || 'Nincs'}`;
+            if (item.type === 'zip') extra = `Tömörített ZIP archívum`;
+            document.getElementById('prop-extra-data').innerText = extra;
             openStaticWindow('properties-window', 'sys-prop', dict[currentLang].propTitle);
         };
 
         window.moveToBin = function(id) { contextMenu.style.display = 'none'; const index = items.findIndex(i => i.id === id); if (index > -1) { deletedItems.push(items[index]); items.splice(index, 1); renderDesktop(); refreshAllFolders(); renderBinList(); } };
-        window.restoreFromBin = function(id) { const index = deletedItems.findIndex(i => i.id === id); if (index > -1) { let item = deletedItems[index]; if (item.parentId && !items.some(i => i.id === item.parentId)) item.parentId = null; let pos = getNextGridPosition(item.parentId); item.x = pos.x; item.y = pos.y; items.push(item); deletedItems.splice(index, 1); renderDesktop(); refreshAllFolders(); renderBinList(); } };
+        window.restoreFromBin = function(id) {
+            const index = deletedItems.findIndex(i => i.id === id);
+            if (index > -1) {
+                let item = deletedItems[index];
+                if (item.parentId && !items.some(i => i.id === item.parentId)) item.parentId = null;
+                item.name = getUniqueName(item.name, item.parentId, item.id);
+                let pos = getNextGridPosition(item.parentId); item.x = pos.x; item.y = pos.y;
+                items.push(item); deletedItems.splice(index, 1); renderDesktop(); refreshAllFolders(); renderBinList();
+            }
+        };
         window.deletePermanently = function(id) { deletedItems = deletedItems.filter(i => i.id !== id); renderBinList(); };
         function renderBinList() { const binContent = document.getElementById('bin-content'); if (deletedItems.length === 0) { binContent.innerHTML = `<div style="padding:15px; opacity:0.7;">${dict[currentLang].binEmpty}</div>`; return; } binContent.innerHTML = ''; deletedItems.forEach(item => { binContent.innerHTML += `<div class="bin-item"><span><strong>${item.name}</strong> <small>(${item.type})</small></span><div class="bin-actions"><button class="bin-btn" onclick="restoreFromBin('${item.id}')">${dict[currentLang].btnRestore}</button><button class="bin-btn del" onclick="deletePermanently('${item.id}')" title="Végleges törlés">X</button></div></div>`; }); }
 
@@ -1029,17 +2672,24 @@
         window.saveTxtFile = function() { if (activeFileId) { let item = items.find(i => i.id === activeFileId); if (item) { item.content = document.getElementById('txt-textarea').value; showDialog('Mentés', 'A fájl tartalma frissítve!', 'alert'); } } };
         window.executeCommand = function() { try { eval(document.getElementById('cmd-textarea').value); } catch(e) { showDialog('Parancssor Hiba', e.message, 'alert'); } };
 
-        document.getElementById('btn-settings').onclick = () => { openStaticWindow('settings-window', 'sys-settings', dict[currentLang].settingsTitle); };
-        document.querySelectorAll('.settings-tab').forEach(tab => { tab.addEventListener('click', (e) => { document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active')); e.target.classList.add('active'); document.getElementById(e.target.dataset.target).classList.add('active'); }); });
+        document.getElementById('btn-settings').onclick = () => { openStaticWindow('settings-window', 'sys-settings', dict[currentLang].settingsTitle); renderRunningAppsPanel(); };
+        document.querySelectorAll('.settings-tab').forEach(tab => { tab.addEventListener('click', (e) => { document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active')); e.target.classList.add('active'); document.getElementById(e.target.dataset.target).classList.add('active'); renderRunningAppsPanel(); }); });
         document.getElementById('icon-size-slider').oninput = (e) => { iconSize = parseInt(e.target.value); document.getElementById('icon-size-label').innerText = iconSize + 'px'; renderDesktop(); refreshAllFolders(); };
 
-        window.exportState = function() { const state = JSON.stringify({ items, deletedItems, sysIcons, desktopBg, desktopStretch, iconSize, currentTimeZone, currentLang, darkMode: document.body.classList.contains('dark-mode') }); const blob = new Blob([state], {type: "application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "windows_allapot.json"; a.click(); };
+        window.exportState = function() { const state = JSON.stringify({ items, deletedItems, sysIcons, desktopBg, desktopStretch, iconSize, currentTimeZone, currentLang, systemVolume, darkMode: document.body.classList.contains('dark-mode') }); const blob = new Blob([state], {type: "application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "windows_allapot.json"; a.click(); };
         window.importState = function(e) {
             const file = e.target.files[0]; if (!file) return; const reader = new FileReader();
             reader.onload = function(evt) {
                 try {
                     const state = JSON.parse(evt.target.result); items = state.items || []; deletedItems = state.deletedItems || [];
-                    if (state.sysIcons) sysIcons = state.sysIcons; if (state.iconSize) { iconSize = state.iconSize; document.getElementById('icon-size-slider').value = iconSize; document.getElementById('icon-size-label').innerText = iconSize + 'px'; } if (state.currentTimeZone) currentTimeZone = state.currentTimeZone; if (state.currentLang) { currentLang = state.currentLang; document.getElementById('lang-select').value = currentLang; }
+                    if (state.sysIcons) {
+                        delete state.sysIcons.calc; // Számológép ne kerüljön vissza az asztalra
+                        sysIcons = { ...sysIcons, ...state.sysIcons };
+                    }
+                    if (state.iconSize) { iconSize = state.iconSize; document.getElementById('icon-size-slider').value = iconSize; document.getElementById('icon-size-label').innerText = iconSize + 'px'; }
+                    if (state.currentTimeZone) currentTimeZone = state.currentTimeZone;
+                    if (state.currentLang) { currentLang = state.currentLang; document.getElementById('lang-select').value = currentLang; }
+                    if (state.systemVolume) { document.getElementById('vol-slider').value = state.systemVolume; changeSystemVolume(state.systemVolume); }
                     document.getElementById('dark-mode-toggle').checked = !!state.darkMode; toggleTheme(); if (state.desktopBg) applyBg(state.desktopBg, state.desktopStretch !== false);
                     openWindows.forEach(w => closeWindow(w.id)); updateClock(); applyTranslations(); renderDesktop(); renderBinList();
                 } catch (err) { showDialog('Hiba', 'Érvénytelen mentési fájl!', 'alert'); }
